@@ -139,7 +139,7 @@ export interface StateContinuityResult {
   reloadsDetected: number;
   domRemountsDetected: number;
   heapReferencePreserved: boolean;
-  status: 'VERIFIED' | 'FAILED';
+  status: 'VERIFIED' | 'FAILED' | 'SIMULATED';
   log: string[];
 }
 
