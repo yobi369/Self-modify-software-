@@ -60,9 +60,12 @@ function rateLimit(req, res, next) {
 }
 
 function requireAiApiEnabled(_req, res, next) {
-  if (process.env.NODE_ENV === "production" && process.env.AI_API_ENABLED !== "true") {
+  // There is no authenticated identity, tenant boundary, or shared quota service yet.
+  // Do not provide an environment-variable bypass: configuration alone cannot create
+  // those security controls. Production AI access stays closed until middleware exists.
+  if (process.env.NODE_ENV === "production") {
     return res.status(503).json({
-      error: "AI endpoints are disabled until production authentication and shared usage controls are configured.",
+      error: "AI endpoints are unavailable until authentication, tenant isolation, and shared usage controls are implemented.",
       code: "AI_API_DISABLED",
     });
   }
