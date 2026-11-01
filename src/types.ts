@@ -274,14 +274,7 @@ export interface ReproducibilityEvidenceReport {
     restoredTargetHash: string;
     restorationLatencyMs: number;
   };
-  rollbackEvent: {
-    watchdogFired: boolean;
-    triggerReason: string | null;
-    restoredTarget: string;
-    restorationLatencyMs: number;
-  };
   finalState: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE' | 'SIMULATED';
-  finalDisposition: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE' | 'SIMULATED';
   // Cryptographic Hash Chain & Tamper-Evident Experiment Seal
   chainIndex: number;
   previousEvidenceHash: string;
