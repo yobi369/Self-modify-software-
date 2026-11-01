@@ -8,6 +8,7 @@ import {
 } from "./requestValidation.mjs";
 
 const app = express();
+app.set("trust proxy", 1);
 const MAX_REQUESTS = 15;
 const WINDOW_MS = 60_000;
 const requestWindows = new Map();
