@@ -165,7 +165,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
           <p className="leading-relaxed">
             This system is explicitly designated as a <strong>Research-Grade Autonomous Software Studio Prototype</strong>. 
-            All performance speedups, rollback guarantees, membrane boundaries, and statistical equivalence conclusions remain strictly scoped to the empirical test harness, synthetic adversarial vectors, and deterministic verification suites. This prototype does not claim to be an unconstrained general-purpose secure execution environment.
+            The current records are synthetic demonstrations. No real performance speedup, rollback guarantee, runtime isolation, or statistical equivalence conclusion has been established. Candidate execution remains disabled.
           </p>
         </div>
       </div>
