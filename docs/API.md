@@ -21,7 +21,7 @@ Legacy `/api/gemini/*` and unprefixed aliases remain available for compatibility
 - Mutation technique: one of `instruction_substitution`, `dead_code_insertion`, `dynamic_jit_wrapper`, or `self_healing_guard`.
 - Best-effort process-local throttle: 15 AI requests per IP per 60 seconds.
 
-The in-memory throttle is not a global quota or a substitute for a shared/edge rate limiter. In production, both AI endpoints fail closed unless `AI_API_ENABLED=true`; do not enable this flag until an authenticated gateway, shared quota/rate limiter, and per-user usage controls are active. Serverless instances do not share memory. Configure production abuse protection at the hosting or gateway layer before exposing paid AI calls publicly.
+The in-memory throttle is not a global quota or a substitute for a shared/edge rate limiter. In production, both AI endpoints are hard-disabled in code. There is deliberately no environment-variable bypass: configuration alone cannot establish authentication, tenant isolation, or shared quotas. Serverless instances do not share memory. Implement and test those controls before changing this guard. The local process throttle is only a development safeguard.
 
 ## Analysis request
 
