@@ -56,7 +56,7 @@ export function buildReproducibilityReport(params: {
   experimentId: string;
   testSuiteResults?: { suiteName: string; passed: boolean; durationMs: number; assertions: number }[];
   benchmarkSamples?: number[];
-  astViolations?: string[];
+  staticPatternFindings?: string[];
   runtimeTrapsTriggered?: string[];
   membraneVerdict?: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
   falsePositiveRate?: number | null;
@@ -196,7 +196,7 @@ export function buildReproducibilityReport(params: {
       testedVectorsSummary: 'No runtime adversarial vectors executed. A lexical pattern scan only is available.',
       isolationMechanism: 'No isolated execution service configured; browser code execution disabled.',
       globalAccessObserved: 'NOT_TESTED',
-      astViolations: params.astViolations || [],
+      staticPatternFindings: params.staticPatternFindings || [],
       runtimeTrapsTriggered: params.runtimeTrapsTriggered || [],
       membraneVerdict: 'NOT_EVALUATED',
       falsePositiveRateOnLegitCorpus: params.falsePositiveRate ?? null
@@ -364,7 +364,7 @@ export async function reproduceExperiment(
     experimentId: reproExpId,
     testSuiteResults: reproSuites,
     benchmarkSamples: reproSamples,
-    astViolations: [],
+    staticPatternFindings: [],
     runtimeTrapsTriggered: [],
     membraneVerdict: 'NOT_EVALUATED',
     falsePositiveRate: null,
