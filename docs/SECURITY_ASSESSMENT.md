@@ -8,7 +8,7 @@ This assessment describes the code in the current hardening branch. It is not an
 
 The previous `runInHermeticSandbox` implementation executed candidate source through the JavaScript `Function` constructor in the page's own realm. Lexically shadowing names such as `window`, `globalThis`, `process`, `eval`, and `Function` does not create a security boundary. Constructor traversal, host object access, uninstrumented loops, memory exhaustion, and prototype side effects can bypass simplistic wrappers. Comparing prototype property counts after execution is not a reliable containment or rollback mechanism.
 
-The hardening branch replaces that implementation with a fail-closed compatibility function. It returns `NOT_EXECUTED` and does not evaluate candidate source. The adversarial examples are screened with a conservative lexical pattern scanner only.
+The hardening branch replaces that implementation with a fail-closed execution-availability gate. It returns `NOT_EXECUTED` and does not evaluate candidate source. The adversarial examples are screened with a conservative lexical pattern scanner only. The JavaScript playground was also changed so its editable source is now read-only and its pass sequence uses fixed built-in calculations instead of `new Function`. Its WebAssembly panel compiles only a fixed arithmetic module; neither panel is an isolated untrusted-code runner.
 
 **The lexical scanner is not an AST parser, does not prove code is safe, and does not provide runtime containment.** A clean result means only that the configured patterns were not detected. All dynamic security verdicts are labelled `NOT_EVALUATED`.
 
