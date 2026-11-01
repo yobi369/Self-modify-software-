@@ -950,7 +950,7 @@ function processData(items) {
                     REPRODUCIBILITY & EMPIRICAL EVIDENCE DOSSIER
                   </h3>
                   <span className="text-[10px] text-neutral-400 font-sans">
-                    machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts • Experiment ID: {activeEvidenceReport.experimentId}
+                    simulated evidence JSON; record digests are unsigned and do not prove execution • Experiment ID: {activeEvidenceReport.experimentId}
                   </span>
                 </div>
               </div>
@@ -972,7 +972,7 @@ function processData(items) {
                   onClick={handleReproduceCurrentExperiment}
                   disabled={isReproducing}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-500/60 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 font-bold cursor-pointer text-[11px] disabled:opacity-50"
-                  title="Run independent re-execution on the defined workload and evaluate statistical convergence"
+                  title="Generate a synthetic comparison; no source execution or statistical conclusion is performed"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isReproducing ? 'animate-spin' : ''}`} />
                   <span>{isReproducing ? 'Reproducing...' : 'Reproduce This Experiment'}</span>
@@ -1003,7 +1003,7 @@ function processData(items) {
                     downloadAnchor.remove();
                   }}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-bold cursor-pointer text-[11px]"
-                  title="Download machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts"
+                  title="Download simulated evidence record"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download .JSON</span>
@@ -1118,12 +1118,12 @@ function processData(items) {
                   </div>
                 </div>
                 <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-1">
-                  <span className="text-neutral-500 text-[10px] block">Baseline Cryptographic Hash</span>
+                  <span className="text-neutral-500 text-[10px] block">Baseline Fixture Digest</span>
                   <span className="text-xs text-neutral-200 block truncate">{activeEvidenceReport.baseline.hash}</span>
                   <span className="text-[10px] text-neutral-400 block">{activeEvidenceReport.baseline.description}</span>
                 </div>
                 <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-1">
-                  <span className="text-cyan-400 text-[10px] block">Candidate Cryptographic Hash</span>
+                  <span className="text-cyan-400 text-[10px] block">Candidate Fixture Digest</span>
                   <span className="text-xs text-cyan-300 block truncate">{activeEvidenceReport.candidate.hash}</span>
                   <span className="text-[10px] text-neutral-400 block">{activeEvidenceReport.candidate.description}</span>
                 </div>
@@ -1251,7 +1251,7 @@ function processData(items) {
 
             {/* Modal Footer */}
             <div className="p-3 bg-[#040608] border-t border-neutral-800 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-              <span className="truncate max-w-[500px]">Format: machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts</span>
+              <span className="truncate max-w-[500px]">Format: simulated evidence record; no source execution or independent reproduction</span>
               <button
                 onClick={() => { sounds.click(); setShowEvidenceModal(false); }}
                 className="px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 cursor-pointer font-bold"
