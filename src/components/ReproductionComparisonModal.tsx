@@ -153,7 +153,7 @@ export const ReproductionComparisonModal: React.FC<ReproductionModalProps> = ({
                 downloadAnchor.remove();
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold cursor-pointer text-[11px]"
-              title="Download machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts"
+              title="Download simulated comparison record"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download JSON</span>
@@ -170,300 +170,73 @@ export const ReproductionComparisonModal: React.FC<ReproductionModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-5 overflow-y-auto space-y-5 text-neutral-300">
-          {/* Convergence Verdict Banner */}
-          <div className={`p-4 rounded-xl border ${
-            isConverged 
-              ? 'border-emerald-500/60 bg-emerald-950/30' 
-              : 'border-rose-500/60 bg-rose-950/30'
-          } space-y-2`}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className={`w-5 h-5 ${isConverged ? 'text-emerald-400' : 'text-rose-400'}`} />
-                <span className="font-bold text-white text-sm">
-                  {isConverged 
-                    ? 'STATISTICAL REPRODUCIBILITY CONVERGED (ALL PREDEFINED TOLERANCES MET)' 
-                    : 'STATISTICAL DIVERGENCE DETECTED'}
-                </span>
-              </div>
-              <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold ${
-                isConverged 
-                  ? 'bg-emerald-950/80 border border-emerald-500/50 text-emerald-300' 
-                  : 'bg-rose-950/80 border border-rose-500/50 text-rose-300'
-              }`}>
-                {comparison.overallConvergence}
-              </span>
-            </div>
-
-            <p className="text-xs text-neutral-200 font-sans leading-relaxed">
-              {comparison.convergenceExplanation}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-neutral-800/80 text-[10px]">
-              <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">
-                |Δ Mean|: <strong>{Math.abs(comparison.meanDeltaPercent)}%</strong> (Predefined empirical tolerance: ≤ 5.0%)
-              </span>
-              <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">
-                95% CI Compatibility: <strong>{comparison.ciOverlap ? 'MET' : 'UNMET'}</strong>
-                {comparison.ciOverlapRange && ` [${comparison.ciOverlapRange[0]}, ${comparison.ciOverlapRange[1]}] μs`}
-              </span>
-              {comparison.tostEquivalence && (
-                <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-cyan-300 font-bold">
-                  TOST Equivalence: {comparison.tostEquivalence.h0Rejected ? 'H₀ REJECTED' : 'H₀ UNREJECTED'}
-                </span>
-              )}
-              <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">
-                Invariant Parity: <strong>100.0%</strong> (95/95 Assertions Passed)
-              </span>
-              <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">
-                Candidate Hash: <strong>100% Identical</strong>
-              </span>
-            </div>
+          <div className="rounded-xl border border-amber-500/50 bg-amber-950/30 p-4 text-amber-100" role="status">
+            <strong className="block font-mono text-xs uppercase mb-1">SIMULATED COMPARISON — NOT A REPRODUCTION RESULT</strong>
+            Neither baseline nor candidate source was executed. The values below are synthetic fixtures. No semantic equivalence, security containment, benchmark convergence, or production readiness has been established.
           </div>
 
-          {/* Side-by-Side Comparison Matrix */}
-          <div className="rounded-xl border border-neutral-800 bg-[#040608] overflow-hidden">
-            <div className="p-3 border-b border-neutral-800 bg-[#05080b] flex items-center justify-between">
-              <span className="text-white font-bold flex items-center gap-2">
-                <Activity className="w-4 h-4 text-cyan-400" />
-                Experimental Reproduction Comparison Matrix
-              </span>
-              <span className="text-[10px] text-neutral-400">
-                Same Baseline • Same 1,000-Token Seed Corpus • Same Protocol
-              </span>
+          <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 space-y-2">
+            <h4 className="font-mono font-bold text-white">Comparison status</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+              <div><span className="block text-neutral-500">Evidence mode</span><strong className="text-amber-300">SIMULATED</strong></div>
+              <div><span className="block text-neutral-500">Reproduction</span><strong className="text-amber-300">NOT EVALUATED</strong></div>
+              <div><span className="block text-neutral-500">Test suites executed</span><strong>{comparison.originalTestsTotal + comparison.reproductionTestsTotal}</strong></div>
+              <div><span className="block text-neutral-500">Runtime isolation</span><strong className="text-amber-300">NOT AVAILABLE</strong></div>
             </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-[11px] text-left">
-                <thead className="bg-neutral-900/60 text-neutral-400 border-b border-neutral-800">
-                  <tr>
-                    <th className="py-2.5 px-3">Invariant / Metric</th>
-                    <th className="py-2.5 px-3">Original Run ({comparison.originalExperimentId})</th>
-                    <th className="py-2.5 px-3">Reproduction Run ({comparison.reproductionExperimentId})</th>
-                    <th className="py-2.5 px-3">Observed Delta</th>
-                    <th className="py-2.5 px-3">Tolerance Check</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-800/60 font-mono">
-                  <tr>
-                    <td className="py-2.5 px-3 text-neutral-200 font-semibold">Candidate SHA-256 Hash</td>
-                    <td className="py-2.5 px-3 text-cyan-300 truncate max-w-[150px]">{comparison.originalCandidateHash}</td>
-                    <td className="py-2.5 px-3 text-cyan-300 truncate max-w-[150px]">{comparison.reproductionCandidateHash}</td>
-                    <td className="py-2.5 px-3 text-neutral-300">Identical (0 diff)</td>
-                    <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
-                        MATCH (100%)
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="py-2.5 px-3 text-neutral-200 font-semibold">Verification Invariants</td>
-                    <td className="py-2.5 px-3 text-neutral-300">4 / 4 Suites (95 tests passed)</td>
-                    <td className="py-2.5 px-3 text-neutral-300">4 / 4 Suites (95 tests passed)</td>
-                    <td className="py-2.5 px-3 text-neutral-300">0 divergence</td>
-                    <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
-                        PASS (100% Parity)
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="py-2.5 px-3 text-neutral-200 font-semibold">Sample Count (N)</td>
-                    <td className="py-2.5 px-3 text-neutral-300">20 independent runs</td>
-                    <td className="py-2.5 px-3 text-neutral-300">20 independent runs</td>
-                    <td className="py-2.5 px-3 text-neutral-300">0 diff</td>
-                    <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-400 text-[10px]">
-                        EQUAL
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr className="bg-cyan-950/10">
-                    <td className="py-2.5 px-3 text-white font-semibold">Mean Latency (μ)</td>
-                    <td className="py-2.5 px-3 text-white font-bold">{comparison.originalMeanUs} μs</td>
-                    <td className="py-2.5 px-3 text-white font-bold">{comparison.reproductionMeanUs} μs</td>
-                    <td className="py-2.5 px-3 text-cyan-300 font-bold">
-                      {comparison.meanDeltaPercent > 0 ? '+' : ''}{comparison.meanDeltaPercent}% ({comparison.meanDeltaUs > 0 ? '+' : ''}{comparison.meanDeltaUs} μs)
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        comparison.toleranceChecks.meanWithinTolerance 
-                          ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-400' 
-                          : 'bg-rose-950/80 border border-rose-500/40 text-rose-400'
-                      }`}>
-                        {comparison.toleranceChecks.meanWithinTolerance ? 'PASS (≤ 5.0%)' : 'FAIL'}
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="py-2.5 px-3 text-neutral-200 font-semibold">Median Latency</td>
-                    <td className="py-2.5 px-3 text-neutral-300">{comparison.originalMedianUs} μs</td>
-                    <td className="py-2.5 px-3 text-neutral-300">{comparison.reproductionMedianUs} μs</td>
-                    <td className="py-2.5 px-3 text-neutral-300">
-                      {comparison.medianDeltaPercent > 0 ? '+' : ''}{comparison.medianDeltaPercent}%
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
-                        PASS (≤ 5.0%)
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="py-2.5 px-3 text-neutral-200 font-semibold">P95 Tail Latency</td>
-                    <td className="py-2.5 px-3 text-neutral-300">{comparison.originalP95Us} μs</td>
-                    <td className="py-2.5 px-3 text-neutral-300">{comparison.reproductionP95Us} μs</td>
-                    <td className="py-2.5 px-3 text-neutral-300">
-                      {comparison.p95DeltaPercent > 0 ? '+' : ''}{comparison.p95DeltaPercent}%
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        comparison.toleranceChecks.p95WithinTolerance 
-                          ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-400' 
-                          : 'bg-rose-950/80 border border-rose-500/40 text-rose-400'
-                      }`}>
-                        {comparison.toleranceChecks.p95WithinTolerance ? 'PASS (≤ 8.0%)' : 'FAIL'}
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr className="bg-emerald-950/10">
-                    <td className="py-2.5 px-3 text-white font-semibold">
-                      <div>95% CI Compatibility Criterion</div>
-                      <span className="text-[10px] text-neutral-400 font-sans font-normal block">
-                        predefined acceptance condition (does not prove identical distribution)
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-emerald-300">
-                      [{comparison.originalCi95Us[0]}, {comparison.originalCi95Us[1]}] μs
-                    </td>
-                    <td className="py-2.5 px-3 text-emerald-300">
-                      [{comparison.reproductionCi95Us[0]}, {comparison.reproductionCi95Us[1]}] μs
-                    </td>
-                    <td className="py-2.5 px-3 text-neutral-300">
-                      {comparison.ciOverlap ? `Overlap [${comparison.ciOverlapRange ? comparison.ciOverlapRange.join(', ') : ''}]` : 'Disjoint'}
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        comparison.toleranceChecks.ciOverlapSatisfied 
-                          ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-400' 
-                          : 'bg-rose-950/80 border border-rose-500/40 text-rose-400'
-                      }`}>
-                        {comparison.toleranceChecks.ciOverlapSatisfied ? 'PASS (Criterion Met)' : 'FAIL'}
-                      </span>
-                    </td>
-                  </tr>
-
-                  {comparison.tostEquivalence && (
-                    <tr className="bg-cyan-950/10 border-t border-cyan-500/20">
-                      <td className="py-2.5 px-3 text-white font-semibold">
-                        <div className="text-cyan-300">TOST Equivalence (Two One-Sided)</div>
-                        <span className="text-[10px] text-neutral-400 font-sans font-normal block">
-                          H₀ (|Δμ| ≥ 5.0%) vs H₁ (|Δμ| &lt; 5.0%)
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-neutral-300 font-mono">
-                        Reference Baseline
-                      </td>
-                      <td className="py-2.5 px-3 text-cyan-300 font-mono">
-                        90% CI: [{comparison.tostEquivalence.confidenceIntervalOfDifferenceUs[0]}, {comparison.tostEquivalence.confidenceIntervalOfDifferenceUs[1]}] μs
-                      </td>
-                      <td className="py-2.5 px-3 text-neutral-300 font-mono">
-                        Margin: ±{comparison.tostEquivalence.equivalenceMarginUs} μs (±5.0%)
-                      </td>
-                      <td className="py-2.5 px-3">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          comparison.tostEquivalence.h0Rejected 
-                            ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-400' 
-                            : 'bg-amber-950/80 border border-amber-500/40 text-amber-400'
-                        }`}>
-                          {comparison.tostEquivalence.h0Rejected ? 'PASS (H₀ REJECTED)' : 'UNREJECTED'}
-                        </span>
-                      </td>
-                    </tr>
-                  )}
-
-                  <tr>
-                    <td className="py-2.5 px-3 text-neutral-200 font-semibold">Execution Isolation Traps</td>
-                    <td className="py-2.5 px-3 text-neutral-300">0 global access observed</td>
-                    <td className="py-2.5 px-3 text-neutral-300">0 global access observed</td>
-                    <td className="py-2.5 px-3 text-neutral-300">0 leakage</td>
-                    <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
-                        SECURE
-                      </span>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="py-2.5 px-3 text-neutral-200 font-semibold">Tamper-Evident Chain Index</td>
-                    <td className="py-2.5 px-3 text-neutral-400">Block #{comparison.originalReport.chainIndex}</td>
-                    <td className="py-2.5 px-3 text-neutral-400">Block #{comparison.reproductionReport.chainIndex}</td>
-                    <td className="py-2.5 px-3 text-cyan-300">Hash-Linked Child</td>
-                    <td className="py-2.5 px-3">
-                      <span className="px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 text-[10px] font-bold">
-                        CHAIN VALID
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <p className="text-xs text-neutral-400">{comparison.convergenceExplanation}</p>
           </div>
 
-          {/* Cryptographic Hash Chain Link Card */}
-          <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-2">
-            <div className="flex items-center justify-between text-cyan-300 font-bold">
-              <div className="flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-cyan-400" />
-                <span>Tamper-Evident Cryptographic Hash Chain Link</span>
+          <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 space-y-3">
+            <h4 className="font-mono font-bold text-white">Illustrative records</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div className="rounded-lg bg-neutral-900 p-3 space-y-1">
+                <strong className="text-neutral-200 block">Original demo record</strong>
+                <span className="block text-neutral-500">{comparison.originalExperimentId}</span>
+                <span className="block break-all text-neutral-300">Fixture digest: {comparison.originalCandidateHash}</span>
+                <span className="block text-neutral-400">Synthetic samples: {comparison.originalReport.statistics.sampleCount}</span>
               </div>
-              <span className="text-[10px] text-emerald-400">RFC 6234 Canonical Digest</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] font-mono">
-              <div className="p-3 rounded-lg bg-neutral-900 border border-neutral-800 space-y-1">
-                <span className="text-neutral-500 text-[10px] block">Original Experiment (Block #{comparison.originalReport.chainIndex})</span>
-                <span className="text-neutral-200 truncate block">Hash: {comparison.originalReport.evidenceIntegrityHash}</span>
-                <span className="text-[10px] text-neutral-400 block truncate">Seal: {comparison.originalReport.tamperEvidentSeal}</span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-neutral-900 border border-neutral-800 space-y-1">
-                <span className="text-cyan-400 text-[10px] block">Reproduction Run (Block #{comparison.reproductionReport.chainIndex})</span>
-                <span className="text-cyan-200 truncate block">Hash: {comparison.reproductionReport.evidenceIntegrityHash}</span>
-                <span className="text-[10px] text-neutral-400 block truncate">Points to Parent: {comparison.reproductionReport.previousEvidenceHash}</span>
+              <div className="rounded-lg bg-neutral-900 p-3 space-y-1">
+                <strong className="text-neutral-200 block">Comparison demo record</strong>
+                <span className="block text-neutral-500">{comparison.reproductionExperimentId}</span>
+                <span className="block break-all text-neutral-300">Fixture digest: {comparison.reproductionCandidateHash}</span>
+                <span className="block text-neutral-400">Synthetic samples: {comparison.reproductionReport.statistics.sampleCount}</span>
               </div>
             </div>
-
-            <p className="text-[10px] text-neutral-400 font-sans">
-              The reproduction run incorporates the cryptographic hash of the original experiment as its parent pointer, creating a tamper-evident audit chain. Any post-hoc modification to either run's telemetry or candidate hash immediately breaks the cryptographic seal.
-            </p>
+            <p className="text-xs text-amber-200">Fixture digests identify demonstration strings, not captured source files. Similar digest values do not prove that the same candidate was independently reproduced.</p>
           </div>
 
-          {/* Raw Sample Distributions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-[11px]">
-            <div className="p-3 rounded-xl border border-neutral-800 bg-[#040608] space-y-1">
-              <span className="text-neutral-400 block">Original Latency Samples (μs):</span>
-              <div className="text-neutral-300 text-[10px] leading-relaxed break-all">
-                [{comparison.originalReport.benchmarkSamples.join(', ')}]
-              </div>
+          <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 space-y-2">
+            <h4 className="font-mono font-bold text-white">Illustrative timing values — not measured</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+              <div><span className="block text-neutral-500">Original mean</span><strong>{comparison.originalMeanUs} μs</strong></div>
+              <div><span className="block text-neutral-500">Comparison mean</span><strong>{comparison.reproductionMeanUs} μs</strong></div>
+              <div><span className="block text-neutral-500">Original P95</span><strong>{comparison.originalP95Us} μs</strong></div>
+              <div><span className="block text-neutral-500">Comparison P95</span><strong>{comparison.reproductionP95Us} μs</strong></div>
             </div>
+            <p className="text-xs text-amber-200">These figures are generated from fixed synthetic samples. They are not performance measurements and cannot support a speedup or equivalence claim.</p>
+          </div>
 
-            <div className="p-3 rounded-xl border border-neutral-800 bg-[#040608] space-y-1">
-              <span className="text-emerald-400 block">Reproduction Latency Samples (μs):</span>
-              <div className="text-neutral-300 text-[10px] leading-relaxed break-all">
-                [{comparison.reproductionReport.benchmarkSamples.join(', ')}]
-              </div>
+          <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 space-y-2">
+            <h4 className="font-mono font-bold text-white">Statistical evaluation</h4>
+            <span className="text-amber-300 text-xs font-bold">TOST STATUS: {comparison.tostEquivalence.status}</span>
+            <p className="text-xs text-neutral-300">{comparison.tostEquivalence.conclusion}</p>
+            <p className="text-xs text-neutral-400">No inferential p-value or equivalence conclusion is issued for synthetic sample data.</p>
+          </div>
+
+          <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 space-y-2">
+            <h4 className="font-mono font-bold text-white">Local record digest links</h4>
+            <div className="text-[11px] font-mono space-y-2">
+              <div><span className="block text-neutral-500">Original record digest</span><code className="break-all">{comparison.originalReport.evidenceIntegrityHash}</code></div>
+              <div><span className="block text-neutral-500">Comparison record digest</span><code className="break-all">{comparison.reproductionReport.evidenceIntegrityHash}</code></div>
+              <div><span className="block text-neutral-500">Previous digest pointer</span><code className="break-all">{comparison.reproductionReport.previousEvidenceHash}</code></div>
             </div>
+            <p className="text-xs text-neutral-400">The browser keeps this chain in memory. SHA-256 links can detect accidental changes to the current record snapshot, but are not signed, authenticated, durable, or resistant to an attacker who can recompute them.</p>
           </div>
         </div>
 
         {/* Footer */}
         <div className="p-3 bg-[#040608] border-t border-neutral-800 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-          <span>Format: machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts</span>
+          <span>Simulated comparison record; no source execution or independent reproduction was performed</span>
           <button
             onClick={() => { sounds.click(); onClose(); }}
             className="px-4 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 cursor-pointer font-bold"
