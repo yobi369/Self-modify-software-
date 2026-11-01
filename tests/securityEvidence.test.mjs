@@ -63,7 +63,7 @@ test("browser-generated evidence is explicitly simulated with no fabricated test
   const report = buildReproducibilityReport({ experimentId: "TEST-SIMULATED-EVIDENCE" });
   assert.equal(report.evidenceMode, "SIMULATED");
   assert.equal(report.promotionDecision, "SIMULATED");
-  assert.equal(report.finalDisposition, "SIMULATED");
+  assert.equal(report.finalState, "SIMULATED");
   assert.equal(report.testResults.totalTests, 0);
   assert.equal(report.securityFindings.membraneVerdict, "NOT_EVALUATED");
   assert.match(report.baselineMutationHash, /^sha256:/);
@@ -83,7 +83,7 @@ test("reproduction comparison remains NOT_EVALUATED for synthetic data", async (
   assert.equal(comparison.evidenceMode, "SIMULATED");
   assert.equal(comparison.overallConvergence, "NOT_EVALUATED");
   assert.equal(comparison.tostEquivalence.status, "NOT_EVALUATED");
-  assert.equal(comparison.reproductionReport.finalDisposition, "SIMULATED");
+  assert.equal(comparison.reproductionReport.finalState, "SIMULATED");
   assert.equal(comparison.reproductionReport.testResults.totalTests, 0);
 });
 
