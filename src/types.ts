@@ -156,7 +156,7 @@ export interface MaliciousVerdictResult {
   testId: string;
   name: string;
   sourceCode: string;
-  verdict: 'BLOCKED' | 'PERMITTED';
+  verdict: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
   astViolations: string[];
   runtimeTrapsTriggered: string[];
   machineReadablePayload: Record<string, any>;
@@ -167,13 +167,13 @@ export interface FalsePositiveChallengeResult {
   totalLegitimateSnippets: number;
   passedCount: number;
   blockedCount: number;
-  falsePositiveRatePercent: number;
+  falsePositiveRatePercent: number | null;
   snippets: {
     id: string;
     description: string;
     code: string;
     benignFeature: string;
-    result: 'PASS' | 'FALSE_POSITIVE';
+    result: 'PASS' | 'FALSE_POSITIVE' | 'NOT_EVALUATED';
   }[];
 }
 
@@ -253,10 +253,11 @@ export interface ReproducibilityEvidenceReport {
     globalAccessObserved: string;
     astViolations: string[];
     runtimeTrapsTriggered: string[];
-    membraneVerdict: 'BLOCKED' | 'PERMITTED';
-    falsePositiveRateOnLegitCorpus: number;
+    membraneVerdict: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
+    falsePositiveRateOnLegitCorpus: number | null;
   };
-  promotionDecision: 'PROMOTED' | 'REJECTED' | 'QUARANTINED' | 'ROLLED_BACK';
+  evidenceMode: 'SIMULATED';
+  promotionDecision: 'PROMOTED' | 'REJECTED' | 'QUARANTINED' | 'ROLLED_BACK' | 'SIMULATED';
   decisionReason: string;
   watchdogEvents: {
     monitored: boolean;
@@ -279,8 +280,8 @@ export interface ReproducibilityEvidenceReport {
     restoredTarget: string;
     restorationLatencyMs: number;
   };
-  finalState: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE';
-  finalDisposition: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE';
+  finalState: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE' | 'SIMULATED';
+  finalDisposition: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE' | 'SIMULATED';
   // Cryptographic Hash Chain & Tamper-Evident Experiment Seal
   chainIndex: number;
   previousEvidenceHash: string;
@@ -294,7 +295,7 @@ export interface ReproducibilityEvidenceReport {
     convergenceDeltaMeanPercent: number;
     confidenceIntervalsOverlap: boolean;
     invariantParityPreserved: boolean;
-    verdict: 'CONVERGED' | 'DIVERGED';
+    verdict: 'CONVERGED' | 'DIVERGED' | 'NOT_EVALUATED';
   };
 }
 
@@ -360,7 +361,8 @@ export interface ReproductionComparisonReport {
     hashesIdentical: boolean;
     tostEquivalenceSatisfied: boolean;
   };
-  overallConvergence: 'CONVERGED_WITHIN_TOLERANCES' | 'DIVERGED_OUTSIDE_TOLERANCES';
+  evidenceMode: 'SIMULATED';
+  overallConvergence: 'CONVERGED_WITHIN_TOLERANCES' | 'DIVERGED_OUTSIDE_TOLERANCES' | 'NOT_EVALUATED';
   convergenceExplanation: string;
   originalReport: ReproducibilityEvidenceReport;
   reproductionReport: ReproducibilityEvidenceReport;
