@@ -4,23 +4,23 @@
 
 **Status: NOT CERTIFIED FOR PRODUCTION OR COMMERCIAL CUSTOMER USE.**
 
-The repository has a substantial interactive research interface, but the initial repository state has no README, no `.github/workflows/` CI pipeline, no test suite, no declared licence, and no demonstrated production acceptance evidence. The local Express server and Vercel API entry point are separate implementations. AI fallback behaviour in the API currently risks presenting heuristic or unchanged code as a successful analysis or mutation. These issues must be corrected and tested before commercial release.
+The original baseline lacked a README, CI workflow, automated tests, and engineering documentation. This hardening branch now adds those assets, a shared Express API application used by both local development and the Vercel entry point, explicit API request/response validation, fail-closed production AI routes, and a documented test/release process. The latest verified CI run completed 33 tests with zero failures and built both frontend and server artefacts. These improvements do not establish customer production readiness: the repository still has no declared licence, no authenticated customer accounts or tenant isolation, no shared production quota service, no isolated candidate execution service, no deployed preview acceptance evidence, and no independent security review.
 
 This document is a living gate checklist. A checked box requires evidence in CI, a test report, a deployment record, or an authorised review.
 
 ## Gate A — Build and engineering quality
 
-- [ ] Frozen dependency installation passes in CI.
-- [ ] TypeScript checks pass.
-- [ ] Unit and API integration suites pass.
-- [ ] Production frontend and server builds pass.
+- [x] Frozen dependency installation passes in CI (latest verified run: 1 November 2026).
+- [x] TypeScript checks pass (latest verified run: 1 November 2026).
+- [x] Current unit and API integration suites pass: 33 tests, 0 failures, 0 skipped (latest verified run: 1 November 2026).
+- [x] Production frontend and server builds pass in CI (latest verified run: 1 November 2026).
 - [ ] No unresolved critical/high dependency vulnerabilities.
 - [ ] No secrets detected in source, history, or built client assets.
 - [ ] Supported Node/Bun versions are declared and tested.
 
 ## Gate B — API reliability
 
-- [ ] Both local and Vercel route implementations have matching contract tests.
+- [ ] Local development and Vercel use the same Express API application; add end-to-end contract tests through both entry points.
 - [ ] Request body and response sizes are bounded.
 - [ ] Request schemas and enum allowlists are enforced.
 - [ ] Rate limiting is enforced at a shared/edge layer (current limit is per process and is not sufficient for serverless multi-instance production).
