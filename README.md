@@ -1,5 +1,9 @@
 # Self-Modifying Software Studio
 
+[![CI](https://github.com/yobi369/Self-modify-software-/actions/workflows/ci.yml/badge.svg)](https://github.com/yobi369/Self-modify-software-/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/yobi369/Self-modify-software-/actions/workflows/codeql.yml/badge.svg)](https://github.com/yobi369/Self-modify-software-/actions/workflows/codeql.yml)
+
+
 **Research and engineering workspace for studying software mutation, runtime transformation, verification, and execution safety.**
 
 Self-Modifying Software Studio brings together interactive architecture visualisations, memory and virtual-memory simulations, controlled mutation experiments, security demonstrations, and reproducibility-oriented evidence tools. It is designed for engineers and researchers who need to reason about how software changes and how those changes should be evaluated.
