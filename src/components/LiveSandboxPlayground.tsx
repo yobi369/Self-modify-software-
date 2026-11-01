@@ -20,7 +20,7 @@ export const LiveSandboxPlayground: React.FC = () => {
   // --- JavaScript Self-Modifying State ---
   const [jsCallCount, setJsCallCount] = useState<number>(0);
   const [jsOutputLog, setJsOutputLog] = useState<string[]>([
-    'Ready. Click "Execute Evolving Function" to run pass #1.',
+    'Ready. Click "Run Demo Pass" to view the built-in transformation.',
   ]);
   const [currentJsCode, setCurrentJsCode] = useState<string>(
 `let targetFunc = function(x) {
@@ -280,7 +280,7 @@ function targetFunc(x) {
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
                 >
                   <Play className="w-4 h-4" />
-                  <span>Execute Pass #{jsCallCount + 1}</span>
+                  <span>Run Demo Pass #{jsCallCount + 1}</span>
                 </button>
 
                 <button
