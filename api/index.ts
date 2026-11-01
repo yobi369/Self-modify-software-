@@ -7,6 +7,16 @@ import {
   validateMutationResult,
 } from "./requestValidation.mjs";
 
+class ApiError extends Error {
+  statusCode: number;
+  code: string;
+  constructor(message: string, statusCode: number, code: string) {
+    super(message);
+    this.statusCode = statusCode;
+    this.code = code;
+  }
+}
+
 const app = express();
 app.set("trust proxy", 1);
 const MAX_REQUESTS = 15;
@@ -57,20 +67,14 @@ function getAIClient() {
 async function generateJson(prompt, temperature) {
   const client = getAIClient();
   if (!client) {
-    const error = new Error("AI provider is not configured.");
-    error.statusCode = 503;
-    error.code = "AI_NOT_CONFIGURED";
-    throw error;
+    throw new ApiError("AI provider is not configured.", 503, "AI_NOT_CONFIGURED");
   }
 
   let timeoutId;
   try {
-    const timeout = new Promise((_, reject) => {
+    const timeout = new Promise<never>((_, reject) => {
       timeoutId = setTimeout(() => {
-        const error = new Error("AI provider request timed out.");
-        error.statusCode = 504;
-        error.code = "AI_TIMEOUT";
-        reject(error);
+        reject(new ApiError("AI provider request timed out.", 504, "AI_TIMEOUT"));
       }, 15_000);
     });
 
@@ -125,8 +129,8 @@ app.post(
       }
       return res.json({ success: true, analysis: result, simulated: false, verificationStatus: "AI_REVIEW_NOT_EXECUTION_VERIFIED" });
     } catch (error) {
-      const statusCode = Number.isInteger(error?.statusCode) ? error.statusCode : 502;
-      const code = error?.code || "AI_PROVIDER_ERROR";
+      const statusCode = error instanceof ApiError ? error.statusCode : 502;
+      const code = error instanceof ApiError ? error.code : "AI_PROVIDER_ERROR";
       console.error("AI analysis request failed:", code);
       return res.status(statusCode).json({
         error: statusCode === 503 ? "AI analysis is not configured." : statusCode === 504 ? "AI analysis timed out. Please retry." : "AI analysis is temporarily unavailable.",
