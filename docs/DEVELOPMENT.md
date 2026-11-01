@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Node.js 22 or newer.
-- Bun compatible with the repository lockfile.
+- Bun compatible with the repository lockfile. CI currently uses the setup action's default Bun version rather than an exact pin; maintainers should pin a tested version for stricter reproducibility.
 - Git.
 - A Gemini API key only when testing AI-assisted routes.
 
@@ -73,4 +73,4 @@ Never expose secrets through `VITE_*` variables, frontend source, logs, screensh
 - **Type checking fails:** run `bun run lint` and fix the first root error before proceeding.
 - **AI request fails:** confirm the server-side secret is configured, the provider account is active, and the request is within provider quotas. Never paste the key into a public issue.
 - **Build succeeds locally but fails in CI:** compare runtime versions, lockfile installation, environment variables, and exact commands.
-- **Vercel API differs from local behaviour:** inspect `api/index.ts` independently of `server.ts` and run deployed smoke tests.
+- **Vercel API differs from local behaviour:** both entry points use the shared Express API application in `api/index.ts`; compare environment configuration and run deployed smoke tests.
