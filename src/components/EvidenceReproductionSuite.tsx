@@ -137,7 +137,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
               className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-cyan-500/60 bg-cyan-950/60 hover:bg-cyan-900/70 text-cyan-300 font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(6,182,212,0.25)] cursor-pointer"
             >
               <FileCheck className="w-4 h-4 text-cyan-400" />
-              <span>Public Experiment Report</span>
+              <span>Public Experiment Report (Simulation)</span>
             </button>
 
             <button
@@ -150,7 +150,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
               ) : (
                 <Scale className="w-4 h-4 text-emerald-400" />
               )}
-              <span>Run TOST Reproduction Audit</span>
+              <span>Run Illustrative Reproduction (Not Evaluated)</span>
             </button>
           </div>
         </div>
@@ -198,11 +198,11 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
-            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Tamper-Evident Seal</span>
+            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Record Integrity Digest</span>
             <span className="font-mono text-xs font-bold text-emerald-400 block truncate">
               {activeReport.evidenceIntegrityHash.slice(0, 16)}...
             </span>
-            <span className="text-[10px] text-emerald-400 font-mono">Verified SHA-256</span>
+            <span className="text-[10px] text-emerald-400 font-mono">Client-side SHA-256 digest</span>
           </div>
         </div>
       )}
@@ -224,7 +224,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <p className="text-xs text-neutral-400 font-sans">
-            Every experiment execution computes a canonical SHA-256 digest linking back to the parent block, guaranteeing that benchmark data and security verdicts cannot be modified retroactively.
+            This browser-side demonstration computes a SHA-256 digest linked to the previous in-memory record. It can detect accidental changes, but it is not signed, does not authenticate the author, and cannot prove that a benchmark or security test actually ran.
           </p>
 
           <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
