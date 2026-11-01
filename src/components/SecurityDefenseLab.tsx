@@ -175,13 +175,14 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
                 <span>Approach 4: Dual-Mapped Memory (High-Performance V8 / WebKit Architecture)</span>
               </div>
               <p className="text-neutral-300 font-sans">
-                The pinnacle of JIT engineering: The engine asks the OS to map the <strong>same physical memory pages</strong> to <strong>two separate virtual address ranges</strong>. One range is permanently mapped <code className="text-amber-300">RW-</code> (for the compiler thread to write), while the other range is permanently mapped <code className="text-emerald-300">R-X</code> (for the CPU execution thread).
+                Some JIT runtimes use dual-mapped aliases where the platform permits it: the same backing pages are mapped at separate virtual addresses, one writable and one executable. Availability and enforcement are OS-, architecture-, and policy-dependent.
               </p>
               <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-cyan-300 overflow-x-auto">
-{`// High performance zero-syscall W^X architecture:
+{`// Illustrative dual-mapping concept; mapping setup still requires OS operations:
 // Write address: 0x7FFF1000 (Mapped as PROT_READ | PROT_WRITE)
 // Exec address:  0x00401000 (Mapped as PROT_READ | PROT_EXEC)
-// Both point to identical physical RAM frames! Zero mprotect() syscall penalty.`}
+// Both aliases refer to the same backing pages. This can avoid repeated permission transitions;
+// setup, synchronization, and platform-specific cache maintenance still have costs.`}
               </pre>
             </div>
           )}
@@ -233,7 +234,7 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
         </div>
 
         <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-          Modern CPUs feature a Harvard architecture at the L1 cache level: separate <strong>L1 Data Cache (L1-D)</strong> and <strong>L1 Instruction Cache (L1-I)</strong>.
+          Many modern CPUs have separate instruction and data caches at some levels. The exact coherency model and required synchronization are architecture-specific.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs pt-2">
@@ -247,14 +248,14 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
           <div className="p-3.5 rounded-xl border border-neutral-800 bg-neutral-950">
             <span className="text-amber-400 font-bold block mb-1">2. The Prefetch Lag (L1-I)</span>
             <p className="text-neutral-400 text-[11px]">
-              The CPU Instruction Fetch Unit reads from L1 Instruction Cache. L1-I does not automatically snoop L1-D writes on architectures like ARM64 and RISC-V!
+              Instruction-fetch coherency after code writes varies by architecture. Some systems require explicit cache maintenance and instruction synchronization; do not generalize one cache model to every ARM64 or RISC-V implementation.
             </p>
           </div>
 
           <div className="p-3.5 rounded-xl border border-neutral-800 bg-neutral-950">
             <span className="text-cyan-400 font-bold block mb-1">3. The Cache Flush Remedy</span>
             <p className="text-neutral-400 text-[11px]">
-              Calling <code className="text-white">__builtin___clear_cache()</code> flushes the modified data lines to unified L2 cache and invalidates stale L1-I cache lines.
+              A compiler/runtime-supported cache-maintenance API such as <code className="text-white">__builtin___clear_cache()</code> emits target-specific operations where required. Exact semantics depend on the compiler, CPU, and operating system.
             </p>
           </div>
         </div>
