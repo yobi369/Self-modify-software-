@@ -384,6 +384,11 @@ export const AutonomousProductionEngine: React.FC = () => {
       const dataset = generateBenchmarkDataset(500);
       const baseFn = compileActiveFunction(GEN_0_BASELINE);
       const currFn = compileActiveFunction(activeCode);
+      if (!baseFn || !currFn) {
+        setIsRunningBenchmark(false);
+        setEvolutionLog((prev) => ['[NOT RUN]: No built-in demo implementation is available for this code identifier.', ...prev]);
+        return;
+      }
 
       const baseStat = runStatisticalBenchmark(baseFn, dataset, 120, 5, 40);
       const currStat = runStatisticalBenchmark(currFn, dataset, 120, 5, 40);
