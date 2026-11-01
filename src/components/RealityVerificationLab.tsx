@@ -118,10 +118,10 @@ export const RealityVerificationLab: React.FC = () => {
     counter: 9850,
     mutationApplied: false,
     dispatchVersion: 'Gen 0 (Initial Dispatch Target)',
-    heapIdentityToken: 'HEAP_CTX_REF_#8841a0e',
+    heapIdentityToken: 'LOCAL_REACT_REF_DEMO_01',
     log: [
-      '00:01 [INIT]: Workload initialized. Continuous state accumulator bound.',
-      '00:02 [STREAM]: State counter at 9,850. Monitoring for page/DOM remounts...'
+      '00:01 [INIT]: Workload initialized. Local React state counter initialized for demonstration.',
+      '00:02 [STREAM]: State counter at 9,850. Showing a local state counter; no DOM-remount instrumentation is active...'
     ],
     isRunning: false
   });
@@ -144,8 +144,8 @@ export const RealityVerificationLab: React.FC = () => {
             sounds.execute();
             nextLog = [
               `>>> [MUTATION TRIGGERED AT COUNTER = ${nextVal}]: Swapping dispatch closure in-memory...`,
-              `>>> [PROOF]: Window reloads: 0. DOM teardowns: 0. Heap identity: ${prev.heapIdentityToken} (UNBROKEN).`,
-              `>>> [CONTINUITY]: Counter seamlessly advancing to ${nextVal + 15}...`,
+              `>>> [DEMO]: React state advanced without this component being intentionally remounted. No heap-pointer or production continuity claim.`,
+              `>>> [LOCAL STATE]: Demo counter advancing to ${nextVal + 15}...`,
               ...prev.log
             ];
             return {
@@ -185,7 +185,7 @@ export const RealityVerificationLab: React.FC = () => {
   };
 
   // -------------------------------------------------------------
-  // TEST B: MUTATION IDENTITY (fnBefore !== fnAfter)
+  // TEST B: LOCAL FUNCTION REFERENCE COMPARISON
   // -------------------------------------------------------------
   const [testBResult, setTestBResult] = useState<MutationIdentityResult | null>(null);
 
@@ -194,8 +194,8 @@ export const RealityVerificationLab: React.FC = () => {
     const gen0Fn = function gen0Process(items: any[]) { return { count: items.length, mode: 'quadratic' }; };
     const gen1Fn = function gen1Process(items: any[]) { return { count: items.length, mode: 'linear_hash' }; };
 
-    const gen0Id = 'Closure_0x' + Math.floor(Math.random() * 899999 + 100000).toString(16) + ' [Gen 0 Function Reference]';
-    const gen1Id = 'Closure_0x' + Math.floor(Math.random() * 899999 + 100000).toString(16) + ' [Gen 1 Function Reference]';
+    const gen0Id = 'DEMO_FN_REF_' + Math.floor(Math.random() * 899999 + 100000).toString(16);
+    const gen1Id = 'DEMO_FN_REF_' + Math.floor(Math.random() * 899999 + 100000).toString(16);
 
     const areDifferent = (gen0Fn as any) !== (gen1Fn as any);
     const parentPreserved = Object.is(heapContextRef.current, heapContextRef.current);
@@ -205,8 +205,8 @@ export const RealityVerificationLab: React.FC = () => {
       closureIdAfter: gen1Id,
       callableReferencesDiffer: areDifferent,
       parentContextPreserved: parentPreserved,
-      status: 'VERIFIED',
-      proof: `Object.is(fnBefore, fnAfter) === false (Callable reference changed). Parent context heap address === true (State preserved).`
+      status: 'SIMULATED',
+      proof: 'Two local demo function references are distinct. This does not verify closure-state preservation, heap identity, or runtime hot-patching.'
     });
     sounds.success();
   };
@@ -529,7 +529,7 @@ function processData(items) {
             <div>
               <h3 className="font-mono font-bold text-base text-white flex items-center gap-2">
                 <Activity className="w-5 h-5 text-emerald-400" />
-                TEST A: LIVE STATE CONTINUITY (10,000 → 10,001+)
+                TEST A: LOCAL REACT STATE DEMONSTRATION (10,000 → 10,001+)
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
                 Proves that when a mutation is hotpatched into memory at counter = 10,000, execution advances seamlessly without a page reload or state reset.
@@ -559,7 +559,7 @@ function processData(items) {
           {/* Real-time State Displays */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608]">
-              <span className="text-[11px] font-mono text-neutral-500 block">Live Accumulator Counter</span>
+              <span className="text-[11px] font-mono text-neutral-500 block">Local Demo State Counter</span>
               <span className="text-2xl font-mono font-bold text-emerald-400">
                 {testAState.counter.toLocaleString()}
               </span>
@@ -597,7 +597,7 @@ function processData(items) {
             </div>
           </div>
 
-          {/* Live Execution Stream */}
+          {/* Local Demonstration Log */}
           <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 space-y-1.5 max-h-[220px] overflow-y-auto">
             <div className="text-neutral-500 text-[10px] pb-1 border-b border-neutral-800 flex items-center justify-between">
               <span>WORKLOAD STATE STREAM</span>
