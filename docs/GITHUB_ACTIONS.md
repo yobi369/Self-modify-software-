@@ -25,7 +25,7 @@ A pull request opened against a branch other than `main` does not match the curr
 
 ### Permissions and concurrency
 
-The workflow requests only `contents: read`. It does not receive deployment, package-publishing, issue-writing, or secret-management permissions.
+The workflow requests only `contents: read`. It does not receive deployment, package-publishing, issue-writing, or secret-management permissions. Third-party actions are pinned to immutable full commit SHAs; inline comments retain the human-readable upstream release tags. Dependabot is configured to propose action updates, which must be reviewed and tested.
 
 Runs are grouped by workflow and Git ref. A newer run for the same group cancels an older in-progress run. This saves runner time but means a cancelled run is not a successful check; always inspect the newest run for the commit under review.
 
@@ -73,7 +73,7 @@ The CodeQL workflow analyses `javascript-typescript`. It runs on:
 - A weekly schedule at 04:23 UTC on Monday.
 - Manual dispatch.
 
-It uses the official CodeQL action v4 to initialise the database, autobuild the project, and publish analysis results.
+It uses the official CodeQL action v4, pinned to an immutable commit SHA, to initialise the database, autobuild the project, and publish analysis results.
 
 ### Permissions
 
