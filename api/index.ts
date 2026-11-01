@@ -59,6 +59,16 @@ function rateLimit(req, res, next) {
   next();
 }
 
+function requireAiApiEnabled(_req, res, next) {
+  if (process.env.NODE_ENV === "production" && process.env.AI_API_ENABLED !== "true") {
+    return res.status(503).json({
+      error: "AI endpoints are disabled until production authentication and shared usage controls are configured.",
+      code: "AI_API_DISABLED",
+    });
+  }
+  next();
+}
+
 function getAIClient() {
   const apiKey = process.env.GEMINI_API_KEY;
   return apiKey ? new GoogleGenAI({ apiKey }) : null;
@@ -102,6 +112,7 @@ app.get(["/api/health", "/health"], (_req, res) => {
 
 app.post(
   ["/api/ai/analyze", "/ai/analyze", "/api/gemini/analyze", "/gemini/analyze"],
+  requireAiApiEnabled,
   rateLimit,
   async (req, res) => {
     const validation = validateCodeRequest(req.body, "analyze");
