@@ -4,7 +4,7 @@ import { computeSha256 } from './cryptoSha256';
 // Genesis hash for initial chain block
 const GENESIS_PREV_HASH = 'sha256:0000000000000000000000000000000000000000000000000000000000000000';
 
-// In-memory ledger of experiments forming the tamper-evident hash chain
+// In-memory demonstration ledger; it is not an authenticated or tamper-proof evidence store.
 let experimentLedger: ReproducibilityEvidenceReport[] = [];
 
 export function getExperimentChain(): ReproducibilityEvidenceReport[] {
@@ -16,8 +16,8 @@ export function clearExperimentChain(): void {
 }
 
 /**
- * Computes a deterministic canonical string from an evidence record (excluding integrity seals)
- * to produce a tamper-evident cryptographic hash.
+ * Computes a deterministic canonical string from an evidence record to produce a local integrity digest.
+ * This digest is not signed and does not authenticate the record's author or truth.
  */
 export function computeCanonicalPayloadDigest(payload: {
   experimentId: string;
@@ -119,7 +119,7 @@ export function buildReproducibilityReport(params: {
 
   const promotionDecision = 'SIMULATED' as const;
 
-  // Cryptographic Hash Chain linking
+  // Client-side hash-link demonstration
   const chainIndex = experimentLedger.length;
   const previousEvidenceHash = experimentLedger.length > 0
     ? experimentLedger[experimentLedger.length - 1].evidenceIntegrityHash
@@ -228,7 +228,7 @@ export function buildReproducibilityReport(params: {
     finalState: 'SIMULATED',
     finalDisposition: 'SIMULATED',
 
-    // Machine-readable tamper-evident chain
+    // Machine-readable local integrity digest chain
     chainIndex,
     previousEvidenceHash,
     evidenceIntegrityHash,
@@ -327,7 +327,7 @@ export function verifyExperimentChainIntegrity(chain: ReproducibilityEvidenceRep
   return {
     isChainValid: true,
     blockCount: chain.length,
-    message: `All ${chain.length} blocks verified: Cryptographic tamper-evident chain is 100% valid.`
+    message: `All ${chain.length} record digests and links are internally consistent. This does not authenticate the author or prove the experiment occurred.`
   };
 }
 
