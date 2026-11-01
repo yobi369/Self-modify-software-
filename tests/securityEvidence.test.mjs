@@ -98,6 +98,6 @@ test("record digest detects a changed report field", () => {
 test("browser playground does not evaluate editable JavaScript source", async () => {
   const source = await readFile(new URL("../src/components/LiveSandboxPlayground.tsx", import.meta.url), "utf8");
   assert.match(source, /readOnly/);
-  assert.doesNotMatch(source, /new Function\\s*\\(/);
-  assert.doesNotMatch(source, /eval\\s*\\(/);
+  assert.doesNotMatch(source, /new Function\s*\\(/);
+  assert.doesNotMatch(source, /eval\s*\\(/);
 });
