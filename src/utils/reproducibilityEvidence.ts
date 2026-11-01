@@ -333,9 +333,8 @@ export function verifyExperimentChainIntegrity(chain: ReproducibilityEvidenceRep
 
 /**
  * "Reproduce This Experiment"
- * Creates a fresh independent run from the exact same baseline & candidate on the same dataset/protocol,
- * executes verification tests and microsecond benchmark sampling, and evaluates statistical convergence
- * against predefined tolerances.
+ * Creates a simulated comparison using illustrative samples. It does not execute either source artefact,
+ * run regression tests, or perform a formal statistical equivalence evaluation.
  */
 export async function reproduceExperiment(
   originalReport: ReproducibilityEvidenceReport
@@ -432,6 +431,7 @@ export async function reproduceExperiment(
   const h0Rejected = false; // Synthetic samples are illustrative; no inferential conclusion is issued.
 
   const tostEquivalence: TostEquivalenceResult = {
+    status: 'NOT_EVALUATED',
     h0Statement: 'H₀: |μ_repro - μ_orig| ≥ Δ (performance difference exceeds the acceptable tolerance margin of 5.0%)',
     h1Statement: 'H₁: |μ_repro - μ_orig| < Δ (performance difference is within predefined equivalence margin of ±5.0%)',
     equivalenceMarginPercent,
