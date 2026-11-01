@@ -133,7 +133,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
           'Windows: VirtualProtect() with PAGE_EXECUTE_READWRITE',
           'ARM64/macOS: __builtin___clear_cache() or FlushInstructionCache()',
         ],
-        riskLevel: analysis?.riskLevel || 'LOW',
+        riskLevel: analysis?.riskLevel || 'MEDIUM',
       },
       explanation,
       verifierSignature: 'UNSIGNED — SHA-256 is an integrity digest, not a digital signature.',
@@ -308,7 +308,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
           <div className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-900/40 text-neutral-300 flex items-start gap-2">
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
-              <span className="text-cyan-300 font-bold block text-[11px]">Suggest functionally equivalent variants</span>
+              <span className="text-cyan-300 font-bold block text-[11px]">Suggest candidate code variants</span>
               <span className="text-[10px] text-neutral-400">Instruction substitution &amp; dead-code jitter</span>
             </div>
           </div>
@@ -316,7 +316,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
               <span className="text-teal-300 font-bold block text-[11px]">Explain the transformation</span>
-              <span className="text-[10px] text-neutral-400">Semantics &amp; invariant preservation proof</span>
+              <span className="text-[10px] text-neutral-400">Requires independent semantic and regression testing</span>
             </div>
           </div>
           <div className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-900/40 text-neutral-300 flex items-start gap-2">
@@ -542,10 +542,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
               <div className="space-y-1.5 text-xs font-mono">
                 <div className="flex items-center justify-between text-[11px] text-neutral-400">
                   <span>Record ID: <strong className="text-white">{auditableRecord.recordId}</strong></span>
-                  <span className="text-emerald-400 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" />
-                    Behavior Preserved
-                  </span>
+                  <span className="text-amber-400">Equivalence: NOT VERIFIED</span>
                 </div>
 
                 <div className="p-2.5 rounded-lg bg-black/60 border border-neutral-800 space-y-1 text-[11px]">
@@ -558,7 +555,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
                     <span className="text-cyan-300">{auditableRecord.mutatedCodeHashSha256}</span>
                   </div>
                   <div className="truncate">
-                    <span className="text-neutral-500">Signature: </span>
+                    <span className="text-neutral-500">Signing status: </span>
                     <span className="text-amber-400">{auditableRecord.verifierSignature}</span>
                   </div>
                 </div>
