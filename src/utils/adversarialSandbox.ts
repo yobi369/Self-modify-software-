@@ -335,7 +335,7 @@ export function runFalsePositiveChallenge(): FalsePositiveChallengeResult {
  * realm is not a security boundary, so runtime evaluation is disabled until a
  * dedicated isolated execution service is implemented and independently tested.
  */
-export function runInHermeticSandbox(
+export function checkCandidateExecutionAvailability(
   codeStr: string,
   _args: any[],
   _maxIterations: number = 100000
