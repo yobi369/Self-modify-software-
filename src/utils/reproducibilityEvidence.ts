@@ -209,15 +209,8 @@ export function buildReproducibilityReport(params: {
       restoredTargetHash: baselineMutationHash,
       restorationLatencyMs: 0
     },
-    rollbackEvent: {
-      watchdogFired: false,
-      triggerReason: null,
-      restoredTarget: 'NOT_APPLICABLE — simulated workflow',
-      restorationLatencyMs: 0
-    },
     evidenceMode: 'SIMULATED',
     finalState: 'SIMULATED',
-    finalDisposition: 'SIMULATED',
 
     // Machine-readable local integrity digest chain
     chainIndex,
