@@ -407,7 +407,7 @@ function processData(items) {
                   setShowPublicReportModal(true);
                 }}
                 className="flex items-center gap-2 px-3.5 py-3 rounded-xl border border-purple-500/50 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(168,85,247,0.25)] cursor-pointer whitespace-nowrap w-full sm:w-auto justify-center"
-                title="View clean Public Experiment Report generated automatically from the evidence dossier"
+                title="View the simulated research report"
               >
                 <FileText className="w-4 h-4 text-purple-400" />
                 <span>Public Experiment Report</span>
@@ -947,7 +947,7 @@ function processData(items) {
                 <FileCheck className="w-5 h-5 text-cyan-400" />
                 <div>
                   <h3 className="font-bold text-white text-sm">
-                    REPRODUCIBILITY & EMPIRICAL EVIDENCE DOSSIER
+                    SIMULATED EVIDENCE RECORD
                   </h3>
                   <span className="text-[10px] text-neutral-400 font-sans">
                     simulated evidence JSON; record digests are unsigned and do not prove execution • Experiment ID: {activeEvidenceReport.experimentId}
@@ -975,7 +975,7 @@ function processData(items) {
                   title="Generate a synthetic comparison; no source execution or statistical conclusion is performed"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isReproducing ? 'animate-spin' : ''}`} />
-                  <span>{isReproducing ? 'Reproducing...' : 'Reproduce This Experiment'}</span>
+                  <span>{isReproducing ? 'Generating demo...' : 'Generate Simulated Comparison'}</span>
                 </button>
 
                 <button
