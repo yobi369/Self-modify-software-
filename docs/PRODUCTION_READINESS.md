@@ -16,7 +16,7 @@ This document is a living gate checklist. A checked box requires evidence in CI,
 - [x] Production frontend and server builds pass in CI (latest verified run: 1 November 2026).
 - [ ] No unresolved critical/high dependency vulnerabilities.
 - [ ] No secrets detected in source, history, or built client assets.
-- [ ] Supported Node/Bun versions are declared and tested.
+- [x] Supported toolchain is declared and tested in CI: Node.js 22 and Bun 1.4.4.
 
 ## Gate B — API reliability
 
