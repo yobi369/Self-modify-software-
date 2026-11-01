@@ -152,12 +152,12 @@ function processData(items) {
   };
 }`;
 
-// Flawed mutant that passes basic checks but fails under stochastic production workload
+// Built-in fault-injection fixture for the local simulated workload only.
 const MUTANT_LATENT_FAILURE = `// [Latent Bug Mutant] Passes trivial tests, throws intermittently under real workload
 function processData(items) {
   // Latent defect: intermittent exception when traffic is heavy
   if (Math.random() < 0.45 && items.length > 5) {
-    throw new Error("MEMORY_CORRUPTION_PANIC: Latent pointer offset fault in production");
+    throw new Error("SIMULATED_LATENT_FAILURE: Demo workload fault");
   }
   var f = {};
   for(var i=0; i<items.length; i++) f[items[i]] = (f[items[i]]||0) + 1;
@@ -183,7 +183,7 @@ export const AutonomousProductionEngine: React.FC = () => {
       id: 'cp_v1_0_0',
       version: 'v1.0.0 (Gen 0)',
       timestamp: '2026-09-23 05:00:00 UTC',
-      mutationSummary: 'Baseline Production Engine (O(N^2) Array Scan)',
+      mutationSummary: 'Baseline demo algorithm (O(N^2) Array Scan)',
       technique: 'Baseline Implementation',
       code: GEN_0_BASELINE,
       status: 'active',
@@ -216,7 +216,7 @@ export const AutonomousProductionEngine: React.FC = () => {
   const [trafficErrorCount, setTrafficErrorCount] = useState<number>(0);
   const [watchdogStatus, setWatchdogStatus] = useState<'HEALTHY' | 'ANOMALY_DETECTED' | 'AUTO_ROLLBACK_EXECUTED'>('HEALTHY');
   const [watchdogLog, setWatchdogLog] = useState<string[]>([
-    '05:12:00 [WATCHDOG]: Heartbeat healthy. Rolling error rate 0.00%. Invariants verified.'
+    'DEMO WATCHDOG: Local simulated workload running. No independent invariants verified.'
   ]);
 
   // Compile active code safely into memory
@@ -296,7 +296,7 @@ export const AutonomousProductionEngine: React.FC = () => {
         setHeapInvocations((inv) => inv + Math.floor(Math.random() * 5) + 3);
         setTrafficTotalRequests((r) => r + Math.floor(Math.random() * 5) + 3);
 
-        // Run live active code on simulated traffic
+        // Run a built-in demo implementation on simulated traffic
         const fn = compileActiveFunction(activeCode);
         if (fn) {
           try {
@@ -308,7 +308,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               const newCount = e + 1;
               if (newCount >= 3 && watchdogStatus === 'HEALTHY') {
                 // Trigger Autonomous Canary Rollback!
-                triggerCanaryRollback(err.message || 'Latent production exception');
+                triggerCanaryRollback(err.message || 'Simulated demo exception');
               }
               return newCount;
             });
@@ -320,7 +320,7 @@ export const AutonomousProductionEngine: React.FC = () => {
     return () => clearInterval(timer);
   }, [activeCode, isTrafficRunning, watchdogStatus]);
 
-  // Automated Canary Rollback triggered when production anomaly exceeds threshold
+  // Simulated rollback sequence triggered when demo workload anomaly exceeds threshold
   const triggerCanaryRollback = (reason: string) => {
     sounds.error();
     setWatchdogStatus('ANOMALY_DETECTED');
@@ -337,14 +337,14 @@ export const AutonomousProductionEngine: React.FC = () => {
       const knownGood = checkpoints.find((cp) => cp.status === 'active' || cp.status === 'archived');
       if (knownGood) {
         setActiveCode(knownGood.code);
-        setActiveVersion(`${knownGood.version} (RESTORED)`);
+        setActiveVersion(`${knownGood.version} (DEMO RESTORED)`);
         setActivePointer(`0x7ffee280${Math.floor(Math.random() * 9000 + 1000)}`);
         setWatchdogStatus('AUTO_ROLLBACK_EXECUTED');
         setTrafficErrorCount(0);
         sounds.success();
 
         setWatchdogLog((prev) => [
-          `${new Date().toISOString().substring(11, 19)} [RESTORED]: Production recovered to ${knownGood.version}. Error rate reset to 0.00%.`,
+          `${new Date().toISOString().substring(11, 19)} [DEMO RESTORED]: Local demo state reset to ${knownGood.version}. Simulated error counter reset.`,
           ...prev
         ]);
       }
@@ -499,6 +499,10 @@ export const AutonomousProductionEngine: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status">
+        <strong className="block mb-1 uppercase tracking-wide">Browser research simulation — not a production engine</strong>
+        Only built-in demo algorithms are exercised. Arbitrary candidate execution is disabled because this browser realm is not a secure sandbox. Workload, heap, promotion, and rollback displays are simulated and do not affect a production process.
+      </div>
       {/* Header Banner */}
       <div className="rounded-2xl border border-emerald-950/80 bg-gradient-to-b from-[#081216] via-[#050a0d] to-[#04080a] p-6 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -518,7 +522,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               METAMORPHIC MUTATION ENGINE &amp; EVOLUTION PIPELINE
             </h1>
             <p className="text-sm text-neutral-400 font-sans mt-1 max-w-3xl">
-              Engineered for investigating autonomous software mutation, runtime code transformation, and binary diversity: adversarial mutation survival, hermetic execution membrane for the tested threat model, live workload canary rollback, and empirical multi-generation self-evolution.
+              Research demonstration of software mutation concepts, static pattern screening, built-in algorithm comparisons, simulated workload faults, and local rollback-state transitions. No secure execution membrane or production deployment controller is provided.
             </p>
           </div>
 
@@ -527,7 +531,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             <div className="flex items-center justify-between text-neutral-400 text-[10px]">
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                LIVE RUNTIME HEAP
+                LOCAL DEMO STATE
               </span>
               <span className="text-emerald-400">Zero Downtime</span>
             </div>
@@ -598,7 +602,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             }`}
           >
             <Cpu className="w-4 h-4 text-cyan-400" />
-            <span>Live Heap Hotpatching Verification</span>
+            <span>Simulated State Switching Demo</span>
           </button>
 
           <button
@@ -812,7 +816,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                   className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-500/40 bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 font-mono text-xs transition-colors cursor-pointer"
                 >
                   <Bug className="w-3.5 h-3.5 text-rose-400" />
-                  <span>Inject Latent Production Bug</span>
+                  <span>Inject Simulated Demo Fault</span>
                 </button>
               </div>
             </div>
@@ -954,10 +958,10 @@ export const AutonomousProductionEngine: React.FC = () => {
             <div>
               <h3 className="font-mono font-bold text-base text-white flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-cyan-400" />
-                ZERO-DOWNTIME LIVE HEAP HOTPATCHING VERIFICATION
+                SIMULATED STATE SWITCHING DEMONSTRATION
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                Proves that executable machine behavior is hot-swapped inside the already-running JavaScript runtime without a page or process restart, while preserving live accumulator state.
+                Illustrates local React state changes between built-in algorithm fixtures. No process heap, native code, or production runtime is hot-swapped.
               </p>
             </div>
 
@@ -974,7 +978,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 <span className="text-neutral-500 block text-[11px]">Continuous Heap Invocations</span>
                 <span className="text-base font-bold text-cyan-300">{heapInvocations.toLocaleString()}</span>
                 <p className="text-[11px] text-neutral-400 font-sans">
-                  Accumulator never resets to zero during hot-patching. Continuous live state is preserved.
+                  The displayed counter is local demo state; it is not evidence of runtime hot-patching or production state continuity.
                 </p>
               </div>
 
@@ -1036,7 +1040,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                       <span className="font-mono text-xs font-semibold text-white">{cp.mutationSummary}</span>
                       {cp.status === 'active' && (
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/80 text-emerald-400">
-                          LIVE IN RUNTIME
+                          DEMO STATE
                         </span>
                       )}
                     </div>
