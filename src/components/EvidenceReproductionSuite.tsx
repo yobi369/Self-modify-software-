@@ -116,7 +116,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
                 Auditable Artifacts &amp; Reproduction
               </span>
               <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/50 text-emerald-400 font-mono text-[11px]">
-                Research-Grade Autonomous Software Studio Prototype
+                Research Demonstration Prototype
               </span>
             </div>
 
