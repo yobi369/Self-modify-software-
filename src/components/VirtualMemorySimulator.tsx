@@ -331,9 +331,7 @@ export const VirtualMemorySimulator: React.FC = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return (
-      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status"><strong className="block mb-1 uppercase tracking-wide">Virtual-memory simulation only</strong>This lab visualises predefined memory-permission and instruction-flow scenarios. It does not modify real process pages, call mprotect/VirtualProtect, inspect page tables, or enforce hardware W^X protections.</div>
-) => window.removeEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isPlaying, currentStepIndex]);
 
   useEffect(() => {
@@ -380,6 +378,7 @@ export const VirtualMemorySimulator: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status"><strong className="block mb-1 uppercase tracking-wide">Virtual-memory simulation only</strong>This lab visualises predefined memory-permission and instruction-flow scenarios. It does not modify real process pages, call mprotect/VirtualProtect, inspect page tables, or enforce hardware W^X protections.</div>
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-emerald-500/30 bg-[#080d10]">
         <div>
