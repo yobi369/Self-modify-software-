@@ -42,36 +42,33 @@ export const ReproductionComparisonModal: React.FC<ReproductionModalProps> = ({
   const isConverged = comparison.overallConvergence === 'CONVERGED_WITHIN_TOLERANCES';
 
   const generateMarkdownReport = () => {
-    return `# INDEPENDENT REPRODUCTION & STATISTICAL CONVERGENCE REPORT
-**Original Experiment ID:** \`${comparison.originalExperimentId}\`  
-**Reproduction Experiment ID:** \`${comparison.reproductionExperimentId}\`  
-**Timestamp:** ${comparison.timestamp}  
-**Disposition:** ${comparison.overallConvergence}
+    return `# SIMULATED COMPARISON REPORT
 
-## Predefined Statistical Tolerances & Acceptance Criteria
-- **Empirical Reproducibility Tolerance:** |Δ Mean| ≤ 5.0% (${comparison.toleranceChecks.meanWithinTolerance ? 'PASS' : 'FAIL'}, observed: ${comparison.meanDeltaPercent > 0 ? '+' : ''}${comparison.meanDeltaPercent}%)
-  *(The predefined empirical reproducibility tolerance for this experiment, acknowledging host runtime noise)*
-- **95% CI Compatibility Criterion:** Overlap = TRUE (${comparison.toleranceChecks.ciOverlapSatisfied ? 'PASS' : 'FAIL'}, Range: [${comparison.ciOverlapRange ? comparison.ciOverlapRange.join(', ') : 'None'}])
-  *(Requires overlapping confidence intervals as a predefined reproducibility acceptance condition)*
-- **Formal Statistical Equivalence (TOST):** H₀: |μ_repro - μ_orig| ≥ 5.0% vs H₁: |μ_repro - μ_orig| < 5.0%
-  *Outcome: ${comparison.tostEquivalence ? comparison.tostEquivalence.conclusion : 'Evaluated within margin'}*
-- **Invariant Parity Ratio:** 100.0% (${comparison.toleranceChecks.invariantsSatisfied ? 'PASS' : 'FAIL'}, 95/95 assertions identical)
-- **Candidate Cryptographic Identity:** SHA-256 Match (${comparison.toleranceChecks.hashesIdentical ? 'PASS' : 'FAIL'})
+**Evidence mode:** SIMULATED  
+**Original demo record:** ${comparison.originalExperimentId}  
+**Comparison demo record:** ${comparison.reproductionExperimentId}  
+**Status:** NOT EVALUATED
 
-## Statistical Latency Comparison (N = ${comparison.sampleCount})
-| Metric | Original Run | Reproduction Run | Delta | Status |
-|---|---|---|---|---|
-| Mean Latency (μ) | ${comparison.originalMeanUs} μs | ${comparison.reproductionMeanUs} μs | ${comparison.meanDeltaPercent > 0 ? '+' : ''}${comparison.meanDeltaPercent}% | ${comparison.toleranceChecks.meanWithinTolerance ? 'PASS' : 'FAIL'} |
-| Median Latency | ${comparison.originalMedianUs} μs | ${comparison.reproductionMedianUs} μs | ${comparison.medianDeltaPercent > 0 ? '+' : ''}${comparison.medianDeltaPercent}% | PASS |
-| P95 Latency | ${comparison.originalP95Us} μs | ${comparison.reproductionP95Us} μs | ${comparison.p95DeltaPercent > 0 ? '+' : ''}${comparison.p95DeltaPercent}% | ${comparison.toleranceChecks.p95WithinTolerance ? 'PASS' : 'FAIL'} |
-| P99 Latency | ${comparison.originalP99Us} μs | ${comparison.reproductionP99Us} μs | ${comparison.p99DeltaPercent > 0 ? '+' : ''}${comparison.p99DeltaPercent}% | PASS |
-| 95% Confidence Interval | [${comparison.originalCi95Us[0]}, ${comparison.originalCi95Us[1]}] | [${comparison.reproductionCi95Us[0]}, ${comparison.reproductionCi95Us[1]}] | Overlap: ${comparison.ciOverlap ? 'YES' : 'NO'} | ${comparison.toleranceChecks.ciOverlapSatisfied ? 'PASS (Criterion Met)' : 'FAIL'} |
+## Scope
 
-## Cryptographic Hash Chain Audit
-- **Parent Integrity Digest:** \`${comparison.originalReport.evidenceIntegrityHash}\`
-- **Child Block Digest:** \`${comparison.reproductionReport.evidenceIntegrityHash}\`
-- **Chain Continuity:** Verified (Block #${comparison.originalReport.chainIndex} ➔ Block #${comparison.reproductionReport.chainIndex})
-- **Format:** machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts.
+Neither source artefact was executed. No independent reproduction, regression suite, runtime security test, or formal statistical equivalence evaluation occurred. The displayed values are synthetic fixtures and must not be used as product performance claims.
+
+## Illustrative values (not measured)
+
+- Original mean: ${comparison.originalMeanUs} μs
+- Comparison mean: ${comparison.reproductionMeanUs} μs
+- Original P95: ${comparison.originalP95Us} μs
+- Comparison P95: ${comparison.reproductionP95Us} μs
+- TOST status: ${comparison.tostEquivalence.status}
+- TOST conclusion: ${comparison.tostEquivalence.conclusion}
+
+## Record integrity digests
+
+- Original record digest: ${comparison.originalReport.evidenceIntegrityHash}
+- Comparison record digest: ${comparison.reproductionReport.evidenceIntegrityHash}
+- Parent digest pointer: ${comparison.reproductionReport.previousEvidenceHash}
+
+SHA-256 digests check internal record consistency only. They are not signatures or proof that an experiment occurred.
 `;
   };
 
@@ -86,10 +83,10 @@ export const ReproductionComparisonModal: React.FC<ReproductionModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-white text-sm sm:text-base tracking-tight flex items-center gap-2">
-                INDEPENDENT EXPERIMENT REPRODUCTION & STATISTICAL CONVERGENCE
+                SIMULATED EXPERIMENT COMPARISON
               </h3>
               <span className="text-[10px] text-neutral-400 font-sans block">
-                machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts
+                synthetic demonstration data; no source execution or statistical conclusion
               </span>
             </div>
           </div>
@@ -99,7 +96,7 @@ export const ReproductionComparisonModal: React.FC<ReproductionModalProps> = ({
               <button
                 onClick={() => { sounds.click(); onOpenPublicReport(); }}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-purple-500/40 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 font-bold cursor-pointer text-[11px]"
-                title="View Public Experiment Report generated automatically from this evidence"
+                title="View simulated research report"
               >
                 <FileCheck className="w-3.5 h-3.5 text-purple-400" />
                 <span>Public Report</span>
@@ -112,7 +109,7 @@ export const ReproductionComparisonModal: React.FC<ReproductionModalProps> = ({
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 font-bold cursor-pointer disabled:opacity-50 text-[11px]"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isReRunning ? 'animate-spin' : ''}`} />
-              <span>{isReRunning ? 'Re-executing Trial...' : 'Re-run Trial'}</span>
+              <span>{isReRunning ? 'Refreshing Demo...' : 'Refresh Simulated Comparison'}</span>
             </button>
 
             <button
