@@ -63,10 +63,16 @@ export function buildReproducibilityReport(params: {
   parentExperimentId?: string;
   parentIntegrityHash?: string;
 }): ReproducibilityEvidenceReport {
-  const samples = params.benchmarkSamples || [
+  const syntheticFixtureSamples = [
     34.2, 33.8, 35.1, 34.0, 33.9, 36.2, 34.4, 33.7, 34.8, 34.1,
     33.5, 35.0, 34.3, 33.9, 34.6, 33.8, 34.2, 35.3, 34.0, 33.6
   ];
+  const suppliedSamples = Array.isArray(params.benchmarkSamples)
+    ? params.benchmarkSamples.filter((sample) => Number.isFinite(sample) && sample >= 0).slice(0, 10_000)
+    : [];
+  // A descriptive summary needs at least two finite, non-negative values.
+  // Fallback values remain synthetic and are never represented as measured timings.
+  const samples = suppliedSamples.length >= 2 ? suppliedSamples : syntheticFixtureSamples;
 
   // Statistical calculations
   const n = samples.length;
@@ -92,8 +98,6 @@ export function buildReproducibilityReport(params: {
   ];
 
   // No real baseline workload was captured; performance improvement is unknown.
-
-
   // This browser-generated report is always a simulation, never production evidence.
   const disposition = 'SIMULATED' as const;
 
