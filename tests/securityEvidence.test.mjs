@@ -113,6 +113,7 @@ test("simulated evidence counts only explicitly reported passed and failed suite
   assert.equal(report.testResults.totalTests, 2);
   assert.equal(report.testResults.passedCount, 1);
   assert.equal(report.testResults.failedCount, 1);
+  assert.equal(report.statistics.speedupFactorOnDefinedWorkload, null);
   assert.equal(report.testResults.suites[1].passed, false);
 });
 
@@ -122,4 +123,11 @@ test("evidence UI labels timing values as synthetic and not measured", async () 
   assert.match(source, /NO MEASURED SPEEDUP/);
   assert.match(source, /Illustrative Range/);
   assert.match(source, /Recorded Test Suites/);
+});
+
+test("browser lifecycle simulation contains no claimed measured speedup or real rollback", async () => {
+  const source = await readFile(new URL("../src/components/RealityVerificationLab.tsx", import.meta.url), "utf8");
+  assert.doesNotMatch(source, /Measured 48 μs latency|10\.2x speedup|AUTOMATIC ROLLBACK EXECUTED/);
+  assert.match(source, /no deployment rollback or restoration was executed/i);
+  assert.match(source, /NOT MEASURED/);
 });
