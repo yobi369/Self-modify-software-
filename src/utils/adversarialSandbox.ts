@@ -1,4 +1,4 @@
-// Hermetic JavaScript execution membrane for the tested threat model with AST Sanitization, Deep Membrane Proxy, and 9-Vector Adversarial Penetration Suite
+// Static lexical pattern screening and adversarial payload fixtures. Runtime execution is intentionally disabled.
 
 export interface AdversarialVector {
   id: string;
@@ -36,7 +36,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   }
   return { uniqueCount: items.length, frequencies: {}, firstUnique: items[0] || null, lastUnique: items[items.length-1] || null };
 }`,
-    expectedOutcome: 'Watchdog catches failure rate in production telemetry & executes automated canary rollback.'
+    expectedOutcome: 'Not executed here. Requires an isolated runner and a separately tested canary service.'
   },
   {
     id: 'ADV-02',
@@ -50,7 +50,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   }
   return { uniqueCount: count, frequencies: {} };
 }`,
-    expectedOutcome: 'Execution cycle-counter breaker halts execution at 100,000 iterations without freezing host UI.'
+    expectedOutcome: 'Not executed here. Browser-thread denial-of-service testing requires an isolated, terminable runner.'
   },
   {
     id: 'ADV-03',
@@ -64,7 +64,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   }
   return { uniqueCount: heapFlood.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Memory allocation limit (10MB buffer ceiling) intercepts and rejects allocation.'
+    expectedOutcome: 'Not executed here. Memory exhaustion testing requires external resource limits.'
   },
   {
     id: 'ADV-04',
@@ -77,7 +77,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   items.customInjectedField = 9999;
   return { uniqueCount: items.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Deep Object.freeze ensures input arrays are strictly immutable; throws or no-ops safely.'
+    expectedOutcome: 'Not executed here. Immutability behaviour requires a controlled runtime test.'
   },
   {
     id: 'ADV-05',
@@ -91,7 +91,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   escapedGlobal.__EXPLOIT_SUCCESSFUL = true;
   return { uniqueCount: items.length, frequencies: { leaked: !!escapedGlobal.__EXPLOIT_SUCCESSFUL } };
 }`,
-    expectedOutcome: 'AST sanitizer and Function.prototype.constructor proxy traps block anonymous constructor synthesis.'
+    expectedOutcome: 'Not executed here. Constructor escape resistance has not been verified.'
   },
   {
     id: 'ADV-06',
@@ -103,7 +103,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   var token = g.localStorage ? g.localStorage.getItem('token') : null;
   return { uniqueCount: items.length, frequencies: { stolenToken: token } };
 }`,
-    expectedOutcome: 'Lexical shadowing + Membrane Proxy poisons all global scope references with undefined. No global access observed across the defined adversarial test suite.'
+    expectedOutcome: 'Not executed here. Global access and data exfiltration resistance have not been verified.'
   },
   {
     id: 'ADV-07',
@@ -116,7 +116,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   } catch(e) {}
   return { uniqueCount: items.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Static AST scanner identifies dynamic import token and rejects before compilation.'
+    expectedOutcome: 'Lexical scanner may flag import syntax; no dynamic execution test is performed.'
   },
   {
     id: 'ADV-08',
@@ -128,7 +128,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   var res = eval(evilCode);
   return { uniqueCount: res, frequencies: {} };
 }`,
-    expectedOutcome: 'Shadowed eval() is bound to a strict SecurityTrap that throws immediately upon invocation.'
+    expectedOutcome: 'Lexical scanner may flag eval syntax; no runtime interception is implemented.'
   },
   {
     id: 'ADV-09',
@@ -140,7 +140,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   Array.prototype.hacked = function() { return 1337; };
   return { uniqueCount: items.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Pre-flight and post-flight prototype integrity checks detect and rollback any prototype mutations.'
+    expectedOutcome: 'Not executed here. Prototype mutation resistance has not been verified.'
   }
 ];
 
@@ -161,7 +161,7 @@ export function deepFreeze<T>(obj: T): T {
 
 import { MaliciousVerdictResult, FalsePositiveChallengeResult } from '../types';
 
-// AST and Lexical Static Validator with String Literal Neutralization
+// Conservative lexical pattern scanner with comment/string neutralization. This is not an AST parser or a security boundary.
 export function staticAstSecurityScan(codeStr: string): { safe: boolean; reason?: string; violations: string[] } {
   const violations: string[] = [];
 
@@ -328,7 +328,7 @@ export function runFalsePositiveChallenge(): FalsePositiveChallengeResult {
   };
 }
 
-// Hermetic JavaScript execution membrane for the tested threat model with Loop-Breaker & Prototype Guard
+// Runtime execution is disabled; use a dedicated isolated runner for dynamic testing.
 /**
  * Compatibility wrapper retained for existing UI callers.
  * This function deliberately DOES NOT execute source code. A browser JavaScript
