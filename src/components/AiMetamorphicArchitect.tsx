@@ -124,10 +124,10 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
       mutatedCodeHashSha256: `sha256:${mutHash}`,
       mutationTechnique: tech,
       language,
-      behaviorPreserved: true,
+      behaviorPreserved: false,
       portabilityAudit: {
-        cacheCoherencyValidated: Boolean(analysis?.cacheCoherency),
-        wxDepCompliant: analysis?.riskLevel !== 'CRITICAL',
+        cacheCoherencyValidated: false,
+        wxDepCompliant: false,
         osConstraints: analysis?.osConstraints || [
           'Linux: mprotect() 4096-byte page boundary alignment',
           'Windows: VirtualProtect() with PAGE_EXECUTE_READWRITE',
@@ -136,7 +136,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
         riskLevel: analysis?.riskLevel || 'LOW',
       },
       explanation,
-      verifierSignature: `sig_ed25519_${computeSha256(`${recordId}:${timestamp}:${mutHash}`).slice(0, 32)}`,
+      verifierSignature: 'UNSIGNED — SHA-256 is an integrity digest, not a digital signature.',
     };
   };
 
@@ -156,7 +156,8 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
       });
 
       if (!response.ok) {
-        throw new Error(`Server returned status ${response.status}`);
+        const failure = await response.json().catch(() => ({}));
+        throw new Error(failure.error || `Server returned status ${response.status}`);
       }
 
       const data = await response.json();
@@ -203,10 +204,14 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
       }
 
       const data = await response.json();
-      const mutatedCode = data.mutatedCode || inputCode;
-      const technique = data.technique || mutationType;
-      const explanation = data.explanation || 'Variant generated preserving control-flow invariants.';
-      const behaviorPreserved = data.behaviorPreserved ?? true;
+      if (typeof data.mutatedCode !== 'string' || !data.mutatedCode.trim() || data.verificationStatus !== 'NOT_VERIFIED') {
+        throw new Error('The provider did not return a valid, explicitly unverified candidate.');
+      }
+      const mutatedCode = data.mutatedCode;
+      const technique = data.technique;
+      const explanation = data.explanation;
+      // Behavioural equivalence is never inferred from an AI response.
+      const behaviorPreserved = false;
 
       setMutationResult({
         mutatedCode,
