@@ -278,14 +278,14 @@ function processData(items) {
 
     setTestEResult({
       stage: 'UNIT_TESTS',
-      unitTestsPassed: true,
+      unitTestsPassed: false,
       benchmarkPassed: false,
       simulatedPromotion: false,
       trafficProcessedBeforeFault: 0,
-      faultTriggerPattern: 'Delayed fault triggered when batch contains > 5 items and payload sequence exceeds 40 invocations',
+      faultTriggerPattern: 'Illustrative demo condition only; no real batch processor, telemetry, or watchdog is connected.',
       watchdogTriggered: false,
-      restoredVersion: 'v1.0.0 (Gen 0 Baseline)',
-      log: ['Stage 1: Running unit test suites on candidate mutant with delayed defect...']
+      restoredVersion: 'SIMULATED BASELINE LABEL — NO DEPLOYMENT RESTORED',
+      log: ['SIMULATION ONLY: No candidate was executed and no unit-test suite ran. A real CI result is required before promotion.']
     });
 
     await new Promise((r) => setTimeout(r, 600));
@@ -293,11 +293,11 @@ function processData(items) {
     setTestEResult((prev) => prev ? {
       ...prev,
       stage: 'BENCHMARK',
-      unitTestsPassed: true,
-      benchmarkPassed: true,
+      unitTestsPassed: false,
+      benchmarkPassed: false,
       log: [
-        'Stage 1: Unit tests PASSED (4/4 suites pass on trivial small-batch inputs).',
-        'Stage 2: Statistical benchmark PASSED (Measured 48 μs latency, +10.2x speedup).',
+        'Stage 1: NOT EVALUATED — this browser simulation does not execute unit tests.',
+        'Stage 2: NOT MEASURED — no candidate benchmark or baseline comparison was run.',
         ...prev.log
       ]
     } : null);
@@ -309,7 +309,7 @@ function processData(items) {
       stage: 'SIMULATED_PROMOTION',
       simulatedPromotion: true,
       log: [
-        'Stage 3: Simulated state transition in the local demonstration...',
+        'Stage 3: Simulated promotion state displayed for teaching only; no deployment or traffic routing occurred.',
         ...prev.log
       ]
     } : null);
@@ -321,7 +321,7 @@ function processData(items) {
       stage: 'SIMULATED_WORKLOAD',
       trafficProcessedBeforeFault: 42,
       log: [
-        'Stage 4: Simulated workload events streaming... 10 reqs... 25 reqs... 42 reqs...',
+        'Stage 4: Synthetic event counter advanced to 42; no real requests or production traffic were processed.',
         ...prev.log
       ]
     } : null);
@@ -336,8 +336,8 @@ function processData(items) {
       watchdogTriggered: true,
       trafficProcessedBeforeFault: 53,
       log: [
-        'Stage 5: [ANOMALY DETECTED]: Simulated error spike (12.4% > 5.0% threshold) on payload batch #53!',
-        'Stage 5: Defect signature: "LATENT_POINTER_FAULT" after traffic threshold.',
+        'Stage 5: Simulated fault state injected by the demo; no production anomaly or measured error rate was observed.',
+        'Stage 5: Illustrative defect label only; no real workload was affected.',
         ...prev.log
       ]
     } : null);
@@ -350,8 +350,8 @@ function processData(items) {
       ...prev,
       stage: 'ROLLBACK_RESTORED',
       log: [
-        'Stage 6: [AUTOMATIC ROLLBACK EXECUTED]: Emergency restore to last known-good checkpoint: v1.0.0 (Gen 0 Baseline).',
-        'Stage 6: Demo state reset. Simulated error counter returned to 0.00%.',
+        'Stage 6: Simulated UI state reset only; no deployment rollback or restoration was executed.',
+        'Stage 6: No production state or external system was changed.',
         ...prev.log
       ]
     } : null);
