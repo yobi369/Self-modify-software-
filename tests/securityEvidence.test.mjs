@@ -10,6 +10,7 @@ import {
   buildReproducibilityReport,
   clearExperimentChain,
   reproduceExperiment,
+  verifyEvidenceIntegrity,
   verifyExperimentChainIntegrity,
   getExperimentChain,
 } from "../src/utils/reproducibilityEvidence.ts";
@@ -17,11 +18,14 @@ import {
 beforeEach(() => clearExperimentChain());
 
 test("candidate execution gate fails closed and never evaluates source", () => {
-  const result = checkCandidateExecutionAvailability("globalThis.__probe = true;", []);
+  globalThis.__sandboxProbe = false;
+  const result = checkCandidateExecutionAvailability("globalThis.__sandboxProbe = true;", []);
   assert.equal(result.success, false);
   assert.equal(result.executionStatus, "NOT_EXECUTED");
   assert.match(result.error, /EXECUTION_DISABLED/);
   assert.equal(result.result, null);
+  assert.equal(globalThis.__sandboxProbe, false);
+  delete globalThis.__sandboxProbe;
 });
 
 test("a clean lexical scan is NOT_EVALUATED, not a security pass", () => {
@@ -80,4 +84,12 @@ test("reproduction comparison remains NOT_EVALUATED for synthetic data", async (
   assert.equal(comparison.tostEquivalence.status, "NOT_EVALUATED");
   assert.equal(comparison.reproductionReport.finalDisposition, "SIMULATED");
   assert.equal(comparison.reproductionReport.testResults.totalTests, 0);
+});
+
+test("record digest detects a changed report field", () => {
+  const report = buildReproducibilityReport({ experimentId: "TEST-TAMPER-DETECTION" });
+  report.candidateMutationHash = "tampered-value";
+  const result = verifyEvidenceIntegrity(report);
+  assert.equal(result.isValid, false);
+  assert.equal(result.sealMatches, false);
 });
