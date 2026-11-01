@@ -71,7 +71,7 @@ export const RealityVerificationLab: React.FC = () => {
       experimentId: `EXP-SENTINEL-${Date.now().toString(36).toUpperCase()}`,
       astViolations: machineVerdict?.astViolations || [],
       runtimeTrapsTriggered: machineVerdict?.runtimeTrapsTriggered || [],
-      membraneVerdict: machineVerdict?.verdict || 'PERMITTED',
+      membraneVerdict: machineVerdict?.verdict || 'NOT_EVALUATED',
       falsePositiveRate: challengeResult?.falsePositiveRatePercent,
       rollbackEvent: testEResult ? {
         watchdogFired: testEResult.watchdogTriggered,
@@ -81,7 +81,7 @@ export const RealityVerificationLab: React.FC = () => {
       } : undefined,
       finalDisposition: testEResult?.watchdogTriggered 
         ? 'ROLLED_BACK_RESTORED_BASELINE' 
-        : (machineVerdict?.verdict === 'BLOCKED' ? 'QUARANTINED_BLOCKED' : 'PROMOTED_TO_LIVE')
+        : 'SIMULATED'
     });
     setActiveEvidenceReport(report);
     return report;
@@ -244,7 +244,7 @@ function processData(items) {
       if (verdict.verdict === 'BLOCKED') {
         sounds.error();
       } else {
-        sounds.success();
+        sounds.click();
       }
     }, 450);
   };
@@ -361,6 +361,10 @@ function processData(items) {
 
   return (
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status">
+        <strong className="block mb-1 uppercase tracking-wide">Research simulation — not a production verification system</strong>
+        This lab does not route production traffic or execute candidate code in an isolated runtime. Security results are lexical pattern checks only; lifecycle timelines and evidence figures are illustrative. Do not use these results to approve a production release.
+      </div>
       {/* Header Banner */}
       <div className="rounded-2xl border border-neutral-800 bg-gradient-to-b from-[#081216] via-[#050a0d] to-[#04080a] p-6 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -803,14 +807,14 @@ function processData(items) {
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/20">
-                  <span className="text-emerald-400 block text-[10px]">Correctly Permitted (Non-Blocked)</span>
-                  <span className="text-lg font-bold text-emerald-300">{challengeResult.passedCount} / {challengeResult.totalLegitimateSnippets}</span>
+                  <span className="text-emerald-400 block text-[10px]">No Known Static Rule Triggered</span>
+                  <span className="text-lg font-bold text-emerald-300">{challengeResult.snippets.filter((snip) => snip.result === 'NOT_EVALUATED').length} / {challengeResult.totalLegitimateSnippets}</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-purple-500/40 bg-purple-950/20">
-                  <span className="text-purple-300 block text-[10px]">False Positive Rate (FPR)</span>
+                  <span className="text-purple-300 block text-[10px]">Static-Scan False Positive Rate</span>
                   <span className="text-lg font-bold text-white">{challengeResult.falsePositiveRatePercent}%</span>
-                  <span className="text-[10px] text-emerald-400 block">0% Over-Restriction</span>
+                  <span className="text-[10px] text-neutral-400 block">Lexical scan only; no runtime tests</span>
                 </div>
               </div>
 
@@ -1039,9 +1043,7 @@ function processData(items) {
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                       activeEvidenceReport.promotionDecision === 'PROMOTED'
                         ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-400'
-                        : (activeEvidenceReport.promotionDecision === 'ROLLED_BACK'
-                            ? 'bg-amber-950/80 border border-amber-500/40 text-amber-400'
-                            : 'bg-rose-950/80 border border-rose-500/40 text-rose-400')
+                        : 'bg-amber-950/80 border border-amber-500/40 text-amber-400'
                     }`}>
                       {activeEvidenceReport.promotionDecision}
                     </span>
@@ -1050,15 +1052,15 @@ function processData(items) {
                 </div>
               </div>
 
-              {/* Tamper-Evident Experiment Hash Chain Card */}
+              {/* Client-side hash-chain demonstration; not a trusted attestation. */}
               <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-2">
                 <div className="flex items-center justify-between text-cyan-300 font-bold">
                   <div className="flex items-center gap-1.5">
                     <Lock className="w-4 h-4 text-cyan-400" />
-                    <span>Tamper-Evident Cryptographic Hash Chain</span>
+                    <span>Client-Side Hash-Chain Demonstration</span>
                   </div>
                   <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
-                    CHAIN BLOCK #{activeEvidenceReport.chainIndex} • SEAL VERIFIED
+                    CHAIN BLOCK #{activeEvidenceReport.chainIndex} • HASH MATCH (UNSIGNED)
                   </span>
                 </div>
 
