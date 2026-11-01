@@ -162,7 +162,7 @@ export function deepFreeze<T>(obj: T): T {
 import { MaliciousVerdictResult, FalsePositiveChallengeResult } from '../types';
 
 // Conservative lexical pattern scanner with comment/string neutralization. This is not an AST parser or a security boundary.
-export function staticAstSecurityScan(codeStr: string): { safe: boolean; reason?: string; violations: string[] } {
+export function staticPatternScan(codeStr: string): { safe: boolean; reason?: string; violations: string[] } {
   const violations: string[] = [];
 
   // Strip single-line comments, multi-line comments, and string literals to prevent false positives
@@ -174,19 +174,19 @@ export function staticAstSecurityScan(codeStr: string): { safe: boolean; reason?
 
   // Check for dynamic import invocation
   if (/\bimport\s*\(/.test(strippedCode)) {
-    violations.push('AST_VIOLATION_DYNAMIC_IMPORT: Dynamic import() module loading is forbidden');
+    violations.push('STATIC_PATTERN_DYNAMIC_IMPORT: Dynamic import() module loading is forbidden');
   }
   // Check for eval invocation
   if (/\beval\s*\(/.test(strippedCode)) {
-    violations.push('AST_VIOLATION_EVAL: Direct eval() invocation is forbidden');
+    violations.push('STATIC_PATTERN_EVAL: Direct eval() invocation is forbidden');
   }
   // Check for constructor traversal
   if (/\[\s*['"`]constructor['"`]\s*\]/.test(codeStr) || /\.constructor\s*\(\s*['"`]return/.test(codeStr)) {
-    violations.push('AST_VIOLATION_CONSTRUCTOR_TRAVERSAL: Function constructor traversal exploit detected');
+    violations.push('STATIC_PATTERN_CONSTRUCTOR_TRAVERSAL: Function constructor traversal exploit detected');
   }
   // Check for prototype pollution assignment
   if (/__proto__|prototype\s*\.\s*[a-zA-Z0-9_$]+\s*=/.test(strippedCode)) {
-    violations.push('AST_VIOLATION_PROTOTYPE_POLLUTION: Prototype mutation pattern detected');
+    violations.push('STATIC_PATTERN_PROTOTYPE_POLLUTION: Prototype mutation pattern detected');
   }
 
   return {
@@ -203,7 +203,7 @@ export function generateMachineReadableSecurityVerdict(
   code: string
 ): MaliciousVerdictResult {
   const t0 = performance.now();
-  const scan = staticAstSecurityScan(code);
+  const scan = staticPatternScan(code);
   const verdict: 'BLOCKED' | 'NOT_EVALUATED' = scan.safe ? 'NOT_EVALUATED' : 'BLOCKED';
   const executionNotice = 'NOT_EXECUTED: No secure isolated execution service is configured.';
 
@@ -232,7 +232,7 @@ export function generateMachineReadableSecurityVerdict(
     name,
     sourceCode: code,
     verdict,
-    astViolations: scan.violations,
+    staticPatternFindings: scan.violations,
     runtimeTrapsTriggered: [executionNotice],
     machineReadablePayload,
     quarantineLatencyMs: parseFloat((performance.now() - t0).toFixed(3))
@@ -306,7 +306,7 @@ export const LEGITIMATE_CHALLENGE_SNIPPETS = [
 // Runs the False-Positive Challenge
 export function runFalsePositiveChallenge(): FalsePositiveChallengeResult {
   const results = LEGITIMATE_CHALLENGE_SNIPPETS.map((snip) => {
-    const scan = staticAstSecurityScan(snip.code);
+    const scan = staticPatternScan(snip.code);
     return {
       id: snip.id,
       description: snip.description,
@@ -348,7 +348,7 @@ export function runInHermeticSandbox(
   executionStatus: 'NOT_EXECUTED';
 } {
   const t0 = performance.now();
-  const scan = staticAstSecurityScan(codeStr);
+  const scan = staticPatternScan(codeStr);
   const executionNotice = 'EXECUTION_DISABLED: Browser JavaScript is not a secure sandbox.';
   return {
     success: false,
@@ -363,7 +363,7 @@ export function runInHermeticSandbox(
 // Static screening of the bundled adversarial examples. No payload is executed.
 export function runAdversarialPenetrationSuite(): PenetrationTestResult[] {
   return ADVERSARIAL_VECTORS.map((vector) => {
-    const scan = staticAstSecurityScan(vector.payload);
+    const scan = staticPatternScan(vector.payload);
     const blocked = !scan.safe;
     return {
       vectorId: vector.id,
