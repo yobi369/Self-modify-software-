@@ -207,7 +207,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
         </div>
       )}
 
-      {/* Main Grid: Cryptographic Chain & Offline Verification Script */}
+      {/* Main Grid: Local Digest Chain & Record Checker */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Client-Side Hash-Chain Demonstration */}
         <div className="lg:col-span-6 rounded-2xl border border-neutral-800 bg-[#070b0e] p-5 space-y-4">
@@ -271,7 +271,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Independent Node.js Verifier CLI */}
+        {/* Right Column: Offline Record Digest Checker CLI */}
         <div className="lg:col-span-6 rounded-2xl border border-neutral-800 bg-[#070b0e] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -302,7 +302,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <p className="text-xs text-neutral-400 font-sans">
-            Export a standalone, zero-dependency Node.js script. Anyone can run this offline in any terminal to independently verify cryptographic hash chains, calculate t-statistics, and replicate the results without relying on a browser or cloud backend.
+            Export a standalone script that recomputes the SHA-256 digest in an exported JSON record. It does not run candidate code, calculate a valid inferential test, or authenticate who created the record.
           </p>
 
           {/* Quick Terminal Run Snippet */}
