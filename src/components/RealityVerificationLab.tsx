@@ -73,15 +73,6 @@ export const RealityVerificationLab: React.FC = () => {
       runtimeTrapsTriggered: machineVerdict?.runtimeTrapsTriggered || [],
       membraneVerdict: machineVerdict?.verdict || 'NOT_EVALUATED',
       falsePositiveRate: challengeResult?.falsePositiveRatePercent,
-      rollbackEvent: testEResult ? {
-        watchdogFired: testEResult.watchdogTriggered,
-        triggerReason: testEResult.watchdogTriggered ? 'LATENT_POINTER_FAULT' : null,
-        restoredTarget: testEResult.restoredVersion,
-        restorationLatencyMs: 4.2
-      } : undefined,
-      finalDisposition: testEResult?.watchdogTriggered 
-        ? 'ROLLED_BACK_RESTORED_BASELINE' 
-        : 'SIMULATED'
     });
     setActiveEvidenceReport(report);
     return report;
@@ -887,8 +878,8 @@ function processData(items) {
                   { step: '1. Unit Tests', active: testEResult.unitTestsPassed },
                   { step: '2. Benchmark', active: testEResult.benchmarkPassed },
                   { step: '3. Simulated Promotion', active: testEResult.simulatedPromotion },
-                  { step: '4. Traffic Load', active: testEResult.trafficProcessedBeforeFault > 0 },
-                  { step: '5. Anomaly Tripped', active: testEResult.watchdogTriggered, alert: true },
+                  { step: '4. Synthetic Event Count', active: testEResult.trafficProcessedBeforeFault > 0 },
+                  { step: '5. Injected Demo Fault', active: testEResult.watchdogTriggered, alert: true },
                   { step: '6. Auto-Rollback', active: testEResult.stage === 'ROLLBACK_RESTORED' }
                 ].map((s, i) => (
                   <div
@@ -910,7 +901,7 @@ function processData(items) {
               <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 space-y-1.5 max-h-[220px] overflow-y-auto">
                 <div className="text-neutral-500 text-[10px] pb-1 border-b border-neutral-800 flex items-center justify-between">
                   <span>WATCHDOG CANARY TELEMETRY AUDIT</span>
-                  <span>Restored State: {testEResult.restoredVersion}</span>
+                  <span>Illustrative State Label: {testEResult.restoredVersion}</span>
                 </div>
                 {testEResult.log.map((l, i) => (
                   <div
