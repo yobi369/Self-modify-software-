@@ -55,6 +55,17 @@ Run critical user journeys against a preview deployment: load the application, o
 
 Test payload limits, request throttling, injection resistance, secret redaction, dependency advisories, security headers, CORS policy, and denial of untrusted code execution. Mutation candidates require a separate isolated runner before any execution-based evaluation.
 
+## Current automated coverage
+
+The current hardening branch has 29 automated tests across four groups:
+
+- Request-validation unit tests.
+- HTTP integration tests for health, invalid requests, missing provider configuration, malformed JSON, oversized payloads, response headers, per-instance throttling, and production AI fail-closed behaviour.
+- Security/evidence tests for disabled candidate execution, lexical pattern findings, simulated evidence labels, local digest integrity/tampering, non-evaluated reproduction, and the browser playground's read-only source.
+- Repository/deployment smoke tests for core scripts and Vercel security-header configuration.
+
+**Not yet implemented:** mocked successful AI-provider integration tests, provider timeout/retry tests, browser component tests, accessibility automation, full Playwright/Cypress end-to-end journeys, deployment smoke tests against a live preview, coverage reporting, and independent penetration testing. The current test count must not be interpreted as full product coverage.
+
 ## Required evidence in pull requests
 
 Every PR that changes runtime behaviour must include:
