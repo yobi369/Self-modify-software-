@@ -50,6 +50,7 @@ Run focused tests while developing, then run the complete check before opening a
 | Variable | Required | Description |
 | --- | --- | --- |
 | `GEMINI_API_KEY` | No for UI-only development | Server-side Gemini API credential |
+| `AI_API_ENABLED` | No for local development | Production-only opt-in; defaults to disabled unless authentication and shared usage controls are ready |
 | `NODE_ENV` | Provider/runtime-dependent | Runtime environment |
 | `PORT` | Local server default | HTTP listen port where supported |
 
