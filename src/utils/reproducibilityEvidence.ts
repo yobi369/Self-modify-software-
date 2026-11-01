@@ -217,6 +217,7 @@ export function buildReproducibilityReport(params: {
     },
     evidenceMode: 'SIMULATED',
     finalState: 'SIMULATED',
+    finalDisposition: 'SIMULATED',
 
     // Machine-readable local integrity digest chain
     chainIndex,
@@ -351,7 +352,6 @@ export async function reproduceExperiment(
     runtimeTrapsTriggered: [],
     membraneVerdict: 'NOT_EVALUATED',
     falsePositiveRate: null,
-    finalDisposition: 'SIMULATED',
     parentExperimentId: originalReport.experimentId,
     parentIntegrityHash: originalReport.evidenceIntegrityHash
   });
