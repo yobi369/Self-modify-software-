@@ -157,7 +157,7 @@ export interface MaliciousVerdictResult {
   name: string;
   sourceCode: string;
   verdict: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
-  astViolations: string[];
+  staticPatternFindings: string[];
   runtimeTrapsTriggered: string[];
   machineReadablePayload: Record<string, any>;
   quarantineLatencyMs: number;
@@ -251,7 +251,7 @@ export interface ReproducibilityEvidenceReport {
     testedVectorsSummary: string;
     isolationMechanism: string;
     globalAccessObserved: string;
-    astViolations: string[];
+    staticPatternFindings: string[];
     runtimeTrapsTriggered: string[];
     membraneVerdict: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
     falsePositiveRateOnLegitCorpus: number | null;
