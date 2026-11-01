@@ -180,9 +180,9 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
-            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Benchmark Speedup</span>
+            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Measured Speedup</span>
             <span className="font-mono text-base font-bold text-emerald-300 block">
-              {activeReport.statistics.speedupFactorOnDefinedWorkload}×
+              {activeReport.statistics.speedupFactorOnDefinedWorkload === null ? "NOT MEASURED" : `${activeReport.statistics.speedupFactorOnDefinedWorkload}×`}
             </span>
             <span className="text-[10px] text-neutral-400 font-mono">
               N = {activeReport.statistics.sampleCount} samples
@@ -190,7 +190,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
-            <span className="text-[10px] font-mono text-neutral-400 uppercase block">95% Confidence Interval</span>
+            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Illustrative Range (Not Inferential)</span>
             <span className="font-mono text-xs font-bold text-cyan-300 block">
               [{activeReport.statistics.confidenceInterval95Us[0]}, {activeReport.statistics.confidenceInterval95Us[1]}] μs
             </span>
@@ -261,8 +261,8 @@ export const EvidenceReproductionSuite: React.FC = () => {
                     <span className="text-neutral-400">{report.previousEvidenceHash}</span>
                   </div>
                   <div className="flex items-center justify-between pt-1 border-t border-neutral-800/60 text-[10px]">
-                    <span>Speedup: <strong className="text-white">{report.statistics.speedupFactorOnDefinedWorkload}×</strong></span>
-                    <span>Mean: <strong className="text-white">{report.statistics.meanLatencyUs} μs</strong></span>
+                    <span>Measured speedup: <strong className="text-amber-300">NOT MEASURED</strong></span>
+                    <span>Synthetic mean: <strong className="text-white">{report.statistics.meanLatencyUs} μs</strong></span>
                     <span>Recorded test suites: <strong className="text-amber-300">{report.testResults.totalTests}</strong></span>
                   </div>
                 </div>
