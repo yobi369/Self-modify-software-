@@ -724,7 +724,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                   ADVERSARIAL MUTATION STRESS SUITE (9 DEFINED VECTORS)
                 </h3>
                 <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                  Evaluates the hermetic execution membrane against 9 defined attack vectors: infinite loops, constructor traversal, prototype pollution, memory exhaust, dynamic import, and eval traps.
+                  Runs lexical pattern checks against nine bundled attack examples. Payloads are not executed; this does not test runtime containment, memory limits, or denial-of-service resistance.
                 </p>
               </div>
 
@@ -736,12 +736,12 @@ export const AutonomousProductionEngine: React.FC = () => {
                 {isRunningPenSuite ? (
                   <>
                     <Activity className="w-4 h-4 animate-spin" />
-                    <span>Executing Penetration Exploits...</span>
+                    <span>Scanning Static Patterns...</span>
                   </>
                 ) : (
                   <>
                     <Zap className="w-4 h-4" />
-                    <span>Run All 9 Adversarial Attacks</span>
+                    <span>Run 9 Static Pattern Checks</span>
                   </>
                 )}
               </button>
@@ -765,8 +765,8 @@ export const AutonomousProductionEngine: React.FC = () => {
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="font-mono font-bold text-xs text-white">{v.id}</span>
                       {result ? (
-                        <span className="flex items-center gap-1 font-mono text-[10px] text-emerald-400 px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 font-bold">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-400" /> INTERCEPTED
+                        <span className={`font-mono text-[10px] px-2 py-0.5 rounded border font-bold ${result.blocked ? 'text-rose-300 bg-rose-950/40 border-rose-500/30' : 'text-amber-300 bg-amber-950/40 border-amber-500/30'}`}>
+                          {result.blocked ? 'STATIC PATTERN FOUND' : 'NO PATTERN FOUND — NOT RUN'}
                         </span>
                       ) : (
                         <span className="font-mono text-[10px] text-neutral-500 px-2 py-0.5 rounded bg-neutral-900">
@@ -779,7 +779,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                     
                     {result && (
                       <div className="pt-2 border-t border-neutral-800 text-[11px] font-mono text-neutral-400 space-y-1">
-                        <div>Trap: <strong className="text-emerald-300">{result.interceptionMechanism}</strong></div>
+                        <div>Scan: <strong className="text-amber-300">{result.interceptionMechanism}</strong></div>
                         {result.runtimeErrorCaught && (
                           <div className="text-[10px] text-rose-300 truncate" title={result.runtimeErrorCaught}>
                             Caught: {result.runtimeErrorCaught}
@@ -806,7 +806,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                   SIMULATED WORKLOAD WATCHDOG & ROLLBACK DEMO
                 </h3>
                 <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                  Proves that when a mutant passes initial tests but breaks under real simulated traffic (e.g. intermittent exceptions), the anomaly watchdog automatically restores the previous known-good state.
+                  Demonstrates a local UI scenario in which a built-in fault fixture triggers a simulated error counter and a local state reset. It does not deploy or roll back a real service.
                 </p>
               </div>
 
