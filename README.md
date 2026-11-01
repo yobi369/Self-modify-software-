@@ -92,6 +92,7 @@ The current UI is a research and review environment. It is not yet a hardened au
 - [Development guide](docs/DEVELOPMENT.md)
 - [Testing strategy](docs/TESTING.md)
 - [Security model and threat assessment](docs/SECURITY.md)
+- [Current security assessment and prototype limitations](docs/SECURITY_ASSESSMENT.md)
 - [Deployment guide](docs/DEPLOYMENT.md)
 - [Production-readiness gates](docs/PRODUCTION_READINESS.md)
 - [Operations and incident response](docs/OPERATIONS.md)
