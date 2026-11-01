@@ -147,7 +147,7 @@ export interface MutationIdentityResult {
   closureIdBefore: string;
   closureIdAfter: string;
   callableReferencesDiffer: boolean;
-  parentContextPreserved: boolean;
+  parentContextPreserved: boolean | null;
   status: 'VERIFIED' | 'FAILED' | 'SIMULATED';
   proof: string;
 }
