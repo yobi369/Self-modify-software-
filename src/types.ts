@@ -148,7 +148,7 @@ export interface MutationIdentityResult {
   closureIdAfter: string;
   callableReferencesDiffer: boolean;
   parentContextPreserved: boolean;
-  status: 'VERIFIED' | 'FAILED';
+  status: 'VERIFIED' | 'FAILED' | 'SIMULATED';
   proof: string;
 }
 
@@ -178,10 +178,10 @@ export interface FalsePositiveChallengeResult {
 }
 
 export interface BlindRegressionResult {
-  stage: 'UNIT_TESTS' | 'BENCHMARK' | 'PROMOTED' | 'PRODUCTION_TRAFFIC' | 'REGRESSION_DETECTED' | 'ROLLBACK_RESTORED';
+  stage: 'UNIT_TESTS' | 'BENCHMARK' | 'SIMULATED_PROMOTION' | 'SIMULATED_WORKLOAD' | 'REGRESSION_DETECTED' | 'ROLLBACK_RESTORED';
   unitTestsPassed: boolean;
   benchmarkPassed: boolean;
-  promotedToLive: boolean;
+  simulatedPromotion: boolean;
   trafficProcessedBeforeFault: number;
   faultTriggerPattern: string;
   watchdogTriggered: boolean;
