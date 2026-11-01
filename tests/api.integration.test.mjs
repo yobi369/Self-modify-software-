@@ -102,12 +102,12 @@ test("AI route applies its per-instance request throttle", async () => {
   assert.equal(lastStatus, 429);
 });
 
-test("production analysis route is disabled unless explicitly enabled", async () => {
+test("production analysis route cannot be enabled by an environment flag without authentication", async () => {
   const previousNodeEnv = process.env.NODE_ENV;
   const previousAiEnabled = process.env.AI_API_ENABLED;
   const previousKey = process.env.GEMINI_API_KEY;
   process.env.NODE_ENV = "production";
-  process.env.AI_API_ENABLED = "false";
+  process.env.AI_API_ENABLED = "true";
   process.env.GEMINI_API_KEY = "test-placeholder-not-a-real-key";
   try {
     const response = await fetch(`${baseUrl}/api/ai/analyze`, {
@@ -127,12 +127,12 @@ test("production analysis route is disabled unless explicitly enabled", async ()
   }
 });
 
-test("production mutation route is disabled unless explicitly enabled", async () => {
+test("production mutation route cannot be enabled by an environment flag without authentication", async () => {
   const previousNodeEnv = process.env.NODE_ENV;
   const previousAiEnabled = process.env.AI_API_ENABLED;
   const previousKey = process.env.GEMINI_API_KEY;
   process.env.NODE_ENV = "production";
-  process.env.AI_API_ENABLED = "false";
+  process.env.AI_API_ENABLED = "true";
   process.env.GEMINI_API_KEY = "test-placeholder-not-a-real-key";
   try {
     const response = await fetch(`${baseUrl}/api/ai/mutate`, {
