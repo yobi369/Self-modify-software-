@@ -105,12 +105,6 @@ export function buildReproducibilityReport(params: {
   // This browser-generated report is always a simulation, never production evidence.
   const disposition = 'SIMULATED' as const;
 
-  const defaultSuites = [
-    { suiteName: 'Structural Invariant & Type Contract Suite', passed: true, durationMs: 1.4, assertions: 12 },
-    { suiteName: 'Deterministic Output Parity Equivalence Suite', passed: true, durationMs: 2.1, assertions: 25 },
-    { suiteName: 'Adversarial Edge-Case & Null-Token Suite', passed: true, durationMs: 1.8, assertions: 18 },
-    { suiteName: 'High-Volume Batch Permutation Suite', passed: true, durationMs: 3.5, assertions: 40 }
-  ];
   const testSuites = params.testSuiteResults || [];
   const totalAssertions = testSuites.reduce((acc, s) => acc + s.assertions, 0);
 
@@ -218,7 +212,7 @@ export function buildReproducibilityReport(params: {
       restoredTargetHash: baselineMutationHash,
       restorationLatencyMs: 0
     },
-    rollbackEvent: params.rollbackEvent || {
+    rollbackEvent: {
       watchdogFired: false,
       triggerReason: null,
       restoredTarget: 'NOT_APPLICABLE — simulated workflow',
@@ -342,20 +336,13 @@ export async function reproduceExperiment(
   // Simulate execution latency for genuine asynchronous pipeline (membrane instantiation & benchmark passes)
   await new Promise(resolve => setTimeout(resolve, 800));
 
-  // Generate 20 fresh independent latency measurements for candidate under host execution
-  // Centered close to 34.2 μs with realistic stochastic microsecond noise (±1.5 μs)
+  // Fixed synthetic samples for UI demonstration only; no candidate is executed.
   const reproSamples: number[] = [
     34.1, 34.5, 33.9, 34.8, 34.0, 35.1, 33.7, 34.4, 34.6, 33.8,
     34.3, 34.9, 34.1, 33.8, 34.7, 34.2, 34.0, 35.2, 34.1, 33.9
   ];
 
-  // Re-run test suites with fresh execution durations
-  const reproSuites = [
-    { suiteName: 'Structural Invariant & Type Contract Suite', passed: true, durationMs: 1.3, assertions: 12 },
-    { suiteName: 'Deterministic Output Parity Equivalence Suite', passed: true, durationMs: 2.0, assertions: 25 },
-    { suiteName: 'Adversarial Edge-Case & Null-Token Suite', passed: true, durationMs: 1.7, assertions: 18 },
-    { suiteName: 'High-Volume Batch Permutation Suite', passed: true, durationMs: 3.4, assertions: 40 }
-  ];
+  const reproSuites: { suiteName: string; passed: boolean; durationMs: number; assertions: number }[] = [];
 
   const reproExpId = `EXP-REPRO-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 900 + 100)}`;
 
