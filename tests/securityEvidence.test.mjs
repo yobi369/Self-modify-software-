@@ -1,5 +1,6 @@
 import test, { beforeEach } from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import {
   checkCandidateExecutionAvailability,
   generateMachineReadableSecurityVerdict,
@@ -92,4 +93,11 @@ test("record digest detects a changed report field", () => {
   const result = verifyEvidenceIntegrity(report);
   assert.equal(result.isValid, false);
   assert.equal(result.sealMatches, false);
+});
+
+test("browser playground does not evaluate editable JavaScript source", async () => {
+  const source = await readFile(new URL("../src/components/LiveSandboxPlayground.tsx", import.meta.url), "utf8");
+  assert.match(source, /readOnly/);
+  assert.doesNotMatch(source, /new Function\\s*\\(/);
+  assert.doesNotMatch(source, /eval\\s*\\(/);
 });
