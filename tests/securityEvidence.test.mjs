@@ -101,3 +101,25 @@ test("browser playground does not evaluate editable JavaScript source", async ()
   assert.doesNotMatch(source, /new Function\s*\(/);
   assert.doesNotMatch(source, /eval\s*\(/);
 });
+
+test("simulated evidence counts only explicitly reported passed and failed suites", () => {
+  const report = buildReproducibilityReport({
+    experimentId: "TEST-SUITE-COUNTS",
+    testSuiteResults: [
+      { suiteName: "passed-fixture", passed: true, durationMs: 12, assertions: 4 },
+      { suiteName: "failed-fixture", passed: false, durationMs: 18, assertions: 3 },
+    ],
+  });
+  assert.equal(report.testResults.totalTests, 2);
+  assert.equal(report.testResults.passedCount, 1);
+  assert.equal(report.testResults.failedCount, 1);
+  assert.equal(report.testResults.suites[1].passed, false);
+});
+
+test("evidence UI labels timing values as synthetic and not measured", async () => {
+  const source = await readFile(new URL("../src/components/RealityVerificationLab.tsx", import.meta.url), "utf8");
+  assert.match(source, /Synthetic Timing Fixture/);
+  assert.match(source, /NO MEASURED SPEEDUP/);
+  assert.match(source, /Illustrative Range/);
+  assert.match(source, /Recorded Test Suites/);
+});
