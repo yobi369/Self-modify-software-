@@ -98,9 +98,8 @@ export function buildReproducibilityReport(params: {
     parseFloat((mean + margin).toFixed(2))
   ];
 
-  // Baseline was 492 μs on the defined workload
-  const baselineMean = 492.0;
-  const speedup = parseFloat((baselineMean / mean).toFixed(2));
+  // No real baseline workload was captured; performance improvement is unknown.
+
 
   // This browser-generated report is always a simulation, never production evidence.
   const disposition = 'SIMULATED' as const;
@@ -185,7 +184,7 @@ export function buildReproducibilityReport(params: {
       p99LatencyUs: p99,
       standardDeviationUs: stdDev,
       confidenceInterval95Us: ci95,
-      speedupFactorOnDefinedWorkload: speedup
+      speedupFactorOnDefinedWorkload: null
     },
     securityFindings: {
       testedVectorsSummary: 'No runtime adversarial vectors executed. A lexical pattern scan only is available.',
@@ -334,7 +333,7 @@ export function verifyExperimentChainIntegrity(chain: ReproducibilityEvidenceRep
 export async function reproduceExperiment(
   originalReport: ReproducibilityEvidenceReport
 ): Promise<ReproductionComparisonReport> {
-  // Simulate execution latency for genuine asynchronous pipeline (membrane instantiation & benchmark passes)
+  // Fixed synthetic samples for UI demonstration only; no execution or benchmark occurs.
   await new Promise(resolve => setTimeout(resolve, 800));
 
   // Fixed synthetic samples for UI demonstration only; no candidate is executed.
