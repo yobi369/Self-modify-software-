@@ -213,9 +213,8 @@ export const HexMemoryInspector: React.FC = () => {
   }
 
   return (
-      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status"><strong className="block mb-1 uppercase tracking-wide">Synthetic memory buffer</strong>This inspector displays application-owned demonstration bytes. It does not read another process's memory, physical RAM, or live executable pages.</div>
-
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status"><strong className="block mb-1 uppercase tracking-wide">Synthetic memory buffer</strong>This inspector displays application-owned demonstration bytes. It does not read another process's memory, physical RAM, or live executable pages.</div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-emerald-500/30 bg-[#080d10]">
         <div>
