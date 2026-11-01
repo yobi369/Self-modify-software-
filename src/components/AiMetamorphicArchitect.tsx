@@ -562,7 +562,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
 
                 <div className="flex items-center justify-between text-[10px] text-neutral-400 pt-1">
                   <span>Technique: <strong className="text-emerald-300">{auditableRecord.mutationTechnique}</strong></span>
-                  <span>W^X Status: <strong className="text-emerald-400">Compliant</strong></span>
+                  <span>W^X Status: <strong className="text-amber-400">Not audited</strong></span>
                 </div>
               </div>
             </div>
