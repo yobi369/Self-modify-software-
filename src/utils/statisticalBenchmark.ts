@@ -10,7 +10,7 @@ export interface StatisticalMetric {
   confidenceInterval95: [number, number];
   coefficientOfVariationPercent: number; // CV % = (stdDev / mean) * 100
   opsPerSec: number;
-  jitState: 'TurboFan Monomorphic JIT (Tier 2)' | 'Sparkplug Baseline' | 'Ignition Bytecode Interpreter';
+  jitState: 'NOT_OBSERVED';
   isStatisticallySignificant: boolean;
 }
 
@@ -19,7 +19,7 @@ export interface ComparativeBenchmarkReport {
   mutant: StatisticalMetric;
   speedupMultiplier: number;
   latencyDeltaPercent: number;
-  pValueEstimate: number;
+  pValueEstimate: number | null;
   confidenceOverlap: boolean;
   recommendation: 'PROMOTE' | 'REJECT' | 'INCONCLUSIVE_NOISE';
   diagnosticNote: string;
@@ -104,8 +104,8 @@ export function runStatisticalBenchmark(
     confidenceInterval95: [ciLower, ciUpper],
     coefficientOfVariationPercent: cvPercent,
     opsPerSec,
-    jitState: cvPercent < 25 ? 'TurboFan Monomorphic JIT (Tier 2)' : 'Sparkplug Baseline',
-    isStatisticallySignificant: cvPercent < 30
+    jitState: 'NOT_OBSERVED',
+    isStatisticallySignificant: false
   };
 }
 
@@ -118,16 +118,16 @@ export function compareBenchmarks(
   const latencyDelta = parseFloat((((mutant.meanUs - baseline.meanUs) / baseline.meanUs) * 100).toFixed(1));
 
   // Confidence Interval overlap check
-  // If baseline CI lower is strictly greater than mutant CI upper, the improvement is statistically significant at p < 0.05
+  // Non-overlapping descriptive intervals are not a formal inferential test.
   const isConfidenceDistinct = mutant.confidenceInterval95[1] < baseline.confidenceInterval95[0];
-  const pValue = isConfidenceDistinct ? 0.001 : 0.12;
+  const pValue: number | null = null;
 
   let recommendation: 'PROMOTE' | 'REJECT' | 'INCONCLUSIVE_NOISE' = 'INCONCLUSIVE_NOISE';
   let diagnostic = '';
 
   if (latencyDelta < -10 && isConfidenceDistinct) {
-    recommendation = 'PROMOTE';
-    diagnostic = `Statistically significant speedup (+${speedup}x). Confidence intervals do not overlap (p < 0.01). V8 JIT monomorphism verified.`;
+    recommendation = 'INCONCLUSIVE_NOISE';
+    diagnostic = `Provisional apparent speedup (+${speedup}x) on this browser workload. Confidence intervals are descriptive only; no formal significance test or JIT-state inspection was performed. Not eligible for automatic promotion.`;
   } else if (latencyDelta > 5) {
     recommendation = 'REJECT';
     diagnostic = `Performance regressed by +${latencyDelta}%. Mutant rejected by statistical gate.`;
