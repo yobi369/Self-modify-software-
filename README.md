@@ -96,6 +96,7 @@ The current UI is a research and review environment. It is not yet a hardened au
 - [Architecture](docs/ARCHITECTURE.md)
 - [Development guide](docs/DEVELOPMENT.md)
 - [Testing strategy](docs/TESTING.md)
+- [GitHub Actions, CI, and repository automation](docs/GITHUB_ACTIONS.md)
 - [Security model and threat assessment](docs/SECURITY.md)
 - [Current security assessment and prototype limitations](docs/SECURITY_ASSESSMENT.md)
 - [Deployment guide](docs/DEPLOYMENT.md)
