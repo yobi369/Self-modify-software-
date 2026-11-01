@@ -11,6 +11,7 @@ import {
   clearExperimentChain,
   reproduceExperiment,
   verifyExperimentChainIntegrity,
+  getExperimentChain,
 } from "../src/utils/reproducibilityEvidence.ts";
 
 beforeEach(() => clearExperimentChain());
@@ -66,7 +67,7 @@ test("browser-generated evidence is explicitly simulated with no fabricated test
 
 test("local digest chain verifies internal consistency without claiming authenticity", () => {
   buildReproducibilityReport({ experimentId: "TEST-CHAIN-01" });
-  const result = verifyExperimentChainIntegrity();
+  const result = verifyExperimentChainIntegrity(getExperimentChain());
   assert.equal(result.isChainValid, true);
   assert.match(result.message, /does not authenticate the author/);
 });
