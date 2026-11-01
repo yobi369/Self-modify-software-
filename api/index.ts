@@ -153,6 +153,7 @@ app.post(
 
 app.post(
   ["/api/ai/mutate", "/ai/mutate", "/api/gemini/mutate", "/gemini/mutate"],
+  requireAiApiEnabled,
   rateLimit,
   async (req, res) => {
     const validation = validateCodeRequest(req.body, "mutate");
