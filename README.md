@@ -38,7 +38,7 @@ Self-Modifying Software Studio brings together interactive architecture visualis
 
 ## Quick start
 
-Requirements: Node.js 22 or later and Bun (the version declared by the repository's CI workflow).
+Requirements: Node.js 22 or later and a Bun release compatible with the committed lockfile. CI currently uses the Bun setup action's default version; an exact Bun toolchain pin remains a reproducibility improvement.
 
 ```bash
 git clone https://github.com/yobi369/Self-modify-software-.git
