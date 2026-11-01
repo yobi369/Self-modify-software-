@@ -21,7 +21,7 @@ Legacy `/api/gemini/*` and unprefixed aliases remain available for compatibility
 - Mutation technique: one of `instruction_substitution`, `dead_code_insertion`, `dynamic_jit_wrapper`, or `self_healing_guard`.
 - Best-effort process-local throttle: 15 AI requests per IP per 60 seconds.
 
-The in-memory throttle is not a global quota or a substitute for a shared/edge rate limiter. In production, both AI endpoints are hard-disabled in code. There is deliberately no environment-variable bypass: configuration alone cannot establish authentication, tenant isolation, or shared quotas. Serverless instances do not share memory. Implement and test those controls before changing this guard. The local process throttle is only a development safeguard.
+The in-memory throttle is not a global quota or a substitute for a shared/edge rate limiter. Forwarded client IP headers are trusted only on Vercel or when an operator explicitly configures a positive `TRUST_PROXY_HOPS` value for a known trusted proxy chain; direct deployments do not trust caller-supplied forwarding headers. In production, both AI endpoints are hard-disabled in code. There is deliberately no environment-variable bypass: configuration alone cannot establish authentication, tenant isolation, or shared quotas. Serverless instances do not share memory. Implement and test those controls before changing this guard. The local process throttle is only a development safeguard.
 
 ## Analysis request
 
