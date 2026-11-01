@@ -46,7 +46,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
     let existingChain = getExperimentChain();
     if (existingChain.length === 0) {
       const initialReport = buildReproducibilityReport({
-        experimentId: 'exp_verified_anchor_001',
+        experimentId: 'exp_simulated_demo_001',
       });
       existingChain = [initialReport];
     }
@@ -121,10 +121,10 @@ export const EvidenceReproductionSuite: React.FC = () => {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight">
-              EVIDENCE &amp; REPRODUCTION SUITE
+              EVIDENCE &amp; REPRODUCTION DEMONSTRATION
             </h1>
             <p className="text-sm text-neutral-300 font-sans max-w-3xl leading-relaxed">
-              Provides immutable cryptographic verification dossiers, tamper-evident SHA-256 hash chains, independent zero-dependency Node.js CLI verification scripts, and Two One-Sided Tests (TOST) statistical equivalence analyses for peer review and offline audit.
+              Provides a browser-side demonstration of evidence record structure, SHA-256 digest linking, and reproducibility concepts. The current data is synthetic; runtime tests, independent reproduction, digital signatures, and authenticated provenance are not implemented.
             </p>
           </div>
 
@@ -176,7 +176,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
             <span className="text-[10px] font-mono text-neutral-400 uppercase block">Active Experiment</span>
             <span className="font-mono text-xs font-bold text-white block truncate">{activeReport.experimentId}</span>
-            <span className="text-[10px] text-emerald-400 font-mono">Chain Block #{activeReport.chainIndex}</span>
+            <span className="text-[10px] text-emerald-400 font-mono">Demo Block #{activeReport.chainIndex}</span>
           </div>
 
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
@@ -209,17 +209,17 @@ export const EvidenceReproductionSuite: React.FC = () => {
 
       {/* Main Grid: Cryptographic Chain & Offline Verification Script */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Tamper-Evident Hash Chain Ledger */}
+        {/* Left Column: Client-Side Hash-Chain Demonstration */}
         <div className="lg:col-span-6 rounded-2xl border border-neutral-800 bg-[#070b0e] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-cyan-400" />
               <h2 className="font-mono font-bold text-sm text-white uppercase">
-                Cryptographic Evidence Chain
+                Record Digest Chain (Unsigned)
               </h2>
             </div>
             <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-cyan-500/40 bg-cyan-950/40 text-cyan-300">
-              {chain.length} Block{chain.length !== 1 ? 's' : ''} Linked
+              {chain.length} Block{chain.length !== 1 ? 's' : ''} Locally Linked
             </span>
           </div>
 
