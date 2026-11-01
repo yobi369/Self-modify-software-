@@ -12,7 +12,14 @@ All notable changes to this project will be documented here.
 - Removed fabricated AI fallback success responses; missing provider configuration and upstream failures now return explicit errors.
 - Mutation API responses now explicitly identify candidates as unverified and do not claim behavioural equivalence.
 - Local development server now mounts the same API application as the Vercel serverless entry point.
-- Added initial Node test-runner smoke tests for request validation and deployment configuration.
+- Expanded automated coverage to 34 tests across request validation, API integration, execution fail-closed behaviour, evidence integrity, synthetic report disclosures, and repository/deployment configuration.
+- Pinned CI to Node.js 22 and Bun 1.4.4; declared the supported toolchain in `package.json`.
+- Added a detailed GitHub Actions guide covering triggers, permissions, concurrency, artefacts, CodeQL, Dependabot, branch governance, and troubleshooting.
+- Added Vercel security headers and explicit production AI fail-closed configuration.
+- Disabled arbitrary JavaScript evaluation in the browser playground and replaced the claimed hermetic sandbox with a `NOT_EXECUTED` gate.
+- Re-labelled lexical scanning, lifecycle, and evidence features to distinguish static screening and simulations from real execution or verification.
+- Removed fabricated passing-test counts, performance speedup claims, production traffic/watchdog/rollback claims, and false statistical equivalence language.
+- Added current production-readiness and commercial-readiness gates; the project is not certified for customer production use.
 
 ## Release history
 
