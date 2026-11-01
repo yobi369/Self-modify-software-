@@ -21,7 +21,7 @@ Legacy `/api/gemini/*` and unprefixed aliases remain available for compatibility
 - Mutation technique: one of `instruction_substitution`, `dead_code_insertion`, `dynamic_jit_wrapper`, or `self_healing_guard`.
 - Best-effort process-local throttle: 15 AI requests per IP per 60 seconds.
 
-The in-memory throttle is not a global quota or a substitute for a shared/edge rate limiter. Serverless instances do not share memory. Configure production abuse protection at the hosting or gateway layer before exposing paid AI calls publicly.
+The in-memory throttle is not a global quota or a substitute for a shared/edge rate limiter. In production, both AI endpoints fail closed unless `AI_API_ENABLED=true`; do not enable this flag until an authenticated gateway, shared quota/rate limiter, and per-user usage controls are active. Serverless instances do not share memory. Configure production abuse protection at the hosting or gateway layer before exposing paid AI calls publicly.
 
 ## Analysis request
 
@@ -55,6 +55,7 @@ Success returns a candidate source string and `verificationStatus: NOT_VERIFIED`
 | 413 | `PAYLOAD_TOO_LARGE` | JSON body exceeds configured limit |
 | 429 | `RATE_LIMITED` | Best-effort local throttle exceeded |
 | 502 | `AI_PROVIDER_ERROR` / `INVALID_PROVIDER_RESPONSE` | Provider unavailable or response invalid |
+| 503 | `AI_API_DISABLED` | Production AI endpoints are disabled until authentication and shared usage controls are configured |
 | 503 | `AI_NOT_CONFIGURED` | Server-side API key is missing |
 | 504 | `AI_TIMEOUT` | Provider response exceeded timeout |
 | 500 | `INTERNAL_ERROR` | Unexpected server error |
