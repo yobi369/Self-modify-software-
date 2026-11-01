@@ -106,7 +106,8 @@ export function buildReproducibilityReport(params: {
   const disposition = 'SIMULATED' as const;
 
   const testSuites = params.testSuiteResults || [];
-  const totalAssertions = testSuites.reduce((acc, s) => acc + s.assertions, 0);
+  const passedSuites = testSuites.filter((suite) => suite.passed).length;
+  const failedSuites = testSuites.length - passedSuites;
 
   const baselineMutationHash = `sha256:${computeSha256('SYNTHETIC_BASELINE_FIXTURE_NOT_SOURCE')}`;
   const candidateMutationHash = `sha256:${computeSha256('SYNTHETIC_CANDIDATE_FIXTURE_NOT_SOURCE')}`;
@@ -169,9 +170,9 @@ export function buildReproducibilityReport(params: {
       previewSamples: []
     },
     testResults: {
-      totalTests: totalAssertions,
-      passedCount: totalAssertions,
-      failedCount: 0,
+      totalTests: testSuites.length,
+      passedCount: passedSuites,
+      failedCount: failedSuites,
       suites: testSuites
     },
     testSuiteResults: testSuites,
