@@ -25,3 +25,10 @@ test("Gemini credential is documented as a server-side secret", async () => {
   assert.match(envExample, /GEMINI_API_KEY/);
   assert.doesNotMatch(envExample, /VITE_GEMINI_API_KEY/);
 });
+
+test("CI and package manifest pin the same Bun toolchain", async () => {
+  const workflow = await readFile(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8");
+  assert.equal(packageJson.packageManager, "bun@1.4.4");
+  assert.equal(packageJson.engines.node, ">=22");
+  assert.match(workflow, /bun-version:\s*"1\.4\.4"/);
+});
