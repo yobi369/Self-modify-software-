@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { ReproducibilityEvidenceReport, ReproductionComparisonReport } from '../types';
 import { sounds } from '../audio/soundEffects';
+import { generateNodeCliVerificationScript } from '../utils/reproducibilityEvidence';
 
 interface PublicExperimentReportModalProps {
   isOpen: boolean;
@@ -37,182 +38,59 @@ export const PublicExperimentReportModal: React.FC<PublicExperimentReportModalPr
 
   if (!isOpen || !report) return null;
 
-  const candidatePayload = `function processData(items) {
-  var freq = Object.create(null);
-  for (var i = 0; i < items.length; i++) {
-    freq[items[i]] = (freq[items[i]] || 0) + 1;
-  }
-  return { uniqueCount: Object.keys(freq).length, frequencies: freq };
-}`;
-
-  const standaloneNodeScript = `// ============================================================================
-// SENTINEL RESEARCH PLATFORM: ZERO-DEPENDENCY INDEPENDENT VERIFIER
-// Autonomous Invariant-Preserving Dispatch Mutation Reproduction
-// ============================================================================
-import { createHash } from 'node:crypto';
-import { performance } from 'node:perf_hooks';
-
-console.log("=== SENTINEL INDEPENDENT EXPERIMENT REPRODUCTION ===");
-console.log("Experiment ID:", "${report.experimentId}");
-console.log("Expected Candidate Hash:", "${report.candidate.hash}");
-console.log("Parent Chain Digest:", "${report.previousEvidenceHash}");
-
-// 1. Candidate Source Artifact
-const candidateSource = \`${candidatePayload}\`;
-
-// 2. Cryptographic SHA-256 Identity Check
-const computedHash = 'sha256:' + createHash('sha256').update(candidateSource).digest('hex');
-console.log("\\n[1/3] Cryptographic Verification:");
-console.log("  Computed Hash:", computedHash);
-const hashMatch = computedHash === "${report.candidate.hash}";
-console.log("  Artifact Integrity:", hashMatch ? "PASSED (MATCHES EVIDENCE RECORD)" : "FAILED");
-
-// 3. Invariant Preservation Execution
-console.log("\\n[2/3] Executing Behavioral Invariant Assertions...");
-const fn = new Function('items', candidateSource.replace(/function processData\\(items\\) \\{/, '').slice(0, -1));
-
-const testItems = ["apple", "banana", "apple", "orange", "banana", "apple"];
-const testRes = fn(testItems);
-const invariantsPassed = 
-  testRes.uniqueCount === 3 && 
-  testRes.frequencies["apple"] === 3 && 
-  testRes.frequencies["banana"] === 2 && 
-  testRes.frequencies["orange"] === 1;
-
-console.log("  Functional Invariants:", invariantsPassed ? "100% PRESERVED" : "INVARIANT VIOLATION DETECTED");
-
-// 4. Statistical Benchmark Protocol (150 warmup passes, 20 sample trials)
-console.log("\\n[3/3] Executing Statistical Benchmark Protocol...");
-const dataset = Array.from({ length: 1000 }, (_, i) => "token_" + (i % 30));
-
-// JIT tiering warmup
-for (let i = 0; i < 150; i++) fn(dataset);
-
-const samplesUs = [];
-for (let i = 0; i < 20; i++) {
-  const t0 = performance.now();
-  fn(dataset);
-  const t1 = performance.now();
-  samplesUs.push((t1 - t0) * 1000);
-}
-
-const mean = samplesUs.reduce((a, b) => a + b, 0) / samplesUs.length;
-const sorted = [...samplesUs].sort((a, b) => a - b);
-const median = sorted[Math.floor(sorted.length / 2)];
-const variance = samplesUs.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (samplesUs.length - 1);
-const stdDev = Math.sqrt(variance);
-const ci95 = [mean - 1.96 * (stdDev / Math.sqrt(samplesUs.length)), mean + 1.96 * (stdDev / Math.sqrt(samplesUs.length))];
-
-console.log("\\n=== STATISTICAL BENCHMARK RESULTS (N = 20) ===");
-console.log("  Mean Latency (μ):", mean.toFixed(2), "μs");
-console.log("  Median Latency:", median.toFixed(2), "μs");
-console.log("  Standard Deviation (σ):", stdDev.toFixed(3), "μs");
-console.log("  95% Confidence Interval:", "[" + ci95[0].toFixed(2) + ", " + ci95[1].toFixed(2) + "]", "μs");
-
-// Predefined Empirical Reproducibility Tolerance Check
-const targetMean = ${report.statistics.meanLatencyUs};
-const deltaPercent = ((mean - targetMean) / targetMean) * 100;
-console.log("\\n=== REPRODUCIBILITY CONVERGENCE EVALUATION ===");
-console.log("  Target Mean:", targetMean.toFixed(2), "μs");
-console.log("  Observed Mean:", mean.toFixed(2), "μs");
-console.log("  Delta:", (deltaPercent > 0 ? "+" : "") + deltaPercent.toFixed(2) + "%");
-console.log("  Tolerance Criterion: |Δ Mean| ≤ 5.0% (the predefined empirical reproducibility tolerance for this experiment)");
-console.log("  Tolerance Result:", Math.abs(deltaPercent) <= 5.0 ? "CONVERGED WITHIN TOLERANCE" : "DIVERGED OUTSIDE TOLERANCE");
-console.log("  95% CI Compatibility Criterion: requires overlapping confidence intervals as a predefined reproducibility acceptance condition");
-console.log("  Host Factors Acknowledged: CPU frequency scaling, background processes, garbage collection pauses, browser scheduling, JIT tiering, power-management state, machine temperature.");
-`;
+  const standaloneNodeScript = generateNodeCliVerificationScript(report);
 
   const generateMarkdownReport = () => {
-    return `# PUBLIC EXPERIMENT REPORT: AUTONOMOUS SOFTWARE MUTATION & DISPATCH EVOLUTION
-*Sentinel Research Platform • Automated Evidence Record*
+    return `# SIMULATED RESEARCH REPORT
 
-**Classification:** Research-Grade Autonomous Software Studio Prototype  
-*(Defensible scientific artifact; does not claim a production-grade untrusted multi-tenant autonomous runtime)*  
-**Central Research Question:** *"Can an autonomous software system safely improve its own implementation while preserving behavioral invariants?"*  
-**Experiment ID:** \`${report.experimentId}\`  
-**Timestamp (UTC):** ${report.timestamp}  
-**Software Baseline:** ${report.softwareVersion} (Commit: \`${report.commitSha}\`)  
-**Host Runtime Environment:** ${report.browserRuntime}  
+**Evidence mode:** ${report.evidenceMode}
+**Experiment ID:** ${report.experimentId}
+**Generated:** ${report.timestamp}
+**Software version:** ${report.softwareVersion}
+**Source commit:** ${report.commitSha}
 
----
+## Critical scope notice
 
-## 1. Executive Summary & Lifecycle Outcome
-The Sentinel Studio evaluated an autonomous mutation intended to optimize in-memory collection aggregation. The mutation progressed through the full autonomous lifecycle:
-1. **Mutation Proposal:** In-memory frequency mapping AST substitution.
-2. **AST & Lexical Screening:** Verified hermetic isolation, no forbidden globals.
-3. **Hermetic Isolated Execution:** Evaluated inside zero-leakage JavaScript membrane.
-4. **4-Suite Invariant Verification:** 95/95 test assertions passed (100% invariant parity).
-5. **Statistical Benchmark:** 150 JIT warmup passes, 20 high-resolution microsecond trials.
-6. **Promotion Decision:** \`${report.promotionDecision}\` (${report.decisionReason}).
-7. **Production Telemetry & Watchdog:** Error rate 0.00% (Anomaly threshold: ${report.watchdogEvents.anomalyThresholdPercent}%).
-8. **Tamper-Evident Evidence Seal:** Canonical SHA-256 digest recorded to cryptographic chain.
+This is an illustrative browser-generated research demonstration. It is **not production evidence**. No production workload was measured, no candidate was promoted, and no arbitrary candidate code was executed in a secure isolated runtime.
 
-**Final Lifecycle Disposition:** \`${report.finalDisposition}\`
+## Report status
 
----
+- **Final disposition:** SIMULATED
+- **Promotion decision:** SIMULATED — no deployment occurred
+- **Runtime isolation:** Not available; code execution disabled
+- **Security verdict:** Not evaluated at runtime
+- **Recorded automated test suites:** ${report.testResults.totalTests}
+- **Recorded assertions passed:** ${report.testResults.passedCount}
+- **Recorded assertions failed:** ${report.testResults.failedCount}
 
-## 2. Cryptographic Identifiers & Evaluated Artifacts
-- **Baseline Code Hash:** \`${report.baselineMutationHash}\`
-- **Evaluated Candidate Hash:** \`${report.candidateMutationHash}\`
-- **Chain Block Index:** #${report.chainIndex}
-- **Previous Evidence Hash:** \`${report.previousEvidenceHash}\`
-- **Canonical Evidence Integrity Hash:** \`${report.evidenceIntegrityHash}\`
-- **Tamper-Evident Digital Seal:** \`${report.tamperEvidentSeal}\`
-- **Scope Boundary:** Evaluated against defined vector suite via JavaScript closure membrane. No claim of OS/hypervisor boundary.
+## Illustrative metrics
 
----
+The following values are synthetic demonstration data and must not be used for performance claims, service-level commitments, or purchasing decisions.
 
-## 3. Four-Suite Invariant Verification Results
-| Verification Gate | Assertions | Result | Notes |
-|---|---|---|---|
-| AST Lexical Screening | 25 / 25 | **PASS** | 0 global escapes, 0 eval/Function leaks |
-| State Continuity & Invariants | 30 / 30 | **PASS** | Zero page reload; state preserved across hot dispatch swap |
-| Adversarial Trap Suite | 25 / 25 | **PASS** | 0 membrane escapes; prototype pollution blocked |
-| Memory Leak & References | 15 / 15 | **PASS** | 0 dangling closure references or retained buffers |
-| **Total Invariant Parity** | **95 / 95 (100.0%)** | **PASS** | Complete behavioral equivalence confirmed |
+- Sample count: ${report.statistics.sampleCount}
+- Mean latency: ${report.statistics.meanLatencyUs} μs
+- Median latency: ${report.statistics.medianLatencyUs} μs
+- P95 latency: ${report.statistics.p95LatencyUs} μs
+- P99 latency: ${report.statistics.p99LatencyUs} μs
+- 95% interval: [${report.statistics.confidenceInterval95Us[0]}, ${report.statistics.confidenceInterval95Us[1]}] μs
 
----
+## Integrity identifiers
 
-## 4. Statistical Performance & Equivalence Evaluation
-- **Sample Count (N):** ${report.statistics.sampleCount} trials
-- **Mean Latency (μ):** ${report.statistics.meanLatencyUs} μs
-- **Median Latency:** ${report.statistics.medianLatencyUs} μs
-- **P95 Tail Latency:** ${report.statistics.p95LatencyUs} μs
-- **P99 Tail Latency:** ${report.statistics.p99LatencyUs} μs
-- **Sample Standard Deviation (σ):** ${report.statistics.standardDeviationUs} μs
-- **95% Confidence Interval:** [${report.statistics.confidenceInterval95Us[0]}, ${report.statistics.confidenceInterval95Us[1]}] μs
-- **Workload Speedup Factor:** ${report.statistics.speedupFactorOnDefinedWorkload}x
+- Baseline fixture digest: ${report.baselineMutationHash}
+- Candidate fixture digest: ${report.candidateMutationHash}
+- Record digest: ${report.evidenceIntegrityHash}
+- Previous record digest: ${report.previousEvidenceHash}
+- Chain index: ${report.chainIndex}
 
-### Methodological Criteria:
-1. **Predefined Empirical Reproducibility Tolerance:** |Δ Mean| ≤ 5.0%
-   *Designated as the predefined empirical reproducibility tolerance for this experiment, acknowledging host runtime noise.*
-2. **95% CI Compatibility Criterion:**
-   *Requires overlapping confidence intervals as a predefined reproducibility acceptance condition. CI overlap does not mathematically prove identical underlying distributions, which is why formal statistical equivalence testing is applied.*
-3. **Formal Statistical Equivalence Testing (TOST Framework):**
-   - **H₀:** |μ_repro - μ_orig| ≥ Δ (performance difference exceeds the acceptable tolerance margin of 5.0%)
-   - **H₁:** |μ_repro - μ_orig| < Δ (performance difference is within predefined equivalence margin of ±5.0%)
-${comparison?.tostEquivalence ? `   - **TOST Result:** ${comparison.tostEquivalence.conclusion}` : '   - **Equivalence Framework:** Ready for independent two-sided equivalence test upon reproduction.'}
+These SHA-256 values provide record self-consistency checks only. They are not digital signatures, do not authenticate the report author, and do not prove that an experiment occurred.
 
----
+## Independent verification
 
-## 5. Host Runtime Noise Factors Disclosed
-In accordance with scientific rigor, benchmark variance is acknowledged as subject to:
-1. Host CPU frequency scaling & dynamic turbo boost governors
-2. Background OS process scheduling and thread contention
-3. V8 Garbage Collection (generational Major/Minor GC pauses)
-4. Browser event-loop task queue scheduling
-5. V8 JIT tiering state transitions (Sparkplug ➔ Maglev ➔ TurboFan)
-6. Operating system power-management & C-states
-7. Silicon thermal throttling
+The accompanying Node.js script checks the exported JSON record's internal digest consistency. It does not execute candidate code, reproduce a benchmark, verify semantic equivalence, or establish provenance.
 
----
+## Production readiness
 
-## 6. Independent Third-Party Reproduction Protocol
-Third parties can independently verify this experiment without running the web UI by executing:
-\`\`\`bash
-node verify_experiment.mjs
-\`\`\`
-The script verifies the candidate source against the SHA-256 digest \`${report.candidateMutationHash}\`, tests behavioral invariants, and executes the statistical benchmark.
+This project must not be represented as a secure autonomous production mutation engine until an independently reviewed isolated execution service, real regression suites, reproducible benchmarks, human approval gates, canary deployment, and rollback controls have been implemented and tested.
 `;
   };
 
@@ -240,7 +118,7 @@ The script verifies the candidate source against the SHA-256 digest \`${report.c
 <body>
   <div class="badge">RESEARCH-GRADE AUTONOMOUS SOFTWARE STUDIO PROTOTYPE</div>
   <div class="notice">
-    <strong>Scientific Boundary Declaration:</strong> This report records an empirical experiment on autonomous invariant-preserving code dispatch evolution. The system is defended as a serious research prototype; it does not claim a production-grade untrusted multi-tenant autonomous execution runtime.
+    <strong>SIMULATED DATA — NOT PRODUCTION EVIDENCE:</strong> No production workload, secure isolated execution, or independent candidate verification occurred. SHA-256 digests are not signatures or proof of experiment truth.
   </div>
   <pre style="white-space: pre-wrap;">${markdown}</pre>
 </body>
@@ -261,7 +139,7 @@ The script verifies the candidate source against the SHA-256 digest \`${report.c
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'verify_experiment.mjs';
+    a.download = 'verify-evidence.mjs';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -300,7 +178,7 @@ The script verifies the candidate source against the SHA-256 digest \`${report.c
                 </span>
               </div>
               <span className="text-[10px] text-neutral-400 font-sans block">
-                Machine-generated evidence record for independent inspection and reproduction
+                Simulated demonstration record; hashes verify record consistency only
               </span>
             </div>
           </div>
