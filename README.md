@@ -15,13 +15,14 @@ Self-Modifying Software Studio brings together interactive architecture visualis
 - Explore self-modification concepts, memory permissions, runtime transformation, and code mutation.
 - Inspect code for potential self-modification and execution-safety concerns.
 - Generate candidate code transformations for human review.
-- Compare baseline and candidate behaviour using explicit test evidence.
+- Explore how baseline/candidate comparison and reproducibility evidence should be structured; current browser-generated metrics are synthetic.
 - Produce reproducibility-oriented experiment records and reports.
 - Learn about W^X, DEP, ASLR, instruction-cache coherency, and rollback design.
 
 ## What this application does not guarantee
 
 - AI-generated code is not guaranteed to compile, preserve behaviour, or be safe.
+- Arbitrary candidate source is not executed in the browser; runtime execution remains disabled until an isolated runner exists.
 - A browser simulation is not equivalent to native execution or operating-system enforcement.
 - A displayed test result is not independent proof unless the test actually ran against the stated artefact and environment.
 - Hashes provide integrity identifiers, not digital signatures or identity authentication.
