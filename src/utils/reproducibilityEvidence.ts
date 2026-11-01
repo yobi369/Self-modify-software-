@@ -217,7 +217,6 @@ export function buildReproducibilityReport(params: {
     },
     evidenceMode: 'SIMULATED',
     finalState: 'SIMULATED',
-    finalDisposition: 'SIMULATED',
 
     // Machine-readable local integrity digest chain
     chainIndex,
