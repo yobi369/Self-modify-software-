@@ -60,13 +60,6 @@ export function buildReproducibilityReport(params: {
   runtimeTrapsTriggered?: string[];
   membraneVerdict?: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
   falsePositiveRate?: number | null;
-  rollbackEvent?: {
-    watchdogFired: boolean;
-    triggerReason: string | null;
-    restoredTarget: string;
-    restorationLatencyMs: number;
-  };
-  finalDisposition?: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE' | 'SIMULATED';
   parentExperimentId?: string;
   parentIntegrityHash?: string;
 }): ReproducibilityEvidenceReport {
