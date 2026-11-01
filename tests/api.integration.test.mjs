@@ -28,6 +28,10 @@ after(async () => {
   else process.env.AI_API_ENABLED = originalAiEnabled;
 });
 
+test("direct deployments do not trust client-supplied forwarded IP headers", () => {
+  assert.equal(app.get("trust proxy"), false);
+});
+
 test("health endpoint reports service status without exposing credentials", async () => {
   const response = await fetch(`${baseUrl}/api/health`);
   const body = await response.json();
