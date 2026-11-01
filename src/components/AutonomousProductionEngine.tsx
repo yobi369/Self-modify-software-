@@ -355,99 +355,12 @@ export const AutonomousProductionEngine: React.FC = () => {
   const runAutonomousEvolutionLoop = async () => {
     if (isEvolvingMultiGen) return;
     setIsEvolvingMultiGen(true);
-    sounds.execute();
-
-    const generations = [
-      { gen: 1, name: 'Gen 1 (Hash Set Map O(N))', code: GEN_1_HASHSET },
-      { gen: 2, name: 'Gen 2 (4x Loop Unrolling)', code: GEN_2_UNROLLED },
-      { gen: 3, name: 'Gen 3 (Fast In-Line Cache)', code: GEN_3_TYPED_MAP }
-    ];
-
-    setEvolutionLog(['00:00 [LOOP]: Initiating autonomous multi-generation evolutionary loop...']);
-
-    for (const targetGen of generations) {
-      if (targetGen.gen <= currentGeneration) continue;
-
-      setEvolutionLog((prev) => [
-        `\n--- GENERATION ${targetGen.gen}: Synthesizing ${targetGen.name} ---`,
-        `[MEMBRANE]: Static screening only. Runtime candidate execution is disabled...`,
-        ...prev
-      ]);
-      await new Promise((r) => setTimeout(r, 600));
-
-      // 1. Sandbox & Verification test
-      const testTokens = ['rax', 'rbx', 'rcx', 'rdx', 'rsp', 'rbp', 'rax', 'rcx'];
-      const sandboxRun = runInHermeticSandbox(targetGen.code, testTokens);
-
-      if (!sandboxRun.success) {
-        setEvolutionLog((prev) => [`[NOT EXECUTED]: ${sandboxRun.error}`, ...prev]);
-        sounds.error();
-        break;
-      }
-
-      setEvolutionLog((prev) => [`[NOT VERIFIED]: Behavioural invariants and performance cannot be certified without an isolated runner and independent test suite.`, ...prev]);
-      await new Promise((r) => setTimeout(r, 600));
-
-      // 2. Statistical benchmark comparison
-      const dataset = generateBenchmarkDataset(400);
-      const prevFn = compileActiveFunction(activeCode);
-      const currFn = compileActiveFunction(targetGen.code);
-
-      const baseStat = runStatisticalBenchmark(prevFn, dataset, 80, 4, 30);
-      const mutantStat = runStatisticalBenchmark(currFn, dataset, 80, 4, 30);
-      const comparison = compareBenchmarks(baseStat, mutantStat);
-
-      if (comparison.recommendation === 'PROMOTE') {
-        const newSpeedup = parseFloat((comparison.speedupMultiplier).toFixed(2));
-        const newPointer = `0x7ffee280${Math.floor(Math.random() * 9000 + 1000)}`;
-
-        // Atomically hotpatch the live in-memory runtime!
-        setActiveCode(targetGen.code);
-        setActiveVersion(`v1.0.${targetGen.gen} (${targetGen.name})`);
-        setActivePointer(newPointer);
-        setCurrentGeneration(targetGen.gen);
-
-        setGenerationHistory((prev) => [
-          ...prev,
-          { gen: targetGen.gen, name: targetGen.name, speedup: newSpeedup, latencyUs: mutantStat.meanUs, passed: true }
-        ]);
-
-        const newCp: MutationCheckpoint = {
-          id: `cp_gen_${targetGen.gen}_${Date.now()}`,
-          version: `v1.0.${targetGen.gen}`,
-          timestamp: new Date().toISOString().substring(0, 19).replace('T', ' ') + ' UTC',
-          mutationSummary: `Autonomous Evolution: ${targetGen.name}`,
-          technique: targetGen.name,
-          code: targetGen.code,
-          status: 'active',
-          metrics: {
-            latencyUs: mutantStat.meanUs,
-            opsPerSec: mutantStat.opsPerSec,
-            memoryKb: 7.2,
-            testPassRate: 100
-          },
-          diffSummary: `Provisional browser timing only (+${newSpeedup}x); not statistically validated or promoted.`
-        };
-
-        setCheckpoints((prev) => [
-          newCp,
-          ...prev.map((c) => (c.status === 'active' ? { ...c, status: 'archived' as const } : c))
-        ]);
-
-        sounds.success();
-        setEvolutionLog((prev) => [
-          `[SIMULATED]: Gen ${targetGen.gen} state updated in the local demonstration; no production process was modified.`,
-          ...prev
-        ]);
-      } else {
-        setEvolutionLog((prev) => [`[REGRESSION REJECTED]: ${comparison.diagnosticNote}`, ...prev]);
-        sounds.error();
-        break;
-      }
-
-      await new Promise((r) => setTimeout(r, 800));
-    }
-
+    sounds.click();
+    setEvolutionLog([
+      '[NOT EXECUTED]: Autonomous mutation is disabled in this browser prototype.',
+      '[REASON]: No independently reviewed isolated execution service is configured.',
+      '[REQUIRED]: Add isolated candidate execution, real regression suites, human approval, canary deployment, and rollback before enabling promotion.'
+    ]);
     setIsEvolvingMultiGen(false);
   };
 
@@ -492,7 +405,7 @@ export const AutonomousProductionEngine: React.FC = () => {
     setTrafficErrorCount(0);
 
     setWatchdogLog((prev) => [
-      `${new Date().toISOString().substring(11, 19)} [DEPLOYMENT]: Promoted mutant "Latent Pointer Fault" to live heap. Monitoring anomaly telemetry...`,
+      `${new Date().toISOString().substring(11, 19)} [DEMO]: Loaded the simulated latent-failure fixture into local demo state. No production deployment occurred.`,
       ...prev
     ]);
   };
@@ -526,7 +439,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             </p>
           </div>
 
-          {/* Live In-Memory Pointer Status Badge */}
+          {/* Local demonstration state badge */}
           <div className="rounded-2xl border border-emerald-500/30 bg-[#060c0f] p-4 font-mono text-xs space-y-1.5 shadow-lg min-w-[280px]">
             <div className="flex items-center justify-between text-neutral-400 text-[10px]">
               <span className="flex items-center gap-1.5">
@@ -687,7 +600,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                     <span className={`text-[10px] font-mono px-2 py-0.5 rounded ${
                       currentGeneration === g.gen ? 'bg-emerald-500 text-black font-bold' : g.active ? 'bg-neutral-800 text-emerald-400' : 'bg-neutral-900 text-neutral-600'
                     }`}>
-                      {currentGeneration === g.gen ? 'CURRENT' : g.active ? 'PROMOTED' : 'PENDING'}
+                      {currentGeneration === g.gen ? 'CURRENT' : g.active ? 'DEMO ACTIVE' : 'NOT EXECUTED'}
                     </span>
                   </div>
                   <p className="text-xs text-neutral-400 font-sans mb-3">{g.tech}</p>
@@ -702,7 +615,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             {/* Evolution Pipeline Terminal Log */}
             <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 space-y-1.5 max-h-[220px] overflow-y-auto">
               <div className="text-neutral-500 text-[10px] flex items-center justify-between pb-1 border-b border-neutral-800">
-                <span>AUTONOMOUS ENGINE TERMINAL LOG</span>
+                <span>RESEARCH DEMONSTRATION LOG</span>
                 <span>Demo Generations: {currentGeneration} / 3</span>
               </div>
               {evolutionLog.map((log, i) => (
@@ -795,7 +708,7 @@ export const AutonomousProductionEngine: React.FC = () => {
         </div>
       )}
 
-      {/* SUBTAB 3: CANARY WATCHDOG & LIVE WORKLOAD ROLLBACK */}
+      {/* SUBTAB 3: SIMULATED WORKLOAD WATCHDOG & ROLLBACK */}
       {activeSubTab === 'canary_watchdog' && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-neutral-800 bg-[#070b0e] p-6 space-y-4">
@@ -951,7 +864,7 @@ export const AutonomousProductionEngine: React.FC = () => {
         </div>
       )}
 
-      {/* SUBTAB 5: LIVE HEAP HOTPATCHING INSPECTOR */}
+      {/* SUBTAB 5: LOCAL STATE SWITCHING DEMO */}
       {activeSubTab === 'live_heap_inspector' && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-neutral-800 bg-[#070b0e] p-6 space-y-4">
