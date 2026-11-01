@@ -263,7 +263,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
                   <div className="flex items-center justify-between pt-1 border-t border-neutral-800/60 text-[10px]">
                     <span>Speedup: <strong className="text-white">{report.statistics.speedupFactorOnDefinedWorkload}×</strong></span>
                     <span>Mean: <strong className="text-white">{report.statistics.meanLatencyUs} μs</strong></span>
-                    <span>Tests: <strong className="text-emerald-400">{report.testResults.passedCount}/{report.testResults.totalTests}</strong></span>
+                    <span>Recorded test suites: <strong className="text-amber-300">{report.testResults.totalTests}</strong></span>
                   </div>
                 </div>
               </div>
@@ -277,7 +277,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-emerald-400" />
               <h2 className="font-mono font-bold text-sm text-white uppercase">
-                Independent Node.js Verifier
+                Offline Record Digest Checker
               </h2>
             </div>
             <div className="flex items-center gap-1.5">
@@ -307,7 +307,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
 
           {/* Quick Terminal Run Snippet */}
           <div className="p-3 rounded-xl border border-neutral-800 bg-black font-mono text-xs text-emerald-400 flex items-center justify-between">
-            <span>$ node verify-evidence.js</span>
+            <span>$ node verify-evidence.mjs evidence-report.json</span>
             <button
               onClick={handleCopyCliCommand}
               className="text-neutral-400 hover:text-white text-[11px] flex items-center gap-1"
