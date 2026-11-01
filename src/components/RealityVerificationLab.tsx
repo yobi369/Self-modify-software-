@@ -1134,36 +1134,36 @@ function processData(items) {
                 <div className="flex items-center justify-between">
                   <span className="text-white font-bold flex items-center gap-2">
                     <Activity className="w-4 h-4 text-emerald-400" />
-                    Rigorous Benchmark Statistics (N = {activeEvidenceReport.statistics.sampleCount} Warmup Samples)
+                    Synthetic Timing Fixture — Not Measured (N = {activeEvidenceReport.statistics.sampleCount})
                   </span>
                   <span className="text-emerald-400 font-bold">
-                    {activeEvidenceReport.statistics.speedupFactorOnDefinedWorkload}× Cumulative Improvement on Defined Workload
+                    NO MEASURED SPEEDUP
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">Mean (μ)</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture Mean</span>
                     <span className="font-bold text-white">{activeEvidenceReport.statistics.meanLatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">Median</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture Median</span>
                     <span className="font-bold text-white">{activeEvidenceReport.statistics.medianLatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">P95</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture P95</span>
                     <span className="font-bold text-cyan-300">{activeEvidenceReport.statistics.p95LatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">P99</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture P99</span>
                     <span className="font-bold text-cyan-300">{activeEvidenceReport.statistics.p99LatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">Std Dev (σ)</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture Std Dev</span>
                     <span className="font-bold text-neutral-300">{activeEvidenceReport.statistics.standardDeviationUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">95% Conf. Interval</span>
+                    <span className="text-[10px] text-neutral-500 block">Illustrative Range</span>
                     <span className="font-bold text-emerald-400 text-[11px]">
                       [{activeEvidenceReport.statistics.confidenceInterval95Us[0]}, {activeEvidenceReport.statistics.confidenceInterval95Us[1]}]
                     </span>
@@ -1171,22 +1171,23 @@ function processData(items) {
                 </div>
 
                 <div className="text-[11px] text-neutral-400 font-sans">
-                  Raw latency samples (μs): [{activeEvidenceReport.benchmarkSamples.join(', ')}]
+                  Synthetic fixture values (μs), not captured from a real benchmark: [{activeEvidenceReport.benchmarkSamples.join(', ')}]
                 </div>
               </div>
 
               {/* Test Suites Verification Table */}
               <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608] space-y-2">
-                <span className="text-white font-bold block">Verification Test Suites</span>
+                <span className="text-white font-bold block">Recorded Test Suites (supplied to this simulated report)</span>
+                {activeEvidenceReport.testSuiteResults.length === 0 && <p className="text-xs text-amber-300">No test suites were executed or attached to this browser-generated report.</p>}
                 <div className="space-y-1.5">
                   {activeEvidenceReport.testSuiteResults.map((s, idx) => (
                     <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-neutral-900/60 border border-neutral-800/80 text-[11px]">
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        {s.passed ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />}
                         <span className="text-neutral-200">{s.suiteName}</span>
                       </div>
                       <div className="flex items-center gap-4 text-neutral-400">
-                        <span>{s.assertions} Assertions</span>
+                        <span>{s.passed ? "Reported passed" : "Reported failed"} · {s.assertions} assertions</span>
                         <span>{s.durationMs} ms</span>
                         <span className="text-emerald-400 font-bold">PASS</span>
                       </div>
