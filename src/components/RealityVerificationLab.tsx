@@ -309,7 +309,7 @@ function processData(items) {
       stage: 'SIMULATED_PROMOTION',
       simulatedPromotion: true,
       log: [
-        'Stage 3: Promotion approved! Hotpatching closure to simulated traffic...',
+        'Stage 3: Simulated state transition in the local demonstration...',
         ...prev.log
       ]
     } : null);
@@ -321,7 +321,7 @@ function processData(items) {
       stage: 'SIMULATED_WORKLOAD',
       trafficProcessedBeforeFault: 42,
       log: [
-        'Stage 4: Live simulated traffic streaming... 10 reqs... 25 reqs... 42 reqs...',
+        'Stage 4: Simulated workload events streaming... 10 reqs... 25 reqs... 42 reqs...',
         ...prev.log
       ]
     } : null);
@@ -660,7 +660,7 @@ function processData(items) {
               <div className="p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/20 font-mono text-xs space-y-2">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>MATHEMATICAL PROOF OF DISPATCH MUTATION:</span>
+                  <span>ILLUSTRATIVE LOCAL STATE-TRANSITION MODEL:</span>
                 </div>
                 <div className="text-neutral-200">
                   <code>Object.is(fnBefore, fnAfter) === false</code> (Distinct memory instances in V8 heap).
@@ -868,7 +868,7 @@ function processData(items) {
               {isSimulatingBlindRegression ? (
                 <>
                   <Activity className="w-4 h-4 animate-spin" />
-                  <span>Simulating Production Lifecycle...</span>
+                  <span>Simulating Local Research Scenario...</span>
                 </>
               ) : (
                 <>
@@ -1206,7 +1206,7 @@ function processData(items) {
                     {activeEvidenceReport.securityFindings.testedVectorsSummary}
                   </div>
                   <div className="flex items-center justify-between text-[11px] pt-1 border-t border-neutral-800">
-                    <span className="text-neutral-400">Membrane Verdict:</span>
+                    <span className="text-neutral-400">Static Scan Status:</span>
                     <span className={`font-bold ${activeEvidenceReport.securityFindings.membraneVerdict === 'BLOCKED' ? 'text-rose-400' : 'text-emerald-400'}`}>
                       {activeEvidenceReport.securityFindings.membraneVerdict}
                     </span>
