@@ -569,7 +569,7 @@ const payload = {
 
 const canonical = JSON.stringify(payload);
 const computed = 'sha256:' + createHash('sha256').update(canonical).digest('hex');
-const expectedSeal = `SENTINEL-CHAIN-SEAL:${computed}#BLOCK-${report.chainIndex}`;
+const expectedSeal = 'SENTINEL-CHAIN-SEAL:' + computed + '#BLOCK-' + report.chainIndex;
 const digestMatches = computed === report.evidenceIntegrityHash;
 const sealMatches = expectedSeal === report.tamperEvidentSeal;
 
