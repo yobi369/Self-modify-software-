@@ -40,14 +40,18 @@ export const SecurityDefenseLab: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status">
+        <strong className="block mb-1 uppercase tracking-wide">Educational simulation only</strong>
+        These scenarios display illustrative outcomes. They do not call operating-system memory APIs, execute native machine code, inspect CPU page tables, or test real kernel/MMU enforcement.
+      </div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-emerald-500/30 bg-[#080d10]">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-bold">
-              OPERATING SYSTEM & HARDWARE ENFORCEMENT
+              OS & HARDWARE CONCEPT SIMULATOR
             </span>
-            <span className="text-xs font-mono text-neutral-400">DEFENSE & MITIGATION LABORATORY</span>
+            <span className="text-xs font-mono text-neutral-400">ILLUSTRATIVE DEFENSE LAB</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-mono font-bold text-white mt-1">
             W^X SECURITY &amp; DEFENSE LAB
@@ -56,7 +60,7 @@ export const SecurityDefenseLab: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono text-neutral-400 border border-neutral-800 bg-neutral-900 px-3 py-1.5 rounded-xl">
-            CPU Feature: <strong className="text-emerald-400">NX Bit / XD Bit (No-Execute)</strong>
+            Concept: <strong className="text-emerald-400">NX / XD No-Execute</strong>
           </span>
         </div>
       </div>
@@ -69,7 +73,7 @@ export const SecurityDefenseLab: React.FC = () => {
             FOUR APPROACHES TO RUNTIME CODE MODIFICATION
           </h2>
           <p className="text-xs text-neutral-400 mt-1">
-            Select a strategy to test how CPU Memory Management Units (MMU) and OS kernels respond
+            Select a strategy to view an illustrative explanation of memory-permission concepts
           </p>
         </div>
 
@@ -213,7 +217,7 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
                 ? 'border-amber-500/50 bg-amber-950/40 text-amber-300'
                 : 'border-emerald-500/50 bg-emerald-950/40 text-emerald-300'
             }`}>
-              <strong>Kernel Diagnostic:</strong> {simulatedExecutionResult}
+              <strong>Simulated Diagnostic:</strong> {simulatedExecutionResult}
             </div>
           )}
         </div>
