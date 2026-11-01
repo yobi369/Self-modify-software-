@@ -18,7 +18,16 @@ class ApiError extends Error {
 }
 
 const app = express();
-app.set("trust proxy", 1);
+const configuredProxyHops = Number(process.env.TRUST_PROXY_HOPS);
+if (Number.isSafeInteger(configuredProxyHops) && configuredProxyHops > 0) {
+  app.set("trust proxy", configuredProxyHops);
+} else if (process.env.VERCEL === "1") {
+  // Vercel terminates the public connection before forwarding to this function.
+  app.set("trust proxy", 1);
+} else {
+  // Never trust client-supplied X-Forwarded-For on a direct/local deployment.
+  app.set("trust proxy", false);
+}
 const MAX_REQUESTS = 15;
 const WINDOW_MS = 60_000;
 const requestWindows = new Map();
@@ -45,8 +54,11 @@ function rateLimit(req, res, next) {
   requestWindows.set(key, entry);
 
   if (requestWindows.size > 5_000) {
+    // Expire old entries first, then evict oldest entries so attacker-controlled
+    // address churn cannot grow this process-local map without a hard bound.
     for (const [ip, window] of requestWindows) {
       if (now - window.startedAt >= WINDOW_MS) requestWindows.delete(ip);
+      if (requestWindows.size <= 5_000) break;
     }
   }
 
