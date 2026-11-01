@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Node.js 22 or newer.
-- Bun compatible with the repository lockfile. CI currently uses the setup action's default Bun version rather than an exact pin; maintainers should pin a tested version for stricter reproducibility.
+- Bun 1.4.4 (pinned by CI and declared in `package.json`).
 - Git.
 - A Gemini API key only when testing AI-assisted routes.
 
@@ -69,7 +69,7 @@ Never expose secrets through `VITE_*` variables, frontend source, logs, screensh
 
 ## Troubleshooting
 
-- **Dependency install fails:** verify Bun version and retry with the frozen lockfile; do not regenerate the lockfile without reviewing the diff.
+- **Dependency install fails:** verify Bun 1.4.4 and retry with the frozen lockfile; do not regenerate the lockfile without reviewing the diff.
 - **Type checking fails:** run `bun run lint` and fix the first root error before proceeding.
 - **AI request fails:** confirm the server-side secret is configured, the provider account is active, and the request is within provider quotas. Never paste the key into a public issue.
 - **Build succeeds locally but fails in CI:** compare runtime versions, lockfile installation, environment variables, and exact commands.
