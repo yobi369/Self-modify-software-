@@ -309,7 +309,7 @@ function processData(items) {
       stage: 'PROMOTED',
       promotedToLive: true,
       log: [
-        'Stage 3: Promotion approved! Hotpatching closure to live production traffic...',
+        'Stage 3: Promotion approved! Hotpatching closure to simulated traffic...',
         ...prev.log
       ]
     } : null);
@@ -321,7 +321,7 @@ function processData(items) {
       stage: 'PRODUCTION_TRAFFIC',
       trafficProcessedBeforeFault: 42,
       log: [
-        'Stage 4: Live production traffic streaming... 10 reqs... 25 reqs... 42 reqs...',
+        'Stage 4: Live simulated traffic streaming... 10 reqs... 25 reqs... 42 reqs...',
         ...prev.log
       ]
     } : null);
@@ -384,7 +384,7 @@ function processData(items) {
               REALITY VERIFICATION LAB &amp; TOST ANALYSIS
             </h1>
             <p className="text-sm text-neutral-400 font-sans mt-1 max-w-3xl">
-              Proves live closure dispatch switching, zero-reload state continuity, machine-readable security verdicts, empirical false-positive resistance, TOST statistical equivalence testing, and delayed blind regression restoration.
+              Demonstrates simulated closure-dispatch concepts, static pattern screening, illustrative false-positive checks, and a staged rollback scenario. No production workload or isolated runtime is used.
             </p>
           </div>
 
@@ -392,10 +392,10 @@ function processData(items) {
             <div className="rounded-xl border border-cyan-500/30 bg-[#060c0f] p-3.5 font-mono text-xs text-neutral-400 space-y-1 min-w-[280px]">
               <div className="text-white font-bold flex items-center justify-between">
                 <span>Scope & Boundary Declaration</span>
-                <span className="text-emerald-400 text-[10px]">Empirically Tested</span>
+                <span className="text-emerald-400 text-[10px]">Static Scan Only</span>
               </div>
               <p className="text-[11px] text-neutral-300 font-sans leading-tight">
-                Evaluated against <strong>defined attack vectors</strong> via hermetic JavaScript execution membrane for the tested threat model and AST gates. No global access observed across the defined adversarial test suite. Does not claim a hypervisor/OS-level boundary.
+                Only lexical pattern checks are performed. Runtime payload execution is disabled because the browser realm is not a secure isolation boundary. No runtime security result is claimed.
               </p>
             </div>
 
@@ -693,7 +693,7 @@ function processData(items) {
                 TEST C: DELIBERATELY MALICIOUS MUTANT (DEFINED VECTORS VERDICT)
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                Evaluates candidate code against enumerated attack vectors (globalThis, window, constructor traversal, eval, runaway recursion), producing a machine-readable JSON security payload. Confirms containment within our hermetic JavaScript execution membrane for the tested threat model without claiming general-purpose OS sandbox equivalence. No global access observed across the defined adversarial test suite.
+                Performs lexical pattern screening only and produces a machine-readable review payload. Candidate execution is disabled. A clean scan is NOT a security pass; it means only that the configured patterns were not detected.
               </p>
             </div>
 
@@ -856,7 +856,7 @@ function processData(items) {
                 TEST E: BLIND REGRESSION (PASSES TESTS $\rightarrow$ FAILS UNDER LOAD $\rightarrow$ WATCHDOG RESTORES)
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                The ultimate test: mutant passes all unit tests, passes the statistical benchmark, gets promoted to production, behaves incorrectly only after a specific traffic threshold, and the watchdog automatically restores Gen N-1.
+                Illustrative lifecycle simulation: a hypothetical mutant passes mock checks, a simulated workload triggers a fault, and the demo displays a rollback sequence. No real production deployment or rollback occurs.
               </p>
             </div>
 
@@ -886,7 +886,7 @@ function processData(items) {
                 {[
                   { step: '1. Unit Tests', active: testEResult.unitTestsPassed },
                   { step: '2. Benchmark', active: testEResult.benchmarkPassed },
-                  { step: '3. Promoted', active: testEResult.promotedToLive },
+                  { step: '3. Simulated Promotion', active: testEResult.promotedToLive },
                   { step: '4. Traffic Load', active: testEResult.trafficProcessedBeforeFault > 0 },
                   { step: '5. Anomaly Tripped', active: testEResult.watchdogTriggered, alert: true },
                   { step: '6. Auto-Rollback', active: testEResult.stage === 'ROLLBACK_RESTORED' }
@@ -930,7 +930,7 @@ function processData(items) {
             </div>
           ) : (
             <p className="text-xs font-mono text-neutral-500 text-center py-8">
-              Click the button above to execute the multi-stage blind regression simulation.
+              Click the button above to view a staged demonstration. It does not execute production traffic or deploy a candidate.
             </p>
           )}
         </div>
