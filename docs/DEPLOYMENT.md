@@ -6,7 +6,7 @@ The repository includes Vercel configuration for a Vite static frontend and a se
 
 ## Required environment configuration
 
-Configure `GEMINI_API_KEY` as an encrypted server-side environment variable for the intended deployment environments. Do not prefix it with `VITE_`. Keep preview and production credentials separate where possible. Rotate any credential that has ever been committed or exposed.
+Configure `GEMINI_API_KEY` as an encrypted server-side environment variable for the intended deployment environments. Keep `AI_API_ENABLED=false` in production by default. The API returns `AI_API_DISABLED` unless this flag is explicitly set to `true`. Do not prefix it with `VITE_`. Keep preview and production credentials separate where possible. Do not set `AI_API_ENABLED=true` until authenticated access, per-user quotas, and a shared/edge rate limiter have been implemented and verified. The current per-process throttle is not sufficient for public paid access. Rotate any credential that has ever been committed or exposed.
 
 ## Preview deployment
 
