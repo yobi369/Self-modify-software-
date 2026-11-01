@@ -6,8 +6,11 @@ import app from "../api/index.ts";
 let server;
 let baseUrl;
 const originalApiKey = process.env.GEMINI_API_KEY;
+const originalNodeEnv = process.env.NODE_ENV;
+const originalAiEnabled = process.env.AI_API_ENABLED;
 
 before(async () => {
+  process.env.NODE_ENV = 'test';
   delete process.env.GEMINI_API_KEY;
   server = createServer(app);
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -19,6 +22,10 @@ after(async () => {
   if (server) await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   if (originalApiKey === undefined) delete process.env.GEMINI_API_KEY;
   else process.env.GEMINI_API_KEY = originalApiKey;
+  if (originalNodeEnv === undefined) delete process.env.NODE_ENV;
+  else process.env.NODE_ENV = originalNodeEnv;
+  if (originalAiEnabled === undefined) delete process.env.AI_API_ENABLED;
+  else process.env.AI_API_ENABLED = originalAiEnabled;
 });
 
 test("health endpoint reports service status without exposing credentials", async () => {
@@ -93,4 +100,54 @@ test("AI route applies its per-instance request throttle", async () => {
     await response.arrayBuffer();
   }
   assert.equal(lastStatus, 429);
+});
+
+test("production analysis route is disabled unless explicitly enabled", async () => {
+  const previousNodeEnv = process.env.NODE_ENV;
+  const previousAiEnabled = process.env.AI_API_ENABLED;
+  const previousKey = process.env.GEMINI_API_KEY;
+  process.env.NODE_ENV = "production";
+  process.env.AI_API_ENABLED = "false";
+  process.env.GEMINI_API_KEY = "test-placeholder-not-a-real-key";
+  try {
+    const response = await fetch(`${baseUrl}/api/ai/analyze`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ code: "int main(void) { return 0; }", language: "c" }),
+    });
+    assert.equal(response.status, 503);
+    assert.equal((await response.json()).code, "AI_API_DISABLED");
+  } finally {
+    if (previousNodeEnv === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = previousNodeEnv;
+    if (previousAiEnabled === undefined) delete process.env.AI_API_ENABLED;
+    else process.env.AI_API_ENABLED = previousAiEnabled;
+    if (previousKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = previousKey;
+  }
+});
+
+test("production mutation route is disabled unless explicitly enabled", async () => {
+  const previousNodeEnv = process.env.NODE_ENV;
+  const previousAiEnabled = process.env.AI_API_ENABLED;
+  const previousKey = process.env.GEMINI_API_KEY;
+  process.env.NODE_ENV = "production";
+  process.env.AI_API_ENABLED = "false";
+  process.env.GEMINI_API_KEY = "test-placeholder-not-a-real-key";
+  try {
+    const response = await fetch(`${baseUrl}/api/ai/mutate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ code: "int value = 1;", language: "c" }),
+    });
+    assert.equal(response.status, 503);
+    assert.equal((await response.json()).code, "AI_API_DISABLED");
+  } finally {
+    if (previousNodeEnv === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = previousNodeEnv;
+    if (previousAiEnabled === undefined) delete process.env.AI_API_ENABLED;
+    else process.env.AI_API_ENABLED = previousAiEnabled;
+    if (previousKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = previousKey;
+  }
 });
