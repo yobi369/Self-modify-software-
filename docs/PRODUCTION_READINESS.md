@@ -26,6 +26,7 @@ This document is a living gate checklist. A checked box requires evidence in CI,
 - [ ] Rate limiting is enforced at a shared/edge layer (current limit is per process and is not sufficient for serverless multi-instance production).
 - [ ] Authentication, per-user quotas, and tenant isolation are implemented before paid public AI access.
 - [ ] Provider timeout, quota, malformed output, and missing-key behaviour are tested.
+- [ ] Production AI routes remain disabled by default and cannot be enabled without an approved authentication/shared-quota design.
 - [ ] No fabricated fallback is returned as real AI output.
 - [ ] Logs are structured and redact credentials and source code.
 - [ ] Health/readiness endpoints accurately describe dependency state.
