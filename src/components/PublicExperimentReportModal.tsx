@@ -68,7 +68,7 @@ This is an illustrative browser-generated research demonstration. It is **not pr
 The following values are synthetic demonstration data and must not be used for performance claims, service-level commitments, or purchasing decisions.
 
 - Sample count: ${report.statistics.sampleCount}
-- Mean latency: ${report.statistics.meanLatencyUs} μs
+- Synthetic fixture mean (not measured): ${report.statistics.meanLatencyUs} μs
 - Median latency: ${report.statistics.medianLatencyUs} μs
 - P95 latency: ${report.statistics.p95LatencyUs} μs
 - P99 latency: ${report.statistics.p99LatencyUs} μs
@@ -244,9 +244,9 @@ This project must not be represented as a secure autonomous production mutation 
             <h4 className="font-mono text-white font-bold">Illustrative metrics — not measured</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
               <div><span className="block text-neutral-500">Sample count</span><strong>{report.statistics.sampleCount}</strong></div>
-              <div><span className="block text-neutral-500">Mean latency</span><strong>{report.statistics.meanLatencyUs} μs</strong></div>
+              <div><span className="block text-neutral-500">Synthetic fixture mean</span><strong>{report.statistics.meanLatencyUs} μs</strong></div>
               <div><span className="block text-neutral-500">P95 latency</span><strong>{report.statistics.p95LatencyUs} μs</strong></div>
-              <div><span className="block text-neutral-500">Speedup field</span><strong>{report.statistics.speedupFactorOnDefinedWorkload}×</strong></div>
+              <div><span className="block text-neutral-500">Measured speedup</span><strong className="text-amber-300">NOT MEASURED</strong></div>
             </div>
             <p className="text-[11px] text-amber-200">These values are synthetic placeholders from the demonstration generator. They are not benchmark results and must not be quoted as product performance.</p>
             <div className="border-t border-neutral-800 pt-3 text-xs">
