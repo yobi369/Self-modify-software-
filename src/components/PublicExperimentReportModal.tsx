@@ -174,7 +174,7 @@ This project must not be represented as a secure autonomous production mutation 
                   PUBLIC EXPERIMENT REPORT
                 </h3>
                 <span className="px-2 py-0.5 rounded text-[10px] bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-bold">
-                  RESEARCH-GRADE PROTOTYPE
+                  SIMULATED RESEARCH DEMO
                 </span>
               </div>
               <span className="text-[10px] text-neutral-400 font-sans block">
