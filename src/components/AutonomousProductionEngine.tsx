@@ -35,7 +35,7 @@ import {
   ADVERSARIAL_VECTORS, 
   PenetrationTestResult, 
   runAdversarialPenetrationSuite,
-  runInHermeticSandbox
+  checkCandidateExecutionAvailability
 } from '../utils/adversarialSandbox';
 import { 
   ComparativeBenchmarkReport, 
