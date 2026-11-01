@@ -95,6 +95,7 @@ The current UI is a research and review environment. It is not yet a hardened au
 - [Current security assessment and prototype limitations](docs/SECURITY_ASSESSMENT.md)
 - [Deployment guide](docs/DEPLOYMENT.md)
 - [Production-readiness gates](docs/PRODUCTION_READINESS.md)
+- [Commercial readiness and launch strategy](docs/COMMERCIAL_READINESS.md)
 - [Operations and incident response](docs/OPERATIONS.md)
 - [Release process](docs/RELEASING.md)
 - [Contributing](CONTRIBUTING.md)
