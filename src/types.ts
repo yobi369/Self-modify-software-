@@ -245,7 +245,7 @@ export interface ReproducibilityEvidenceReport {
     p99LatencyUs: number;
     standardDeviationUs: number;
     confidenceInterval95Us: [number, number];
-    speedupFactorOnDefinedWorkload: number;
+    speedupFactorOnDefinedWorkload: number | null;
   };
   securityFindings: {
     testedVectorsSummary: string;
