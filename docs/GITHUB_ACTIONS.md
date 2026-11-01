@@ -141,7 +141,7 @@ Workflow YAML cannot by itself enforce all repository governance. A repository a
 - Disable force pushes and branch deletion for protected branches.
 - Restrict production deployment permissions and require approval for production environments.
 
-The current GitHub integration cannot verify or change all repository-administration settings. Treat each item above as **unverified until an owner checks it in GitHub Settings**.
+**Observed repository state (1 November 2026):** GitHub reports the `main` branch as unprotected (`protected: false`), with branch-protection enforcement disabled and no required status checks. This is a confirmed release blocker, not an unverified assumption. The available repository connection can inspect but cannot administer branch protection. An owner with repository administration rights must configure the rules above in GitHub Settings and then re-read the branch protection state to confirm enforcement.
 
 ## 6. Secrets and environment variables
 
