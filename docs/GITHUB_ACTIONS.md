@@ -35,7 +35,7 @@ The job runs on `ubuntu-latest` with a 15-minute timeout and executes these step
 
 1. **Checkout source** using `actions/checkout@v5`.
 2. **Set up Node.js 22** using `actions/setup-node@v7`.
-3. **Set up Bun** using `oven-sh/setup-bun@v2`.
+3. **Set up Bun 1.4.4** using `oven-sh/setup-bun@v2` with an explicit `bun-version` input.
 4. **Install locked dependencies** using `bun install --frozen-lockfile`. A lockfile mismatch fails the workflow rather than silently changing dependency resolution.
 5. **Typecheck** using `bun run lint`, which runs `tsc --noEmit`.
 6. **Automated tests** using `bun run test`, which runs the Node test runner with the `tsx` loader.
