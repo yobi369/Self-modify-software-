@@ -69,7 +69,7 @@ export const RealityVerificationLab: React.FC = () => {
     if (activeEvidenceReport) return activeEvidenceReport;
     const report = buildReproducibilityReport({
       experimentId: `EXP-SENTINEL-${Date.now().toString(36).toUpperCase()}`,
-      astViolations: machineVerdict?.astViolations || [],
+      staticPatternFindings: machineVerdict?.staticPatternFindings || [],
       runtimeTrapsTriggered: machineVerdict?.runtimeTrapsTriggered || [],
       membraneVerdict: machineVerdict?.verdict || 'NOT_EVALUATED',
       falsePositiveRate: challengeResult?.falsePositiveRatePercent,
