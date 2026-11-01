@@ -43,7 +43,7 @@ import { sounds } from '../audio/soundEffects';
 import { 
   generateMachineReadableSecurityVerdict, 
   runFalsePositiveChallenge,
-  runInHermeticSandbox 
+  checkCandidateExecutionAvailability 
 } from '../utils/adversarialSandbox';
 import { buildReproducibilityReport, reproduceExperiment } from '../utils/reproducibilityEvidence';
 import { MethodologySpecificationModal } from './MethodologySpecificationModal';
