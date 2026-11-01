@@ -381,7 +381,7 @@ export interface AuditableMutationRecord {
     riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   };
   explanation: string;
-  verifierSignature: string;
+  verifierSignature: string; // Explicitly unsigned until a real signing service is implemented.
 }
 
 export type ActiveTab = 
