@@ -198,7 +198,7 @@ export const RealityVerificationLab: React.FC = () => {
     const gen1Id = 'DEMO_FN_REF_' + Math.floor(Math.random() * 899999 + 100000).toString(16);
 
     const areDifferent = (gen0Fn as any) !== (gen1Fn as any);
-    const parentPreserved = Object.is(heapContextRef.current, heapContextRef.current);
+    const parentPreserved: boolean | null = null; // No parent-context preservation test is implemented.
 
     setTestBResult({
       closureIdBefore: gen0Id,
@@ -377,7 +377,7 @@ function processData(items) {
                 Reality Verification Lab
               </span>
               <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/50 text-emerald-300 font-mono text-[11px]">
-                Research-Grade Autonomous Software Studio Prototype
+                Simulated Research Prototype
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight">
@@ -749,7 +749,7 @@ function processData(items) {
 
               {machineVerdict ? (
                 <div className="rounded-xl border border-neutral-800 bg-[#040608] p-3 font-mono text-xs overflow-x-auto max-h-[220px]">
-                  <pre className={machineVerdict.verdict === 'BLOCKED' ? 'text-rose-400' : 'text-emerald-400'}>
+                  <pre className={machineVerdict.verdict === 'BLOCKED' ? 'text-rose-400' : machineVerdict.verdict === 'NOT_EVALUATED' ? 'text-amber-300' : 'text-emerald-400'}>
                     {JSON.stringify(machineVerdict.machineReadablePayload, null, 2)}
                   </pre>
                 </div>
