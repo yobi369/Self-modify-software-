@@ -571,7 +571,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 ) : (
                   <>
                     <Play className="w-4 h-4 fill-current" />
-                    <span>Run Multi-Gen Evolutionary Loop</span>
+                    <span>Check Candidate Execution Readiness</span>
                   </>
                 )}
               </button>
@@ -883,7 +883,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 <span className="text-neutral-500 block text-[11px]">Runtime Dispatch Reference Slot</span>
                 <span className="text-base font-bold text-emerald-400">{activePointer}</span>
                 <p className="text-[11px] text-neutral-400 font-sans">
-                  Target vtable dispatch reference. When hotpatched, this closure address swaps atomically without process/page reload.
+                  Illustrative local dispatch label. No native vtable or process-level closure address is inspected or changed.
                 </p>
               </div>
 
