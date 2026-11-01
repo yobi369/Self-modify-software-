@@ -1,0 +1,6 @@
+{
+  "name": "Self-Modifying Software Studio & Binary Mutation Research Suite",
+  "description": "A research-grade environment for investigating autonomous software mutation, runtime code transformation, binary diversity, execution safety, reproducibility, and empirical verification across JavaScript, WebAssembly, x86-64, ARM64, and related execution models.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
