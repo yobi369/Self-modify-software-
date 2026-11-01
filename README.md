@@ -71,7 +71,7 @@ Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) before changing application bo
 
 ## AI configuration
 
-Set `GEMINI_API_KEY` in your local environment or deployment provider's encrypted environment-variable store. The key must remain server-side. The application should report AI-provider failures explicitly; it must not fabricate an AI result or represent an unverified candidate as behaviour-preserving.
+Set `GEMINI_API_KEY` in your local environment or deployment provider's encrypted environment-variable store. The key must remain server-side. Production AI routes are disabled by default and require `AI_API_ENABLED=true`; do not enable them until authentication and shared usage controls are in place. The application should report AI-provider failures explicitly; it must not fabricate an AI result or represent an unverified candidate as behaviour-preserving.
 
 ## Safe mutation lifecycle
 
