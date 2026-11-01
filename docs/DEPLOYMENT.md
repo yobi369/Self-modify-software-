@@ -4,6 +4,8 @@
 
 The repository includes Vercel configuration for a Vite static frontend and a serverless Express API in `api/index.ts`. Local development uses `server.ts`; it is not the production entry point.
 
+**Observed deployment state (1 November 2026):** the connected Vercel account has no Git-linked project for this repository. No preview or production deployment has been verified. A project must be explicitly created/linked and a preview smoke-tested before deployment readiness can be claimed.
+
 ## Required environment configuration
 
 Configure `GEMINI_API_KEY` as an encrypted server-side environment variable for the intended deployment environments. Do not prefix it with `VITE_`. Keep preview and production credentials separate where possible. Production AI endpoints are hard-disabled in code and have no environment-variable override until authenticated access, tenant isolation, per-user quotas, and a shared/edge rate limiter are implemented and verified. The current per-process throttle is not sufficient for public paid access. Rotate any credential that has ever been committed or exposed.
