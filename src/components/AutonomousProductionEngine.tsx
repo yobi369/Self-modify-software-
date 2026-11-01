@@ -209,7 +209,7 @@ export const AutonomousProductionEngine: React.FC = () => {
   const [benchReport, setBenchReport] = useState<ComparativeBenchmarkReport | null>(null);
   const [isRunningBenchmark, setIsRunningBenchmark] = useState<boolean>(false);
 
-  // Canary Watchdog & Live Workload Simulator state
+  // Canary Watchdog & Simulated Workload Demo state
   const [isTrafficRunning, setIsTrafficRunning] = useState<boolean>(true);
   const [trafficRequestsPerSec, setTrafficRequestsPerSec] = useState<number>(45);
   const [trafficTotalRequests, setTrafficTotalRequests] = useState<number>(3120);
@@ -220,13 +220,72 @@ export const AutonomousProductionEngine: React.FC = () => {
   ]);
 
   // Compile active code safely into memory
-  const compileActiveFunction = (codeStr: string) => {
-    try {
-      const wrapped = `return (function() { ${codeStr}; return processData; })();`;
-      return new Function(wrapped)();
-    } catch {
-      return null;
+  // Execute only four built-in demo implementations. Never evaluate source strings.
+  const compileActiveFunction = (codeStr: string): ((items: any[]) => any) | null => {
+    if (codeStr === GEN_0_BASELINE) {
+      return (items) => {
+        const unique: any[] = [];
+        const frequencies: Record<string, number> = Object.create(null);
+        for (const item of items) {
+          if (!unique.includes(item)) unique.push(item);
+          frequencies[String(item)] = (frequencies[String(item)] || 0) + 1;
+        }
+        return { uniqueCount: unique.length, frequencies, firstUnique: unique[0] || null, lastUnique: unique[unique.length - 1] || null };
+      };
     }
+    if (codeStr === GEN_1_HASHSET) {
+      return (items) => {
+        const frequencies: Record<string, number> = Object.create(null);
+        const unique: any[] = [];
+        for (const item of items) {
+          const key = String(item);
+          if (frequencies[key] === undefined) { frequencies[key] = 1; unique.push(item); }
+          else frequencies[key] += 1;
+        }
+        return { uniqueCount: unique.length, frequencies, firstUnique: unique[0] || null, lastUnique: unique[unique.length - 1] || null };
+      };
+    }
+    if (codeStr === GEN_2_UNROLLED) {
+      return (items) => {
+        const frequencies: Record<string, number> = Object.create(null);
+        const unique: any[] = [];
+        const add = (item: any) => {
+          const key = String(item);
+          if (frequencies[key] === undefined) { frequencies[key] = 1; unique.push(item); }
+          else frequencies[key] += 1;
+        };
+        let index = 0;
+        for (; index + 3 < items.length; index += 4) {
+          add(items[index]); add(items[index + 1]); add(items[index + 2]); add(items[index + 3]);
+        }
+        for (; index < items.length; index += 1) add(items[index]);
+        return { uniqueCount: unique.length, frequencies, firstUnique: unique[0] || null, lastUnique: unique[unique.length - 1] || null };
+      };
+    }
+    if (codeStr === GEN_3_TYPED_MAP) {
+      return (items) => {
+        const frequencies: Record<string, number> = Object.create(null);
+        const unique: any[] = [];
+        for (const item of items) {
+          const key = String(item);
+          const count = frequencies[key];
+          if (count === undefined) { frequencies[key] = 1; unique.push(item); }
+          else frequencies[key] = count + 1;
+        }
+        return { uniqueCount: unique.length, frequencies, firstUnique: unique[0] || null, lastUnique: unique[unique.length - 1] || null };
+      };
+    }
+    if (codeStr === MUTANT_LATENT_FAILURE) {
+      return (items) => {
+        if (Math.random() < 0.45 && items.length > 5) {
+          throw new Error("SIMULATED_LATENT_FAILURE: Demo workload fault.");
+        }
+        const frequencies: Record<string, number> = Object.create(null);
+        for (const item of items) frequencies[String(item)] = (frequencies[String(item)] || 0) + 1;
+        return { uniqueCount: Object.keys(frequencies).length, frequencies, firstUnique: items[0] || null, lastUnique: items[items.length - 1] || null };
+      };
+    }
+    return null;
   };
 
   // Keep heap state ticking (demonstrates zero-downtime persistent memory while swapping pointers)
@@ -244,7 +303,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             const testTokens = ['cpu', 'ram', 'gpu', 'ssd', 'cpu', 'cache', 'bus', 'dram'];
             fn(testTokens);
           } catch (err: any) {
-            // Anomaly caught in live production!
+            // Anomaly caught in simulated!
             setTrafficErrorCount((e) => {
               const newCount = e + 1;
               if (newCount >= 3 && watchdogStatus === 'HEALTHY') {
@@ -311,7 +370,7 @@ export const AutonomousProductionEngine: React.FC = () => {
 
       setEvolutionLog((prev) => [
         `\n--- GENERATION ${targetGen.gen}: Synthesizing ${targetGen.name} ---`,
-        `[MEMBRANE]: Executing in hermetic JavaScript execution membrane for the tested threat model...`,
+        `[MEMBRANE]: Static screening only. Runtime candidate execution is disabled...`,
         ...prev
       ]);
       await new Promise((r) => setTimeout(r, 600));
@@ -321,12 +380,12 @@ export const AutonomousProductionEngine: React.FC = () => {
       const sandboxRun = runInHermeticSandbox(targetGen.code, testTokens);
 
       if (!sandboxRun.success) {
-        setEvolutionLog((prev) => [`[VERIFICATION FAILED]: ${sandboxRun.error}`, ...prev]);
+        setEvolutionLog((prev) => [`[NOT EXECUTED]: ${sandboxRun.error}`, ...prev]);
         sounds.error();
         break;
       }
 
-      setEvolutionLog((prev) => [`[VERIFICATION]: All 4 invariants verified. Running statistical JIT benchmark...`, ...prev]);
+      setEvolutionLog((prev) => [`[NOT VERIFIED]: Behavioural invariants and performance cannot be certified without an isolated runner and independent test suite.`, ...prev]);
       await new Promise((r) => setTimeout(r, 600));
 
       // 2. Statistical benchmark comparison
@@ -367,7 +426,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             memoryKb: 7.2,
             testPassRate: 100
           },
-          diffSummary: `Statistical p < 0.01 speedup (+${newSpeedup}x). Memory pointer hot-swapped to ${newPointer}.`
+          diffSummary: `Provisional browser timing only (+${newSpeedup}x); not statistically validated or promoted.`
         };
 
         setCheckpoints((prev) => [
@@ -377,7 +436,7 @@ export const AutonomousProductionEngine: React.FC = () => {
 
         sounds.success();
         setEvolutionLog((prev) => [
-          `[PROMOTED]: Gen ${targetGen.gen} accepted! Speedup: ${newSpeedup}x (Mean: ${mutantStat.meanUs}μs, 95% CI: [${mutantStat.confidenceInterval95.join(', ')}]). Heap pointer hot-swapped!`,
+          `[SIMULATED]: Gen ${targetGen.gen} state updated in the local demonstration; no production process was modified.`,
           ...prev
         ]);
       } else {
@@ -423,7 +482,7 @@ export const AutonomousProductionEngine: React.FC = () => {
     }, 800);
   };
 
-  // Deploy an adversarial mutant directly to production to test the Anomaly Watchdog!
+  // Load a simulated adversarial mutant into the demo to test the Anomaly Watchdog!
   const deployLatentBugMutant = () => {
     sounds.error();
     setActiveCode(MUTANT_LATENT_FAILURE);
@@ -515,7 +574,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             }`}
           >
             <Activity className="w-4 h-4 text-amber-400" />
-            <span>3. Canary Watchdog & Live Rollback</span>
+            <span>3. Simulated Workload Watchdog & Rollback</span>
           </button>
 
           <button
@@ -640,7 +699,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 space-y-1.5 max-h-[220px] overflow-y-auto">
               <div className="text-neutral-500 text-[10px] flex items-center justify-between pb-1 border-b border-neutral-800">
                 <span>AUTONOMOUS ENGINE TERMINAL LOG</span>
-                <span>Generations Verified: {currentGeneration} / 3</span>
+                <span>Demo Generations: {currentGeneration} / 3</span>
               </div>
               {evolutionLog.map((log, i) => (
                 <div key={i} className="leading-relaxed whitespace-pre-wrap">{log}</div>
@@ -740,10 +799,10 @@ export const AutonomousProductionEngine: React.FC = () => {
               <div>
                 <h3 className="font-mono font-bold text-base text-white flex items-center gap-2">
                   <Activity className="w-5 h-5 text-amber-400" />
-                  REAL-TIME WORKLOAD SENTINEL & CANARY ROLLBACK
+                  SIMULATED WORKLOAD WATCHDOG & ROLLBACK DEMO
                 </h3>
                 <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                  Proves that when a mutant passes initial tests but breaks under real production traffic (e.g. intermittent exceptions), the anomaly watchdog automatically restores the previous known-good state.
+                  Proves that when a mutant passes initial tests but breaks under real simulated traffic (e.g. intermittent exceptions), the anomaly watchdog automatically restores the previous known-good state.
                 </p>
               </div>
 
