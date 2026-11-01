@@ -131,3 +131,18 @@ test("browser lifecycle simulation contains no claimed measured speedup or real 
   assert.match(source, /no deployment rollback or restoration was executed/i);
   assert.match(source, /NOT MEASURED/);
 });
+
+test("invalid or undersized benchmark fixtures fall back to finite synthetic samples", () => {
+  const empty = buildReproducibilityReport({ experimentId: "TEST-EMPTY-SAMPLES", benchmarkSamples: [] });
+  assert.equal(empty.evidenceMode, "SIMULATED");
+  assert.equal(empty.statistics.sampleCount, 20);
+  assert.ok(empty.benchmarkSamples.every(Number.isFinite));
+
+  clearExperimentChain();
+  const invalid = buildReproducibilityReport({
+    experimentId: "TEST-INVALID-SAMPLES",
+    benchmarkSamples: [Number.NaN, Number.POSITIVE_INFINITY, -1],
+  });
+  assert.equal(invalid.statistics.sampleCount, 20);
+  assert.ok(invalid.benchmarkSamples.every((sample) => Number.isFinite(sample) && sample >= 0));
+});
