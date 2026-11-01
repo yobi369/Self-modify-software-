@@ -4,7 +4,7 @@
 
 Self-Modifying Software Studio is a browser-based research application with an optional server-side AI integration. The current repository contains a React/Vite frontend, an Express development server, and a separate Express application exported from `api/index.ts` for Vercel serverless routing.
 
-The application presents interactive labs for architecture exploration, runtime and memory simulation, code analysis, mutation proposals, security demonstrations, and experiment evidence. These capabilities must be classified accurately: a simulation is not native execution, and an AI proposal is not a verified transformation.
+The application presents interactive labs for architecture exploration, runtime and memory simulation, AI-assisted code analysis, mutation proposals, static pattern screening, and simulated experiment evidence. It does not currently provide an isolated runtime for arbitrary candidate execution or a production deployment controller. These capabilities must be classified accurately: a simulation is not native execution, and an AI proposal is not a verified transformation.
 
 ## 2. Runtime components
 
@@ -12,7 +12,7 @@ The application presents interactive labs for architecture exploration, runtime 
 
 The React application is mounted by `src/main.tsx` and composed in `src/App.tsx`. Feature areas are implemented under `src/components/`. Shared contracts are in `src/types.ts`; reusable experiment, hashing, and benchmark helpers are in `src/utils/`.
 
-The browser is an untrusted client. It must not contain provider API keys, privileged credentials, or authoritative release decisions. Client-generated reports are user-facing evidence drafts unless independently checked by a trusted server or CI runner.
+The browser is an untrusted client. It must not contain provider API keys, privileged credentials, or authoritative release decisions. Client-generated reports are user-facing evidence drafts and are currently labelled SIMULATED. Candidate execution in the browser is disabled: a page realm is not a secure isolation boundary.
 
 ### Local development server
 
