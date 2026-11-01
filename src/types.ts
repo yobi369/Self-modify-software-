@@ -293,13 +293,14 @@ export interface ReproducibilityEvidenceReport {
     parentExperimentId: string;
     parentEvidenceIntegrityHash: string;
     convergenceDeltaMeanPercent: number;
-    confidenceIntervalsOverlap: boolean;
-    invariantParityPreserved: boolean;
+    confidenceIntervalsOverlap: boolean | null;
+    invariantParityPreserved: boolean | null;
     verdict: 'CONVERGED' | 'DIVERGED' | 'NOT_EVALUATED';
   };
 }
 
 export interface TostEquivalenceResult {
+  status: 'NOT_EVALUATED' | 'EVALUATED';
   h0Statement: string;
   h1Statement: string;
   equivalenceMarginPercent: number;
