@@ -280,7 +280,7 @@ function processData(items) {
       stage: 'UNIT_TESTS',
       unitTestsPassed: true,
       benchmarkPassed: false,
-      promotedToLive: false,
+      simulatedPromotion: false,
       trafficProcessedBeforeFault: 0,
       faultTriggerPattern: 'Delayed fault triggered when batch contains > 5 items and payload sequence exceeds 40 invocations',
       watchdogTriggered: false,
@@ -306,8 +306,8 @@ function processData(items) {
 
     setTestEResult((prev) => prev ? {
       ...prev,
-      stage: 'PROMOTED',
-      promotedToLive: true,
+      stage: 'SIMULATED_PROMOTION',
+      simulatedPromotion: true,
       log: [
         'Stage 3: Promotion approved! Hotpatching closure to simulated traffic...',
         ...prev.log
@@ -318,7 +318,7 @@ function processData(items) {
 
     setTestEResult((prev) => prev ? {
       ...prev,
-      stage: 'PRODUCTION_TRAFFIC',
+      stage: 'SIMULATED_WORKLOAD',
       trafficProcessedBeforeFault: 42,
       log: [
         'Stage 4: Live simulated traffic streaming... 10 reqs... 25 reqs... 42 reqs...',
@@ -328,7 +328,7 @@ function processData(items) {
 
     await new Promise((r) => setTimeout(r, 800));
 
-    // The delayed defect triggers under real production traffic!
+    // The delayed defect is introduced into the illustrative simulated workload.
     sounds.error();
     setTestEResult((prev) => prev ? {
       ...prev,
@@ -336,7 +336,7 @@ function processData(items) {
       watchdogTriggered: true,
       trafficProcessedBeforeFault: 53,
       log: [
-        'Stage 5: [ANOMALY DETECTED]: Production error spike (12.4% > 5.0% threshold) on payload batch #53!',
+        'Stage 5: [ANOMALY DETECTED]: Simulated error spike (12.4% > 5.0% threshold) on payload batch #53!',
         'Stage 5: Defect signature: "LATENT_POINTER_FAULT" after traffic threshold.',
         ...prev.log
       ]
@@ -351,7 +351,7 @@ function processData(items) {
       stage: 'ROLLBACK_RESTORED',
       log: [
         'Stage 6: [AUTOMATIC ROLLBACK EXECUTED]: Emergency restore to last known-good checkpoint: v1.0.0 (Gen 0 Baseline).',
-        'Stage 6: Production restored without page reload. Error rate returned to 0.00%.',
+        'Stage 6: Demo state reset. Simulated error counter returned to 0.00%.',
         ...prev.log
       ]
     } : null);
@@ -886,7 +886,7 @@ function processData(items) {
                 {[
                   { step: '1. Unit Tests', active: testEResult.unitTestsPassed },
                   { step: '2. Benchmark', active: testEResult.benchmarkPassed },
-                  { step: '3. Simulated Promotion', active: testEResult.promotedToLive },
+                  { step: '3. Simulated Promotion', active: testEResult.simulatedPromotion },
                   { step: '4. Traffic Load', active: testEResult.trafficProcessedBeforeFault > 0 },
                   { step: '5. Anomaly Tripped', active: testEResult.watchdogTriggered, alert: true },
                   { step: '6. Auto-Rollback', active: testEResult.stage === 'ROLLBACK_RESTORED' }
