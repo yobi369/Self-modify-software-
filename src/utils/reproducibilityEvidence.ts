@@ -58,15 +58,15 @@ export function buildReproducibilityReport(params: {
   benchmarkSamples?: number[];
   astViolations?: string[];
   runtimeTrapsTriggered?: string[];
-  membraneVerdict?: 'BLOCKED' | 'PERMITTED';
-  falsePositiveRate?: number;
+  membraneVerdict?: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
+  falsePositiveRate?: number | null;
   rollbackEvent?: {
     watchdogFired: boolean;
     triggerReason: string | null;
     restoredTarget: string;
     restorationLatencyMs: number;
   };
-  finalDisposition?: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE';
+  finalDisposition?: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE' | 'SIMULATED';
   parentExperimentId?: string;
   parentIntegrityHash?: string;
 }): ReproducibilityEvidenceReport {
@@ -532,71 +532,53 @@ export async function reproduceExperiment(
  * Generates an independent, zero-dependency Node.js CLI script for auditing
  * evidence records and cryptographic hash chains offline in any standard terminal.
  */
-export function generateNodeCliVerificationScript(report: ReproducibilityEvidenceReport): string {
-  const candidatePayload = `function processData(items) {
-  var freq = Object.create(null);
-  for (var i = 0; i < items.length; i++) {
-    freq[items[i]] = (freq[items[i]] || 0) + 1;
-  }
-  return { uniqueCount: Object.keys(freq).length, frequencies: freq };
-}`;
-
-  return `// ============================================================================
-// SELF-MODIFYING SOFTWARE STUDIO: ZERO-DEPENDENCY INDEPENDENT VERIFIER
-// Autonomous Invariant-Preserving Dispatch Mutation Reproduction CLI
-// ============================================================================
+/**
+ * Generates an offline self-consistency checker for an exported evidence JSON file.
+ * It does not execute candidate code and does not authenticate who created the report.
+ */
+export function generateNodeCliVerificationScript(_report: ReproducibilityEvidenceReport): string {
+  return `// Self-Modifying Software Studio — evidence record self-consistency check
+// Usage: node verify-evidence.mjs path/to/evidence-report.json
+// This recomputes the embedded SHA-256 digest. It does NOT prove provenance,
+// that tests actually ran, or that the report was signed by a trusted identity.
 import { createHash } from 'node:crypto';
-import { performance } from 'node:perf_hooks';
+import { readFileSync } from 'node:fs';
 
-console.log("=== SELF-MODIFYING SOFTWARE STUDIO INDEPENDENT VERIFIER ===");
-console.log("Experiment ID:", "${report.experimentId}");
-console.log("Expected Candidate Hash:", "${report.candidate.hash}");
-console.log("Parent Chain Digest:", "${report.previousEvidenceHash}");
-console.log("Integrity Hash:", "${report.evidenceIntegrityHash}");
-
-// 1. Candidate Source Artifact
-const candidateSource = \`${candidatePayload}\`;
-
-// 2. Cryptographic SHA-256 Identity Check
-const computedHash = 'sha256:' + createHash('sha256').update(candidateSource).digest('hex');
-console.log("\\n[1/3] Cryptographic Verification:");
-console.log("  Computed Hash:", computedHash);
-const hashMatch = computedHash === "${report.candidate.hash}";
-console.log("  Artifact Integrity:", hashMatch ? "PASSED (MATCHES EVIDENCE RECORD)" : "FAILED");
-
-// 3. Invariant Preservation Execution
-console.log("\\n[2/3] Executing Behavioral Invariant Assertions...");
-const fn = new Function('items', candidateSource.replace(/function processData\\(items\\) \\{/, '').slice(0, -1));
-
-const testItems = ["apple", "banana", "apple", "orange", "banana", "apple"];
-const testRes = fn(testItems);
-const invariantPass = testRes.uniqueCount === 3 && testRes.frequencies["apple"] === 3;
-console.log("  Invariant Check: uniqueCount === 3 && frequencies['apple'] === 3");
-console.log("  Behavioral Parity:", invariantPass ? "PASSED (100% INVARIANTS SATISFIED)" : "FAILED");
-
-// 4. Empirical Microsecond Latency Sampling
-console.log("\\n[3/3] Running Empirical Microsecond Workload Sampling (N = 100 runs)...");
-const latencies = [];
-for (let i = 0; i < 100; i++) {
-  const t0 = performance.now();
-  fn(testItems);
-  const t1 = performance.now();
-  latencies.push((t1 - t0) * 1000); // microseconds
+const file = process.argv[2];
+if (!file) {
+  console.error('Usage: node verify-evidence.mjs path/to/evidence-report.json');
+  process.exit(2);
 }
 
-latencies.sort((a, b) => a - b);
-const mean = latencies.reduce((a, b) => a + b, 0) / latencies.length;
-const p50 = latencies[Math.floor(latencies.length * 0.5)];
-const p95 = latencies[Math.floor(latencies.length * 0.95)];
+const report = JSON.parse(readFileSync(file, 'utf8'));
+const payload = {
+  experimentId: report.experimentId,
+  softwareVersion: report.softwareVersion,
+  commitSha: report.commitSha,
+  baselineMutationHash: report.baselineMutationHash,
+  candidateMutationHash: report.candidateMutationHash,
+  sampleCount: report.statistics.sampleCount,
+  meanLatencyUs: report.statistics.meanLatencyUs,
+  medianLatencyUs: report.statistics.medianLatencyUs,
+  p95LatencyUs: report.statistics.p95LatencyUs,
+  ciLower: report.statistics.confidenceInterval95Us[0],
+  ciUpper: report.statistics.confidenceInterval95Us[1],
+  promotionDecision: report.promotionDecision,
+  previousEvidenceHash: report.previousEvidenceHash
+};
 
-console.log("  Observed Mean Latency:", mean.toFixed(2), "μs");
-console.log("  Observed P50 Latency :", p50.toFixed(2), "μs");
-console.log("  Observed P95 Latency :", p95.toFixed(2), "μs");
-console.log("  Reference Mean       :", "${report.statistics.meanLatencyUs} μs");
-console.log("  Reference 95% CI     : [${report.statistics.confidenceInterval95Us.join(', ')}] μs");
+const canonical = JSON.stringify(payload);
+const computed = 'sha256:' + createHash('sha256').update(canonical).digest('hex');
+const expectedSeal = `SENTINEL-CHAIN-SEAL:${computed}#BLOCK-${report.chainIndex}`;
+const digestMatches = computed === report.evidenceIntegrityHash;
+const sealMatches = expectedSeal === report.tamperEvidentSeal;
 
-console.log("\\n============================================================");
-console.log("VERIFICATION COMPLETE: All cryptographic and behavioral assertions pass.");
-console.log("============================================================\\n");
+console.log('Record digest matches:', digestMatches);
+console.log('Seal matches:', sealMatches);
+console.log('Evidence mode:', report.evidenceMode || 'UNSPECIFIED');
+console.log('Promotion decision:', report.promotionDecision);
+console.log('NOTE: A matching digest is not a digital signature or proof of experiment truth.');
+
+if (!digestMatches || !sealMatches) process.exitCode = 1;
 `;
 }
