@@ -57,7 +57,7 @@ Test payload limits, request throttling, injection resistance, secret redaction,
 
 ## Current automated coverage
 
-The current hardening branch has 42 automated tests across five groups:
+The current hardening branch has 43 automated tests across five groups:
 
 - Request-validation unit tests.
 - HTTP integration tests for health, invalid requests, missing provider configuration, malformed JSON, oversized payloads, response headers, per-instance throttling, and production AI fail-closed behaviour.
@@ -67,7 +67,7 @@ The current hardening branch has 42 automated tests across five groups:
 
 **Additional CI runtime smoke check:** after building, CI starts the compiled production Express server and verifies the SPA root, health response/security headers, and fail-closed AI routes even when placeholder provider credentials and the legacy enable flag are present. This is not a live Vercel preview test.
 
-**Not yet implemented:** mocked successful AI-provider integration tests, provider timeout/retry tests, browser component tests, accessibility automation, full Playwright/Cypress end-to-end journeys, HTTP smoke tests against a live preview (the current preview is protected by Vercel SSO), coverage reporting, and independent penetration testing. The current test count must not be interpreted as full product coverage.
+**Not yet implemented:** mocked successful AI-provider integration tests, provider timeout/retry tests, browser component tests, accessibility automation, full Playwright/Cypress end-to-end journeys, full authenticated browser E2E journeys against the live preview, coverage reporting, and independent penetration testing. An authenticated HTTP smoke check against the latest protected Vercel preview now verifies the homepage and `/api/health` return HTTP 200 with the expected security headers. The current test count must not be interpreted as full product coverage.
 
 ## Required evidence in pull requests
 
