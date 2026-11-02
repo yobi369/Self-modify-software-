@@ -11,7 +11,7 @@ Latest verified application revision: `a728816833ff1f825ac3adba7eea4465d1014c21`
 - [CI run 41398393553](https://github.com/yobi369/Self-modify-software-/actions/runs/41398393553): TypeScript, 48 Node tests, production build, production-server smoke check, and cross-browser Playwright suite all passed. Browser suite: 38 passed, 32 intentionally skipped duplicate axe runs across non-Chromium profiles.
 - [Security run 41398393504](https://github.com/yobi369/Self-modify-software-/actions/runs/41398393504): full-severity Bun dependency audit and full-history Gitleaks scan passed. GitHub Dependency Review was skipped because the repository dependency graph has not yet been enabled.
 - [CodeQL run 41398400352](https://github.com/yobi369/Self-modify-software-/actions/runs/41398400352): TypeScript/JavaScript analysis passed for the latest application revision.
-- [Vercel preview deployment](https://self-modifying-software-studio-fck7ykltp.vercel.app): the latest READY deployment inspected is for older application revision `eb2ccdd993a1423b223bc28adb3f285a76aac48c`, not the current hardening branch head. Earlier authenticated checks confirmed its homepage and `/api/health` return HTTP 200 with the configured security headers. Vercel project settings confirm SSO protection is enabled for all deployment URLs except custom domains; password protection and trusted-IP restrictions are disabled. No preview was promoted to production.
+- [Current Vercel preview deployment](https://self-modifying-software-studio-7a34lhlyl.vercel.app): READY for hardening branch commit `b51b2f663f15fc46328bb3038d82697dd7f93765`. Vercel project state remains `live=false`; SSO protection is enabled for all deployment URLs except custom domains, while password protection and trusted-IP restrictions are disabled. The preview was not promoted to production. Authenticated HTTP smoke and owner browser acceptance remain pending because an authorized SSO session was not available to this workflow.
 
 These are engineering and build checks, not a production certification. Customer identity, tenant isolation, shared quotas, an isolated execution service, live preview acceptance, legal/commercial policies, and independent security review remain outstanding. The production AI routes intentionally remain unavailable.
 
@@ -72,7 +72,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [ ] Real baseline/candidate regression execution uses pinned toolchains, datasets, and reproducible environments.
 - [x] Critical browser journeys run in Chromium desktop/mobile, Firefox desktop, and WebKit desktop/mobile projects against the built production server.
 - [x] Automated WCAG 2.1 A/AA axe-core scans pass across all eight research modules on desktop Chromium; keyboard and responsive tests pass across the browser matrix. Independent human accessibility review remains outstanding.
-- [ ] A deployed preview for the current HEAD has passed authenticated HTTP smoke checks and browser acceptance. The currently inspected Vercel preview is older than this branch head; a new SSO-protected preview deployment and authenticated owner acceptance are still required.
+- [ ] The current hardening-branch preview is READY and SSO-protected. Authenticated HTTP smoke checks, owner browser acceptance, and confirmation against the exact deployment remain outstanding.
 
 ## Gate E — Commercial and operational readiness
 
