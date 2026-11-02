@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* WCAG AA: Tailwind neutral-500/600 are too dim on the Studio's dark surfaces. */
+.text-neutral-500,
+.text-neutral-600 {
+  color: #a3a3a3;
+}
