@@ -1,4 +1,4 @@
-// Rigorous Statistical JIT Benchmark Engine with Warmup, Multi-Trial Sampling, Variance & 95% CI
+// Descriptive browser microbenchmark for fixed built-in demo functions. JIT tier state and statistical significance are not established.
 
 export interface StatisticalMetric {
   sampleCount: number;
@@ -25,7 +25,7 @@ export interface ComparativeBenchmarkReport {
   diagnosticNote: string;
 }
 
-// Generates representative real-world token workload
+// Generates a deterministic synthetic token fixture; it is not a captured real-world workload.
 export function generateBenchmarkDataset(size: number = 500): string[] {
   const dictionary = [
     'syscall', 'mprotect', 'rip', 'rax', 'rbx', 'rcx', 'rdx', 'rsp', 'rbp', 'rsi',
@@ -39,7 +39,7 @@ export function generateBenchmarkDataset(size: number = 500): string[] {
   return dataset;
 }
 
-// Executes a statistical benchmark with warm-up phase & multi-trial sampling
+// Collects descriptive timing samples in the current browser session; results are environment-dependent and not production evidence.
 export function runStatisticalBenchmark(
   fn: (items: any[]) => any,
   dataset: string[],
@@ -47,7 +47,7 @@ export function runStatisticalBenchmark(
   trialEpochs: number = 5,
   samplesPerEpoch: number = 40
 ): StatisticalMetric {
-  // 1. Warm-Up Phase: Ensure V8 TurboFan tier-up & monomorphic IC optimization
+  // 1. Warm-up phase. This does not guarantee or observe any particular JavaScript engine JIT tier.
   for (let w = 0; w < warmupIterations; w++) {
     fn(dataset);
   }
@@ -109,7 +109,7 @@ export function runStatisticalBenchmark(
   };
 }
 
-// Compare two statistical benchmark results using Confidence Intervals & Welch's T-test heuristic
+// Compare descriptive timing summaries. This is not a Welch test, formal significance test, or promotion gate.
 export function compareBenchmarks(
   baseline: StatisticalMetric,
   mutant: StatisticalMetric
@@ -130,7 +130,7 @@ export function compareBenchmarks(
     diagnostic = `Provisional apparent speedup (+${speedup}x) on this browser workload. Confidence intervals are descriptive only; no formal significance test or JIT-state inspection was performed. Not eligible for automatic promotion.`;
   } else if (latencyDelta > 5) {
     recommendation = 'REJECT';
-    diagnostic = `Performance regressed by +${latencyDelta}%. Mutant rejected by statistical gate.`;
+    diagnostic = `The second built-in demo function was slower by ${latencyDelta}%. This descriptive heuristic labels the comparison REJECT; no inferential test or production promotion decision was performed.`;
   } else {
     recommendation = 'INCONCLUSIVE_NOISE';
     diagnostic = `Delta is within noise envelope (CV: ${mutant.coefficientOfVariationPercent}% vs ${baseline.coefficientOfVariationPercent}%). Inconclusive variance.`;
