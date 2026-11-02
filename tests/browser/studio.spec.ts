@@ -73,16 +73,14 @@ test("mobile layout keeps the page within the viewport and navigation scrollable
   expect(navDimensions.scrollWidth).toBeGreaterThan(navDimensions.clientWidth);
 });
 
-test("all research modules meet automated WCAG 2.1 A/AA accessibility checks", async ({ page, browserName }, testInfo) => {
-  test.skip(browserName !== "chromium" || testInfo.project.name !== "chromium-desktop", "Run the full axe scan once on desktop Chromium; other projects retain cross-browser E2E coverage.");
-  test.setTimeout(120_000);
-  await page.goto("/");
-
-  for (const tab of tabs) {
+for (const tab of tabs) {
+  test(`research module ${tab} meets WCAG 2.1 A/AA accessibility checks`, async ({ page, browserName }, testInfo) => {
+    test.skip(browserName !== "chromium" || testInfo.project.name !== "chromium-desktop", "Run axe checks on desktop Chromium; all browser projects retain navigation and responsive E2E coverage.");
+    await page.goto("/");
     const button = page.locator(`#tab-${tab}`);
     await button.click();
     await expect(button).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator("main h1, main h2").first()).toBeVisible();
+    await expect(page.locator("main h1").first()).toBeVisible();
 
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -94,8 +92,8 @@ test("all research modules meet automated WCAG 2.1 A/AA accessibility checks", a
         .map((violation) => `${violation.id} (${violation.impact}): ${violation.help}`)
         .join("\n")}`,
     ).toEqual([]);
-  }
-});
+  });
+}
 
 test("AI analysis and mutation endpoints remain disabled in the browser-served app", async ({ request }) => {
   for (const route of ["/api/ai/analyze", "/api/ai/mutate"]) {
