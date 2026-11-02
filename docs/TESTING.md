@@ -57,14 +57,16 @@ Test payload limits, request throttling, injection resistance, secret redaction,
 
 ## Current automated coverage
 
-The current hardening branch has 37 automated tests across four groups:
+The current hardening branch has 38 automated tests across four groups:
 
 - Request-validation unit tests.
 - HTTP integration tests for health, invalid requests, missing provider configuration, malformed JSON, oversized payloads, response headers, per-instance throttling, and production AI fail-closed behaviour.
 - Security/evidence tests for disabled candidate execution, lexical pattern findings, simulated evidence labels, local digest integrity/tampering, non-evaluated reproduction, and the browser playground's read-only source.
-- Repository/deployment smoke tests for core scripts and Vercel security-header configuration.
+- Repository/deployment smoke tests for core scripts, Vercel security-header configuration, and consistency between the Node.js/Bun versions declared in CI and deployment.
 
-**Not yet implemented:** mocked successful AI-provider integration tests, provider timeout/retry tests, browser component tests, accessibility automation, full Playwright/Cypress end-to-end journeys, deployment smoke tests against a live preview, coverage reporting, and independent penetration testing. The current test count must not be interpreted as full product coverage.
+**Additional CI runtime smoke check:** after building, CI starts the compiled production Express server and verifies the SPA root, health response/security headers, and fail-closed AI routes even when placeholder provider credentials and the legacy enable flag are present. This is not a live Vercel preview test.
+
+**Not yet implemented:** mocked successful AI-provider integration tests, provider timeout/retry tests, browser component tests, accessibility automation, full Playwright/Cypress end-to-end journeys, HTTP smoke tests against a live preview (the current preview is protected by Vercel SSO), coverage reporting, and independent penetration testing. The current test count must not be interpreted as full product coverage.
 
 ## Required evidence in pull requests
 
