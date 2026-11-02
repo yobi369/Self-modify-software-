@@ -8,6 +8,7 @@ test("package exposes required quality commands", () => {
   assert.equal(typeof packageJson.scripts.lint, "string");
   assert.equal(typeof packageJson.scripts.build, "string");
   assert.equal(typeof packageJson.scripts.test, "string");
+  assert.equal(packageJson.scripts["smoke:production"], "node tests/production-smoke.mjs");
 });
 
 test("production build uses the Vite output directory expected by deployment", async () => {
@@ -32,4 +33,5 @@ test("CI, package manifest, and Vercel runtime pin compatible Node and Bun toolc
   assert.equal(packageJson.engines.node, "22.x");
   assert.match(workflow, /node-version:\s*"22"/);
   assert.match(workflow, /bun-version:\s*"1\.4\.4"/);
+  assert.match(workflow, /run: bun run smoke:production/);
 });
