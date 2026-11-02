@@ -38,7 +38,7 @@ Self-Modifying Software Studio brings together interactive architecture visualis
 
 ## Quick start
 
-Requirements: Node.js 22 or later and Bun 1.4.4 (pinned in CI and declared in `package.json`).
+Requirements: Node.js 22.x and Bun 1.4.4 (pinned in CI, the package manifest, and Vercel project settings).
 
 ```bash
 git clone https://github.com/yobi369/Self-modify-software-.git
