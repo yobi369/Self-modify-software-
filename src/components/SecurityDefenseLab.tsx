@@ -117,7 +117,7 @@ export const SecurityDefenseLab: React.FC = () => {
               <p className="text-neutral-300 font-sans">
                 Attempts to overwrite <code className="text-white">p[0] = 0x90</code> without calling <code className="text-emerald-400">mprotect()</code>. The code page was marked by the ELF loader as <code className="text-rose-300">PROT_READ | PROT_EXEC</code> (No write permission).
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-rose-300 overflow-x-auto">
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-rose-300 overflow-x-auto">
 {`void *p = (void*)my_func;
 // VIOLATION: Writing to non-writable memory!
 *(unsigned char*)p = 0x90; // ---> Hardware Trap: #PF (Page Fault) -> SIGSEGV`}
@@ -134,7 +134,7 @@ export const SecurityDefenseLab: React.FC = () => {
               <p className="text-neutral-300 font-sans">
                 Calls <code className="text-white">mprotect(page, 4096, PROT_READ|PROT_WRITE|PROT_EXEC)</code>. While functional on older x86 Linux, this violates modern security policies (DEP / W^X). Modern systems and EDRs monitor RWX pages as high-severity anomalies.
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-amber-300 overflow-x-auto">
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-amber-300 overflow-x-auto">
 {`mprotect(page, 4096, PROT_READ | PROT_WRITE | PROT_EXEC);
 // Page is now simultaneously Writable and Executable (W^X Broken)
 p[0] = 0x90;`}
@@ -151,7 +151,7 @@ p[0] = 0x90;`}
               <p className="text-neutral-300 font-sans">
                 Strict adherence to W^X: Memory is NEVER both writable and executable at the same moment. It is allocated as <code className="text-emerald-300">RW-</code> during emission, then transitioned to <code className="text-cyan-300">R-X</code> before execution, followed by an explicit instruction cache flush.
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-emerald-300 overflow-x-auto">
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-emerald-300 overflow-x-auto">
 {`// 1. Allocate as Writable (RW-)
 void *buf = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 emit_opcodes(buf); // Write machine code safely
@@ -177,7 +177,7 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
               <p className="text-neutral-300 font-sans">
                 Some JIT runtimes use dual-mapped aliases where the platform permits it: the same backing pages are mapped at separate virtual addresses, one writable and one executable. Availability and enforcement are OS-, architecture-, and policy-dependent.
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-cyan-300 overflow-x-auto">
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-cyan-300 overflow-x-auto">
 {`// Illustrative dual-mapping concept; mapping setup still requires OS operations:
 // Write address: 0x7FFF1000 (Mapped as PROT_READ | PROT_WRITE)
 // Exec address:  0x00401000 (Mapped as PROT_READ | PROT_EXEC)
