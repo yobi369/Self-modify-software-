@@ -57,12 +57,13 @@ Test payload limits, request throttling, injection resistance, secret redaction,
 
 ## Current automated coverage
 
-The current hardening branch has 38 automated tests across four groups:
+The current hardening branch has 42 automated tests across five groups:
 
 - Request-validation unit tests.
 - HTTP integration tests for health, invalid requests, missing provider configuration, malformed JSON, oversized payloads, response headers, per-instance throttling, and production AI fail-closed behaviour.
 - Security/evidence tests for disabled candidate execution, lexical pattern findings, simulated evidence labels, local digest integrity/tampering, non-evaluated reproduction, and the browser playground's read-only source.
 - Repository/deployment smoke tests for core scripts, Vercel security-header configuration, and consistency between the Node.js/Bun versions declared in CI and deployment.
+- Descriptive benchmark utility tests for deterministic synthetic fixtures, unobserved JIT state, and the absence of formal p-value/significance claims.
 
 **Additional CI runtime smoke check:** after building, CI starts the compiled production Express server and verifies the SPA root, health response/security headers, and fail-closed AI routes even when placeholder provider credentials and the legacy enable flag are present. This is not a live Vercel preview test.
 
