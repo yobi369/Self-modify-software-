@@ -24,7 +24,7 @@ All notable changes to this project will be documented here.
 - Added provider-neutral security architecture decisions for OIDC authentication, tenant isolation, shared quotas, isolated execution, and reproducible baseline/candidate verification.
 - Added pinned GitHub security workflows for full-severity Bun dependency auditing and full-history Gitleaks scanning; GitHub Dependency Review is gated until the repository dependency graph is enabled.
 - Removed the unused Vercel CLI development dependency, upgraded Vite to 6.4.5, and applied compatible dependency security updates; the remediation run reported no high/critical advisories.
-- Expanded the automated suite to 48 passing tests and re-ran TypeScript, production build, and production-server smoke checks after dependency updates.
+- Expanded the automated Node suite to 48 passing tests and re-ran TypeScript, production build, and production-server smoke checks after dependency updates.\n- Added Playwright desktop/mobile browser journeys, keyboard navigation checks, fail-closed AI endpoint checks, and axe-core WCAG 2.1 A/AA scanning to CI.
 
 ## Release history
 
