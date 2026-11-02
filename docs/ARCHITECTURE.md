@@ -66,3 +66,10 @@ The frontend is built by Vite into `dist/`. Vercel serves static assets and rout
 - A SHA-256 digest is not a signed attestation. Use a managed signing identity and verifiable provenance if signed releases are required.
 - Candidate execution must not occur in the API process or in the user's browser with privileged access.
 - A real commercial deployment requires an explicit license, support policy, privacy notice, data-retention policy, and customer-facing service terms.
+
+
+## 7. Identity, tenancy, quotas, and execution architecture
+
+The required target boundaries, authentication contract, tenant data-isolation rules, shared quota design, untrusted execution data plane, and reproducible baseline/candidate verification protocol are documented in [Security Architecture Decisions](SECURITY_ARCHITECTURE.md).
+
+These are future implementation gates, not deployed capabilities. The current repository has no selected identity provider, tenant datastore, shared quota service, or isolated execution runner. Production AI endpoints remain disabled until the relevant controls are implemented and independently verified.
