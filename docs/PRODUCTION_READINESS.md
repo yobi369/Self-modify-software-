@@ -59,6 +59,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [ ] The execution service is independently tested and red-teamed for escape, denial-of-service, filesystem, network, and cross-tenant attacks.
 - [ ] Human approval, reproducible verification, canary rollout, and rollback controls are implemented before any candidate can be promoted.
 - [x] Full-severity Bun audit and full-history Gitleaks scans are enforced in CI. GitHub Dependency Review remains an owner-side setting prerequisite.
+- [ ] GitHub-native secret scanning and push protection are enabled and verified in repository settings.
 - [ ] Main-branch protection, required checks, and deployment permissions are configured and verified. The repository rulesets endpoint returned no rulesets, and the connected GitHub integration could not read classic branch protection. The owner must verify Settings → Branches and require CI, CodeQL, and Security Supply-Chain Checks before merge; also block force-pushes and branch deletion.
 
 ## Gate D — Product correctness and user experience
@@ -84,6 +85,8 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [ ] Independent security review and customer acceptance are completed.
 - [ ] Backup/restore and rollback procedures are rehearsed if persistent customer data is introduced.
 - [ ] Production deployment configuration, domain, secrets, monitoring, and alerting are verified in the owner's hosting account.
+
+Repository legal inventory: GitHub repository metadata currently reports `license: null`; no `LICENSE`, privacy notice, terms, or legal-policy files are present. These are intentionally unresolved pending the owner's licence choice and jurisdiction-appropriate legal review.
 
 ## Security architecture decision record
 
