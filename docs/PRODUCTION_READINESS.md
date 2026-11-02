@@ -6,11 +6,11 @@
 
 The hardening branch now has a consistent Node.js 22.x / Bun 1.4.4 toolchain, API validation and fail-closed production routes, bounded payloads, security headers, CI, CodeQL, a production-server smoke test, and a more accurate research-prototype UI.
 
-Latest code-bearing revision: `450ffe237b141d6c698d1a8b5c47e57dde9d7ad6`.
+Latest verified branch revision: `adafaafcb5137e678f0f696ddd263c12b7b7fb76`.
 The release checklist and test strategy have been refreshed through the current documentation branch tip; the code-bearing revision listed above is the one covered by the linked CI and CodeQL runs.
 
-- [CI run 41390708094](https://github.com/yobi369/Self-modify-software-/actions/runs/41390708094): TypeScript, 42 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
-- [CodeQL run 41390713809](https://github.com/yobi369/Self-modify-software-/actions/runs/41390713809): TypeScript/JavaScript analysis passed for the latest code-bearing revision.
+- [CI run 41391142011](https://github.com/yobi369/Self-modify-software-/actions/runs/41390708094): TypeScript, 42 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
+- [CodeQL run 41391147673](https://github.com/yobi369/Self-modify-software-/actions/runs/41390713809): TypeScript/JavaScript analysis passed for the latest code-bearing revision.
 - [Vercel preview deployment](https://self-modifying-software-stu-git-a4e410-brians-projects-a132bca2.vercel.app): the Vercel build reached READY for the code-bearing revision. Preview access is protected by Vercel SSO, so an unauthenticated live HTTP/browser smoke test could not be completed. The preview was not promoted to production.
 
 These are engineering and build checks, not a production certification. Customer identity, tenant isolation, shared quotas, an isolated execution service, live preview acceptance, legal/commercial policies, and independent security review remain outstanding. The production AI routes intentionally remain unavailable.
