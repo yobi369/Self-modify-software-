@@ -53,7 +53,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [x] Direct deployments do not trust caller-supplied forwarded IP headers by default.
 - [x] Candidate source execution is disabled in the browser prototype.
 - [x] Browser evidence and lexical screening are labelled as simulations or non-evaluated checks.
-- [x] UI no longer claims an implemented hermetic browser sandbox, 95-assertion verification suite, TOST implementation, or independent audit that does not exist.
+- [x] UI no longer claims an implemented hermetic browser sandbox, 95-assertion verification suite, or completed independent audit. TOST calculations remain explicitly NOT_EVALUATED because their inputs are synthetic and no independent reproduction was executed.
 - [ ] A reviewed threat model and data-flow assessment are signed off.
 - [ ] A dedicated execution service is implemented for untrusted code; it must be disposable, network-denied by default, resource-limited, and isolated from application credentials and customer data.
 - [ ] The execution service is independently tested and red-teamed for escape, denial-of-service, filesystem, network, and cross-tenant attacks.
@@ -68,7 +68,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [x] Browser-generated evidence is labelled `SIMULATED`; hashes are described as local integrity digests, not signatures.
 - [x] Runtime security verdicts remain `NOT_EVALUATED` while no isolated runner exists.
 - [x] Static demo generation cards no longer present fabricated latency/speedup figures as measurements.
-- [x] Local browser timing output is descriptive only; JIT tier is unobserved and no p-value/significance claim is made.
+- [x] Local browser timing output is descriptive only; JIT tier is unobserved and no p-value/significance claim is made. The evidence utility's TOST calculation remains NOT_EVALUATED on synthetic inputs.
 - [ ] Real baseline/candidate regression execution uses pinned toolchains, datasets, and reproducible environments.
 - [ ] Critical user journeys have browser-based end-to-end tests.
 - [ ] Accessibility and responsive behaviour are independently reviewed.
