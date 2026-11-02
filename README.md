@@ -57,7 +57,8 @@ The local Vite/Express development server listens on port 3000. Never commit `.e
 | --- | --- |
 | `bun run dev` | Start the local development server |
 | `bun run lint` | Run the TypeScript compiler without emitting files |
-| `bun run test` | Run the automated Node test suite |\n| `bun run test:e2e` | Run Playwright desktop/mobile and cross-browser journeys (after building and installing browsers) |
+| `bun run test` | Run the automated Node test suite |
+| `bun run test:e2e` | Run Playwright desktop/mobile and cross-browser journeys (after building and installing browsers) |
 | `bun run build` | Build the browser application and server bundle |
 | `bun run check` | Run lint, tests, and production build |
 
