@@ -23,6 +23,18 @@ export default defineConfig({
       name: "chromium-mobile",
       use: { ...devices["Pixel 7"] },
     },
+    {
+      name: "firefox-desktop",
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit-desktop",
+      use: { ...devices["Desktop Safari"] },
+    },
+    {
+      name: "webkit-mobile",
+      use: { ...devices["iPhone 13"] },
+    },
   ],
   webServer: {
     command: "bun run start",
