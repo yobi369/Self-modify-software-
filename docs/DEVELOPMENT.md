@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node.js 22 or newer.
+- Node.js 22.x (the supported runtime is pinned consistently in CI and Vercel).
 - Bun 1.4.4 (pinned by CI and declared in `package.json`).
 - Git.
 - A Gemini API key only when testing AI-assisted routes.
