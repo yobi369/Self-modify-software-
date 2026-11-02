@@ -57,14 +57,39 @@ test("primary navigation supports keyboard activation", async ({ page }) => {
 test("mobile layout keeps the page within the viewport and navigation scrollable", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
+  await page.evaluate(async () => { await document.fonts.ready; });
   const navigation = page.getByRole("navigation", { name: "Primary navigation" });
   await expect(navigation).toBeVisible();
 
-  const dimensions = await page.evaluate(() => ({
-    documentWidth: document.documentElement.scrollWidth,
-    viewportWidth: document.documentElement.clientWidth,
-  }));
-  expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
+  const dimensions = await page.evaluate(() => {
+    const overflowingElements = Array.from(document.querySelectorAll("body *"))
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          tag: element.tagName.toLowerCase(),
+          id: element.id,
+          className: typeof element.className === "string" ? element.className : "",
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+          width: Math.round(rect.width),
+          scrollWidth: element.scrollWidth,
+          clientWidth: element.clientWidth,
+        };
+      })
+      .filter((element) => element.right > window.innerWidth + 1 || element.left < -1)
+      .sort((a, b) => b.right - a.right)
+      .slice(0, 12);
+
+    return {
+      documentWidth: document.documentElement.scrollWidth,
+      viewportWidth: document.documentElement.clientWidth,
+      overflowingElements,
+    };
+  });
+  expect(
+    dimensions.documentWidth,
+    `Horizontal overflow at 375px: ${JSON.stringify(dimensions.overflowingElements)}`,
+  ).toBeLessThanOrEqual(dimensions.viewportWidth);
 
   const navDimensions = await navigation.evaluate((element) => ({
     scrollWidth: element.scrollWidth,
