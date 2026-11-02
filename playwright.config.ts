@@ -25,14 +25,15 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "bun run dev",
+    command: "bun run start",
     url: "http://127.0.0.1:3000/api/health",
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
     env: {
       PORT: "3000",
-      NODE_ENV: "development",
-      AI_API_ENABLED: "false",
+      NODE_ENV: "production",
+      AI_API_ENABLED: "true",
+      GEMINI_API_KEY: "smoke-test-placeholder-not-a-secret",
     },
   },
 });
