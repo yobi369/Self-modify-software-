@@ -164,7 +164,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
             Prototype Scope &amp; Boundary Notice
           </div>
           <p className="leading-relaxed">
-            This system is explicitly designated as a <strong>Research-Grade Autonomous Software Studio Prototype</strong>. 
+            This system is explicitly designated as a <strong>Research Prototype</strong>. 
             The current records are synthetic demonstrations. No real performance speedup, rollback guarantee, runtime isolation, or statistical equivalence conclusion has been established. Candidate execution remains disabled.
           </p>
         </div>
