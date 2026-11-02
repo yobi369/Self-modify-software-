@@ -315,7 +315,7 @@ export const AutonomousProductionEngine: React.FC = () => {
   }, [activeCode, isTrafficRunning, watchdogStatus]);
 
   // Simulated rollback sequence triggered when demo workload anomaly exceeds threshold
-  const triggerCanaryRollback = (reason: string) => {
+  const resetLocalDemoState = (reason: string) => {
     sounds.error();
     setWatchdogStatus('DEMO_ANOMALY_DETECTED');
     const timestamp = new Date().toISOString().substring(11, 19);
