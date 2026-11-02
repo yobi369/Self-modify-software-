@@ -24,5 +24,5 @@ test("browser benchmark reports descriptive timings without claiming JIT or sign
   assert.equal(baseline.isStatisticallySignificant, false);
   assert.equal(comparison.pValueEstimate, null);
   assert.notEqual(comparison.recommendation, "PROMOTE");
-  assert.match(comparison.diagnosticNote, /no formal significance test|inconclusive/i);
+  assert.match(comparison.diagnosticNote, /no formal significance test|no inferential test|inconclusive/i);
 });
