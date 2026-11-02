@@ -45,6 +45,9 @@ jobs:
       - name: Build production artefacts
         run: bun run build
 
+      - name: Smoke test the built production server
+        run: bun run smoke:production
+
       - name: Upload build output
         if: success()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
