@@ -141,7 +141,7 @@ export function buildReproducibilityReport(params: {
     softwareVersion: '0.0.0-research-prototype',
     commitSha: 'UNKNOWN',
     commitVersion: 'Unversioned research prototype',
-    browserRuntime: typeof navigator !== 'undefined' ? `${navigator.userAgent} [V8/JIT Engine]` : 'V8 Node/Browser Runtime',
+    browserRuntime: typeof navigator !== 'undefined' ? `${navigator.userAgent} [Browser engine not independently identified]` : 'Node.js runtime [engine not independently identified]',
     scopeBoundaries: {
       runtimeType: 'JavaScript Browser/Host Execution (ECMA-262)',
       isolationType: 'NO_RUNTIME_SANDBOX — execution disabled',
