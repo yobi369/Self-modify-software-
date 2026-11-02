@@ -194,7 +194,7 @@ export const AutonomousProductionEngine: React.FC = () => {
   const [currentGeneration, setCurrentGeneration] = useState<number>(0);
   const [isEvolvingMultiGen, setIsEvolvingMultiGen] = useState<boolean>(false);
   const [evolutionLog, setEvolutionLog] = useState<string[]>([]);
-  // Adversarial penetration test suite state
+  // Static adversarial fixture screening state
   const [penResults, setPenResults] = useState<PenetrationTestResult[]>([]);
   const [isRunningPenSuite, setIsRunningPenSuite] = useState<boolean>(false);
 
@@ -357,7 +357,7 @@ export const AutonomousProductionEngine: React.FC = () => {
     setIsEvolvingMultiGen(false);
   };
 
-  // Run the 9-Vector Adversarial Penetration Test Suite
+  // Run static pattern checks against the nine bundled examples
   const handleRunPenetrationSuite = () => {
     setIsRunningPenSuite(true);
     sounds.execute();
@@ -477,7 +477,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             }`}
           >
             <ShieldAlert className="w-4 h-4 text-rose-400" />
-            <span>1 & 2. Adversarial Penetration (9 Vectors)</span>
+            <span>Static Pattern Screening (9 Examples)</span>
           </button>
 
           <button
@@ -501,7 +501,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             }`}
           >
             <BarChart3 className="w-4 h-4 text-purple-400" />
-            <span>4. Statistical JIT Benchmark (CI 95%)</span>
+            <span>Local Browser Timing Samples</span>
           </button>
 
           <button
@@ -632,7 +632,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               <div>
                 <h3 className="font-mono font-bold text-base text-white flex items-center gap-2">
                   <ShieldAlert className="w-5 h-5 text-rose-400" />
-                  ADVERSARIAL MUTATION STRESS SUITE (9 DEFINED VECTORS)
+                  STATIC PATTERN SCREENING (9 BUNDLED EXAMPLES)
                 </h3>
                 <p className="text-xs text-neutral-400 font-sans mt-0.5">
                   Runs lexical pattern checks against nine bundled attack examples. Payloads are not executed; this does not test runtime containment, memory limits, or denial-of-service resistance.
@@ -752,9 +752,9 @@ export const AutonomousProductionEngine: React.FC = () => {
               </div>
 
               <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608]">
-                <span className="text-[11px] font-mono text-neutral-500 block">Watchdog State</span>
+                <span className="text-[11px] font-mono text-neutral-500 block">Demo State</span>
                 <span className={`text-sm font-mono font-bold ${
-                  watchdogStatus === 'HEALTHY' ? 'text-emerald-400' : watchdogStatus === 'DEMO_ANOMALY_DETECTED' ? 'text-rose-400 animate-pulse' : 'text-amber-400'
+                  watchdogStatus === 'DEMO_HEALTHY' ? 'text-emerald-400' : watchdogStatus === 'DEMO_ANOMALY_DETECTED' ? 'text-rose-400 animate-pulse' : 'text-amber-400'
                 }`}>
                   {watchdogStatus}
                 </span>
@@ -788,7 +788,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                   LOCAL BROWSER MICROBENCHMARK
                 </h3>
                 <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                  Protects against JIT compilation distortion and microsecond noise: 150 warm-up runs, multi-trial sampling, standard deviation (σ), and 95% Confidence Intervals.
+                  Collects descriptive timings for fixed built-in examples in this browser session. Warm-up and repeated samples do not reveal JIT tier state or establish statistical significance.
                 </p>
               </div>
 
@@ -855,7 +855,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               </div>
             ) : (
               <p className="text-xs font-mono text-neutral-500 text-center py-8">
-                Click "Run Rigorous JIT Benchmark" to measure warmup runs, confidence intervals, and tail latencies.
+                Run a local browser microbenchmark to collect descriptive timing samples. Results vary by device and browser and are not production performance evidence.
               </p>
             )}
           </div>
