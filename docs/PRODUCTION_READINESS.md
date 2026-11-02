@@ -6,10 +6,10 @@
 
 The hardening branch now has a consistent Node.js 22.x / Bun 1.4.4 toolchain, API validation and fail-closed production routes, bounded payloads, security headers, CI, CodeQL, a production-server smoke test, and a more accurate research-prototype UI.
 
-Latest verified application revision: `eb2ccdd993a1423b223bc28adb3f285a76aac48c`.
+Latest verified application revision: `9e27563c32d2d8355f2b8b673c4a58f25d9b6f8a` (branch HEAD at the time of this assessment).
 
-- [CI run 41391810935](https://github.com/yobi369/Self-modify-software-/actions/runs/41391810935): TypeScript, 43 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
-- [CodeQL run 41391810974](https://github.com/yobi369/Self-modify-software-/actions/runs/41391810974): TypeScript/JavaScript analysis passed for the latest application revision.
+- [CI run 41392054960](https://github.com/yobi369/Self-modify-software-/actions/runs/41392054960): TypeScript, 43 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
+- [CodeQL run 41392055003](https://github.com/yobi369/Self-modify-software-/actions/runs/41392055003): TypeScript/JavaScript analysis passed for the latest application revision.
 - [Vercel preview deployment](https://self-modifying-software-studio-fck7ykltp.vercel.app): READY for the latest application revision. Authenticated deployment fetches confirmed the homepage and `/api/health` return HTTP 200 and the expected security headers. Vercel project settings confirm SSO protection is enabled for all deployment URLs except custom domains; password protection and trusted-IP restrictions are disabled. A temporary shareable preview URL was created for review and expires on 2026-11-03 at 04:04 UTC. The preview was not promoted to production.
 
 These are engineering and build checks, not a production certification. Customer identity, tenant isolation, shared quotas, an isolated execution service, live preview acceptance, legal/commercial policies, and independent security review remain outstanding. The production AI routes intentionally remain unavailable.
@@ -26,8 +26,8 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [x] Build artifact upload succeeds.
 - [x] CodeQL analysis passes on the latest application revision.
 - [x] Supported runtime is pinned consistently: Node.js 22.x and Bun 1.4.4; Vercel project Node runtime is set to 22.x.
-- [ ] Dependency vulnerability audit and remediation policy are enforced.
-- [ ] Secret scanning covers repository history and release artefacts.
+- [ ] Dependency vulnerability audit and remediation policy are enforced. A Bun audit and pull-request dependency-review workflow has been added; its first successful run and any findings/remediation remain pending.
+- [ ] Secret scanning covers repository history and release artefacts. A full-history Gitleaks workflow has been added; its first successful run and any findings/credential rotation remain pending. This does not replace enabling GitHub-native secret protection where available.
 
 ## Gate B — API reliability and access control
 
@@ -57,7 +57,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [ ] A dedicated execution service is implemented for untrusted code; it must be disposable, network-denied by default, resource-limited, and isolated from application credentials and customer data.
 - [ ] The execution service is independently tested and red-teamed for escape, denial-of-service, filesystem, network, and cross-tenant attacks.
 - [ ] Human approval, reproducible verification, canary rollout, and rollback controls are implemented before any candidate can be promoted.
-- [ ] Dependency and secret scans are enforced.
+- [ ] Dependency and secret scans are enforced (workflow implementation added; successful run and findings review pending).
 - [ ] Main-branch protection, required checks, and deployment permissions are configured and verified. The connected GitHub integration cannot read the branch-protection endpoint, so this remains an owner-side verification item.
 
 ## Gate D — Product correctness and user experience
@@ -71,7 +71,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [ ] Real baseline/candidate regression execution uses pinned toolchains, datasets, and reproducible environments.
 - [ ] Critical user journeys have browser-based end-to-end tests.
 - [ ] Accessibility and responsive behaviour are independently reviewed.
-- [ ] A deployed preview has passed authenticated HTTP smoke checks for the homepage, health endpoint, and security headers. Full interactive browser journeys, accessibility, and user acceptance remain outstanding; the preview remains SSO-protected.
+- [ ] A deployed preview for the current HEAD has passed authenticated HTTP smoke checks for the homepage, health endpoint, and security headers. The latest READY Vercel deployment inspected currently maps to older application revision `eb2ccdd993a1423b223bc28adb3f285a76aac48c`, not this branch HEAD. Full interactive browser journeys, accessibility, and user acceptance remain outstanding; SSO protection remains enabled.
 
 ## Gate E — Commercial and operational readiness
 
@@ -84,7 +84,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [ ] Backup/restore and rollback procedures are rehearsed if persistent customer data is introduced.
 - [ ] Production deployment configuration, domain, secrets, monitoring, and alerting are verified in the owner's hosting account.
 
-## Current product boundary
+## Security architecture decision record\n\nThe provider-neutral identity, tenant isolation, shared quota, isolated execution, and reproducible verification design is documented in [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md). No identity vendor, datastore, quota service, or execution host has been selected or provisioned. These are deliberate owner decisions, not implementation omissions to paper over with in-memory substitutes.\n\nThe GitHub security workflow now defines Bun dependency auditing, pull-request dependency review, and full-history Gitleaks scanning. The corresponding release gates remain unchecked until the workflow has completed successfully and findings have been triaged.\n\n## Current product boundary
 
 The browser labs are educational and research demonstrations. The lexical pattern scanner is not an AST parser or runtime sandbox. The browser playground uses fixed built-in demonstrations; it does not execute arbitrary submitted source. Evidence reports use synthetic fixtures and are marked `SIMULATED`. Browser benchmark samples are local and descriptive, not production performance evidence. AI analysis and mutation routes are disabled in deployed production mode. The product must not be marketed as a secure autonomous self-modifying production engine, a code-execution sandbox, or a semantic-equivalence verifier.
 
