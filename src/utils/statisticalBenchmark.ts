@@ -71,6 +71,9 @@ export function runStatisticalBenchmark(
   // Sort samples for percentile calculation
   samplesUs.sort((a, b) => a - b);
   const n = samplesUs.length;
+  if (n < 2) {
+    throw new Error('Insufficient timer resolution: fewer than two positive-duration samples were collected.');
+  }
 
   // Mean
   const sum = samplesUs.reduce((acc, val) => acc + val, 0);
