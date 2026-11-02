@@ -286,7 +286,7 @@ Exported from Self-Modifying Software Studio
             <span className="text-[10px] text-emerald-400 font-normal border border-emerald-500/30 px-1.5 py-0.2 rounded bg-emerald-950/40">Scoped Claims</span>
           </div>
           <p className="leading-relaxed text-neutral-400">
-            This interface is a research and education prototype. It demonstrates fixed browser examples, simulations, and local evidence structures only. It does not provide an execution membrane, verified sandbox, implemented TOST analysis, or production rollback controller. Arbitrary candidate execution is disabled and generated evidence may be synthetic.
+            This interface is a research and education prototype. It demonstrates fixed browser examples, simulations, and local evidence structures only. It does not provide an execution membrane, verified sandbox, evaluated TOST results, or production rollback controller. Arbitrary candidate execution is disabled and generated evidence may be synthetic.
           </p>
         </div>
       </div>
