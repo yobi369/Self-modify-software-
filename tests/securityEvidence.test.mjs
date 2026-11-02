@@ -106,9 +106,12 @@ test("methodology UI does not claim unimplemented sandbox or statistical verific
 test("research dashboards do not overstate sandbox, rollback, or benchmark evidence", async () => {
   const realityLab = await readFile(new URL("../src/components/RealityVerificationLab.tsx", import.meta.url), "utf8");
   const productionDemo = await readFile(new URL("../src/components/AutonomousProductionEngine.tsx", import.meta.url), "utf8");
+  const evidenceUtility = await readFile(new URL("../src/utils/reproducibilityEvidence.ts", import.meta.url), "utf8");
   assert.match(realityLab, /Browser runtime \(not isolated\)/);
   assert.match(realityLab, /s\.passed \? "PASS" : "FAIL"/);
   assert.doesNotMatch(realityLab, /ECMA-262 V8 Isolated Context|TOST ANALYSIS/);
+  assert.match(evidenceUtility, /engine not independently identified/);
+  assert.doesNotMatch(evidenceUtility, /V8\\/JIT Engine|V8 Node\\/Browser Runtime/);
   assert.match(productionDemo, /Formal significance test: NOT RUN/);
   assert.match(productionDemo, /NOT MEASURED/);
   assert.doesNotMatch(productionDemo, /Statistical Significance: p|IMMUTABLE CHECKPOINT HISTORY LEDGER|AUTO-ROLLBACK/);
