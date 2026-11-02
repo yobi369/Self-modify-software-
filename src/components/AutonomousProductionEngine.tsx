@@ -182,12 +182,11 @@ export const AutonomousProductionEngine: React.FC = () => {
     {
       id: 'cp_v1_0_0',
       version: 'v1.0.0 (Gen 0)',
-      timestamp: '2026-09-23 05:00:00 UTC',
+      timestamp: 'DEMO FIXTURE — NOT AN EVENT RECORD',
       mutationSummary: 'Baseline demo algorithm (O(N^2) Array Scan)',
       technique: 'Baseline Implementation',
       code: GEN_0_BASELINE,
       status: 'active',
-      metrics: { latencyUs: 492, opsPerSec: 2032, memoryKb: 14.2, testPassRate: 100 }
     }
   ]);
 
@@ -195,12 +194,6 @@ export const AutonomousProductionEngine: React.FC = () => {
   const [currentGeneration, setCurrentGeneration] = useState<number>(0);
   const [isEvolvingMultiGen, setIsEvolvingMultiGen] = useState<boolean>(false);
   const [evolutionLog, setEvolutionLog] = useState<string[]>([]);
-  const [generationHistory, setGenerationHistory] = useState<
-    { gen: number; name: string; speedup: number; latencyUs: number; passed: boolean }[]
-  >([
-    { gen: 0, name: 'Gen 0: Baseline O(N^2)', speedup: 1.0, latencyUs: 492, passed: true }
-  ]);
-
   // Adversarial penetration test suite state
   const [penResults, setPenResults] = useState<PenetrationTestResult[]>([]);
   const [isRunningPenSuite, setIsRunningPenSuite] = useState<boolean>(false);
@@ -451,7 +444,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 LOCAL DEMO STATE
               </span>
-              <span className="text-emerald-400">Zero Downtime</span>
+              <span className="text-emerald-400">SIMULATED TRAFFIC</span>
             </div>
             <div className="text-white font-bold text-sm truncate">{activeVersion}</div>
             <div className="flex items-center justify-between text-[11px] text-neutral-400 pt-1 border-t border-neutral-800/80">
@@ -585,10 +578,10 @@ export const AutonomousProductionEngine: React.FC = () => {
             {/* Generational Lineage Progress Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
               {[
-                { gen: 0, title: 'Gen 0: Baseline', tech: 'O(N^2) Array Scan', latency: '492 μs', speedup: '1.0x', active: currentGeneration >= 0 },
-                { gen: 1, title: 'Gen 1: Hash Set', tech: 'O(N) Set Projection', latency: '118 μs', speedup: '4.1x', active: currentGeneration >= 1 },
-                { gen: 2, title: 'Gen 2: Unrolled', tech: '4x Loop Unrolling', latency: '58 μs', speedup: '8.4x', active: currentGeneration >= 2 },
-                { gen: 3, title: 'Gen 3: In-Line Cache', tech: 'Typed Linear Alloc', latency: '34 μs', speedup: '14.4x', active: currentGeneration >= 3 },
+                { gen: 0, title: 'Gen 0: Baseline', tech: 'O(N^2) Array Scan', latency: 'NOT MEASURED', speedup: 'NOT MEASURED', active: currentGeneration >= 0 },
+                { gen: 1, title: 'Gen 1: Hash Set', tech: 'O(N) Set Projection', latency: 'NOT MEASURED', speedup: 'NOT MEASURED', active: currentGeneration >= 1 },
+                { gen: 2, title: 'Gen 2: Unrolled', tech: '4x Loop Unrolling', latency: 'NOT MEASURED', speedup: 'NOT MEASURED', active: currentGeneration >= 2 },
+                { gen: 3, title: 'Gen 3: In-Line Cache', tech: 'Typed Linear Alloc', latency: 'NOT MEASURED', speedup: 'NOT MEASURED', active: currentGeneration >= 3 },
               ].map((g) => (
                 <div
                   key={g.gen}
@@ -807,12 +800,12 @@ export const AutonomousProductionEngine: React.FC = () => {
                 {isRunningBenchmark ? (
                   <>
                     <Activity className="w-4 h-4 animate-spin" />
-                    <span>Warming up JIT & Sampling...</span>
+                    <span>Warming up & sampling...</span>
                   </>
                 ) : (
                   <>
                     <Play className="w-4 h-4 fill-current" />
-                    <span>Run Rigorous JIT Benchmark</span>
+                    <span>Run Local Browser Microbenchmark</span>
                   </>
                 )}
               </button>
@@ -824,7 +817,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608] space-y-3 font-mono text-xs">
                   <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
                     <span className="text-neutral-400 font-bold">BASELINE ENGINE (Gen 0)</span>
-                    <span className="text-neutral-500 text-[10px]">150 Warmup + 200 Trials</span>
+                    <span className="text-neutral-500 text-[10px]">150 warmup + 200 local samples</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-neutral-300">
                     <div>Mean Latency: <strong className="text-white">{benchReport.baseline.meanUs} μs</strong></div>
@@ -843,8 +836,8 @@ export const AutonomousProductionEngine: React.FC = () => {
                 {/* Mutant / Evolved Metrics */}
                 <div className="p-4 rounded-xl border border-emerald-950/80 bg-emerald-950/20 space-y-3 font-mono text-xs">
                   <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
-                    <span className="text-emerald-400 font-bold">CURRENT ACTIVE RUNTIME</span>
-                    <span className="text-emerald-300 text-[10px]">Speedup: +{benchReport.speedupMultiplier}x</span>
+                    <span className="text-emerald-400 font-bold">BUILT-IN DEMO IMPLEMENTATION</span>
+                    <span className="text-emerald-300 text-[10px]">Observed local ratio: {benchReport.speedupMultiplier}x</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-neutral-300">
                     <div>Mean Latency: <strong className="text-emerald-400">{benchReport.mutant.meanUs} μs</strong></div>
@@ -856,7 +849,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                     95% Confidence Interval: <strong className="text-white">[{benchReport.mutant.confidenceInterval95.join(', ')} μs]</strong>
                   </div>
                   <div className="text-[10px] text-emerald-400">
-                    Statistical Significance: p &lt; {benchReport.pValueEstimate} (Distinct CIs)
+                    Formal significance test: NOT RUN (no p-value calculated)
                   </div>
                 </div>
               </div>
@@ -929,7 +922,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 IMMUTABLE CHECKPOINT HISTORY LEDGER
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                Every evolutionary mutation is preserved. Revert to any state with 1-click atomic restore.
+                This local demo stores built-in snapshots in browser state. Selecting one changes only this UI; it does not restore a deployed artefact.
               </p>
             </div>
             <span className="font-mono text-xs px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-950/40 text-emerald-300">
@@ -963,7 +956,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                       )}
                     </div>
                     <p className="text-xs text-neutral-400 font-sans">
-                      Timestamp: {cp.timestamp} • Mean Latency: {cp.metrics.latencyUs} μs
+                      Timestamp: {cp.timestamp} • Metrics: NOT MEASURED
                     </p>
                     {cp.diffSummary && (
                       <p className="text-xs text-emerald-400 font-mono">Diff: {cp.diffSummary}</p>
