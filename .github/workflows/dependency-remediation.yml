@@ -31,9 +31,14 @@ jobs:
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: "1.4.4"
-      - name: Apply non-breaking advisory fixes
+      - name: Remove unused Vercel CLI development dependency
+        run: bun remove --dev vercel
+      - name: Upgrade Vite to the patched 6.4.5 release
+        run: bun add vite@6.4.5
+      - name: Apply compatible advisory fixes
+        continue-on-error: true
         run: bun audit fix
-      - name: Verify the lockfile and audit result
+      - name: Verify the lockfile and high-severity audit result
         run: |
           bun install --frozen-lockfile
           bun audit --audit-level=high
