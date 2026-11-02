@@ -37,6 +37,15 @@ test("all primary research sections can be opened without browser exceptions", a
   expect(pageErrors).toEqual([]);
 });
 
+
+test("keyboard users can skip directly to the main content", async ({ page }) => {
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "Skip to main content" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("main")).toBeFocused();
+});
+
 test("primary navigation supports keyboard activation", async ({ page }) => {
   await page.goto("/");
   const target = page.locator("#tab-live_sandbox");
