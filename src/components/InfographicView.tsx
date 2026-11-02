@@ -209,12 +209,12 @@ Exported from Self-Modifying Software Studio
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-mono font-black tracking-tight text-white leading-tight">
               SELF-MODIFYING SOFTWARE STUDIO &amp; <br className="hidden sm:block"/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-200">
-                BINARY MUTATION RESEARCH SUITE
+                BINARY MUTATION RESEARCH CONCEPTS
               </span>
             </h1>
 
             <p className="text-sm sm:text-base text-emerald-100/90 font-mono leading-relaxed">
-              A research-grade environment for investigating autonomous software mutation, runtime code transformation, binary diversity, execution safety, reproducibility, and empirical verification across JavaScript, WebAssembly, x86-64, ARM64, and related execution models.
+              An interactive research and education prototype for exploring software mutation concepts, runtime transformation models, memory architecture, static pattern screening, and simulated evidence. Arbitrary candidate execution is disabled; the interface does not provide a verified sandbox or empirical performance certification.
             </p>
 
             <div className="p-3.5 rounded-xl border border-emerald-900/60 bg-emerald-950/30 max-w-2xl">
