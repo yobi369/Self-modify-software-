@@ -380,7 +380,7 @@ function targetFunc(x) {
                 <span className="text-emerald-400">W^X Compliant In-Memory Emission</span>
               </div>
 
-              <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608] font-mono text-xs text-emerald-300/90 overflow-x-auto min-h-[140px] leading-relaxed shadow-inner">
+              <div tabIndex={0} role="region" aria-label="Built-in runtime demonstration output" className="p-4 rounded-xl border border-neutral-800 bg-[#040608] font-mono text-xs text-emerald-300/90 overflow-x-auto min-h-[140px] leading-relaxed shadow-inner">
                 {wasmByteHex || 'Click an "Emit" button above to synthesize a WebAssembly binary module in RAM.'}
               </div>
 
