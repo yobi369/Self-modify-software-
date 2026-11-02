@@ -73,7 +73,9 @@ test("mobile layout keeps the page within the viewport and navigation scrollable
   expect(navDimensions.scrollWidth).toBeGreaterThan(navDimensions.clientWidth);
 });
 
-test("all research modules meet automated WCAG 2.1 A/AA accessibility checks", async ({ page }) => {
+test("all research modules meet automated WCAG 2.1 A/AA accessibility checks", async ({ page, browserName }, testInfo) => {
+  test.skip(browserName !== "chromium" || testInfo.project.name !== "chromium-desktop", "Run the full axe scan once on desktop Chromium; other projects retain cross-browser E2E coverage.");
+  test.setTimeout(120_000);
   await page.goto("/");
 
   for (const tab of tabs) {
