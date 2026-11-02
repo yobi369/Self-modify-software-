@@ -21,7 +21,7 @@ This document is a living gate checklist. A checked box requires evidence in CI,
 ## Gate B — API reliability
 
 - [x] Local development and Vercel use the same Express API application.\n- [ ] Add end-to-end contract tests through both entry points.
-- [x] Request body size is bounded (128 KiB).\n- [ ] Provider response size is explicitly bounded.
+- [x] Request body size is bounded (128 KiB).\n- [x] Provider JSON response is bounded to 100,000 characters; generated mutation candidates are bounded to 100,000 characters.
 - [x] Request schemas and enum allowlists are enforced.
 - [ ] Rate limiting is enforced at a shared/edge layer (current limit is per process and is not sufficient for serverless multi-instance production).
 - [ ] Authentication, per-user quotas, and tenant isolation are implemented before paid public AI access.
