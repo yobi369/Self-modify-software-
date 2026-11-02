@@ -495,7 +495,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
                 </button>
               </div>
 
-              <pre className="p-3.5 rounded-xl border border-neutral-800 bg-black font-mono text-xs text-cyan-300/90 overflow-x-auto max-h-[200px] leading-relaxed shadow-inner">
+              <pre tabIndex={0} className="p-3.5 rounded-xl border border-neutral-800 bg-black font-mono text-xs text-cyan-300/90 overflow-x-auto max-h-[200px] leading-relaxed shadow-inner">
                 {mutationResult.mutatedCode}
               </pre>
 
