@@ -37,10 +37,30 @@ test("health endpoint reports service status without exposing credentials", asyn
   const body = await response.json();
   assert.equal(response.status, 200);
   assert.equal(body.status, "ok");
-  assert.equal(body.aiConfigured, false);
+  assert.equal("aiConfigured" in body, false);
   assert.equal(response.headers.get("x-content-type-options"), "nosniff");
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.equal(JSON.stringify(body).includes("GEMINI_API_KEY"), false);
+});
+
+test("production health response does not reveal whether an AI provider secret is configured", async () => {
+  const previousNodeEnv = process.env.NODE_ENV;
+  const previousKey = process.env.GEMINI_API_KEY;
+  process.env.NODE_ENV = "production";
+  process.env.GEMINI_API_KEY = "test-placeholder-not-a-real-key";
+  try {
+    const response = await fetch(`${baseUrl}/api/health`);
+    const body = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(body.status, "ok");
+    assert.equal("aiConfigured" in body, false);
+    assert.equal(JSON.stringify(body).includes("test-placeholder-not-a-real-key"), false);
+  } finally {
+    if (previousNodeEnv === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = previousNodeEnv;
+    if (previousKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = previousKey;
+  }
 });
 
 test("analysis rejects invalid request bodies before provider access", async () => {
