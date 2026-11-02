@@ -4,15 +4,16 @@
 
 **Status: NOT CERTIFIED FOR PRODUCTION OR COMMERCIAL CUSTOMER USE.**
 
-The hardening branch establishes a useful engineering baseline: shared Express API entry point for local and Vercel deployments, request/response validation, fail-closed production AI routes, bounded payloads, security headers, CI, CodeQL, automated tests, and operational documentation.
+The hardening branch now has a consistent Node.js 22.x / Bun 1.4.4 toolchain, API validation and fail-closed production routes, bounded payloads, security headers, CI, CodeQL, a production-server smoke test, and a more accurate research-prototype UI.
 
-Latest verified branch head: `660801935bf48b2fbf2bde45f75f3627815b755a` (1 November 2026).
+Latest code-bearing revision: `450ffe237b141d6c698d1a8b5c47e57dde9d7ad6`.
+Latest documentation-only follow-up: `75eb9f25b870d1ecba3c120c31158c327379083e`.
 
-- [CI run 41388719579](https://github.com/yobi369/Self-modify-software-/actions/runs/41388719579): frozen dependency install, TypeScript check, automated tests, production frontend/server build, and artifact upload all passed.
-- [CodeQL run 41388719588](https://github.com/yobi369/Self-modify-software-/actions/runs/41388719588): TypeScript/JavaScript analysis passed.
-- The most recent code-bearing verification recorded 37 tests passing, with 0 failures and 0 skipped. The subsequent commits changed documentation only.
+- [CI run 41390708094](https://github.com/yobi369/Self-modify-software-/actions/runs/41390708094): TypeScript, 42 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
+- [CodeQL run 41390713809](https://github.com/yobi369/Self-modify-software-/actions/runs/41390713809): TypeScript/JavaScript analysis passed for the latest code-bearing revision.
+- [Vercel preview deployment](https://self-modifying-software-stu-git-a4e410-brians-projects-a132bca2.vercel.app): the Vercel build reached READY for the code-bearing revision. Preview access is protected by Vercel SSO, so an unauthenticated live HTTP/browser smoke test could not be completed. The preview was not promoted to production.
 
-These are engineering checks, not a production certification. The application still lacks customer identity, tenant isolation, a shared production quota service, isolated execution for untrusted candidate code, deployed preview acceptance evidence, and independent security review. The production AI routes intentionally remain unavailable.
+These are engineering and build checks, not a production certification. Customer identity, tenant isolation, shared quotas, an isolated execution service, live preview acceptance, legal/commercial policies, and independent security review remain outstanding. The production AI routes intentionally remain unavailable.
 
 This checklist is evidence-based. A gate may be checked only when the implementation and its verification evidence exist. A documentation statement alone is not evidence.
 
@@ -20,11 +21,12 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 
 - [x] Frozen dependency installation passes in CI.
 - [x] TypeScript validation passes in CI.
-- [x] Automated Node test suite passes (37 passed, 0 failed, 0 skipped on the latest code-bearing verification).
+- [x] Automated Node test suite passes (42 passed, 0 failed, 0 skipped on the latest code-bearing verification).
 - [x] Production frontend and server builds pass in CI.
+- [x] CI starts the built production server and smoke-checks the SPA root, health headers, and fail-closed AI routes.
 - [x] Build artifact upload succeeds.
-- [x] CodeQL analysis passes on the current branch head.
-- [x] Supported toolchain is declared and tested in CI: Node.js 22 and Bun 1.4.4.
+- [x] CodeQL analysis passes on the latest code-bearing revision.
+- [x] Supported runtime is pinned consistently: Node.js 22.x and Bun 1.4.4; Vercel project Node runtime is set to 22.x.
 - [ ] Dependency vulnerability audit and remediation policy are enforced.
 - [ ] Secret scanning covers repository history and release artefacts.
 
@@ -37,7 +39,8 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [x] Provider requests have a deadline and malformed provider output fails closed.
 - [x] Production AI analysis and mutation routes return `AI_API_DISABLED`; no environment-variable bypass exists.
 - [x] Fabricated AI fallback responses have been removed.
-- [x] Health endpoint does not disclose credentials.
+- [x] Health endpoint reports service status without disclosing provider configuration or credentials.
+- [x] Production smoke test proves the AI routes remain disabled even when a placeholder key and legacy enable flag are present.
 - [ ] End-to-end API contract tests cover both the Vercel function and standalone server entry point.
 - [ ] Shared/edge rate limiting is implemented (the current in-memory throttle is process-local and unsuitable as a multi-instance production control).
 - [ ] Authentication, per-user quotas, and tenant isolation are implemented and tested before public AI access.
@@ -50,6 +53,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [x] Direct deployments do not trust caller-supplied forwarded IP headers by default.
 - [x] Candidate source execution is disabled in the browser prototype.
 - [x] Browser evidence and lexical screening are labelled as simulations or non-evaluated checks.
+- [x] UI no longer claims an implemented hermetic browser sandbox, 95-assertion verification suite, TOST implementation, or independent audit that does not exist.
 - [ ] A reviewed threat model and data-flow assessment are signed off.
 - [ ] A dedicated execution service is implemented for untrusted code; it must be disposable, network-denied by default, resource-limited, and isolated from application credentials and customer data.
 - [ ] The execution service is independently tested and red-teamed for escape, denial-of-service, filesystem, network, and cross-tenant attacks.
@@ -63,10 +67,12 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [x] Semantic equivalence is not claimed without baseline/candidate execution evidence.
 - [x] Browser-generated evidence is labelled `SIMULATED`; hashes are described as local integrity digests, not signatures.
 - [x] Runtime security verdicts remain `NOT_EVALUATED` while no isolated runner exists.
+- [x] Static demo generation cards no longer present fabricated latency/speedup figures as measurements.
+- [x] Local browser timing output is descriptive only; JIT tier is unobserved and no p-value/significance claim is made.
 - [ ] Real baseline/candidate regression execution uses pinned toolchains, datasets, and reproducible environments.
 - [ ] Critical user journeys have browser-based end-to-end tests.
 - [ ] Accessibility and responsive behaviour are independently reviewed.
-- [ ] A deployed preview has passed smoke, error-path, and security-header checks.
+- [ ] A deployed preview has passed authenticated browser smoke, error-path, and security-header checks. Current Vercel preview builds successfully but is SSO-protected; build success alone is not live acceptance evidence.
 
 ## Gate E — Commercial and operational readiness
 
@@ -81,8 +87,8 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 
 ## Current product boundary
 
-The browser labs are educational and research demonstrations. The lexical pattern scanner is not an AST parser or runtime sandbox. The browser playground uses fixed built-in demonstrations; it does not safely execute arbitrary submitted source. Evidence reports use synthetic fixtures and are marked `SIMULATED`. AI analysis and mutation routes are disabled in production. The product must not be marketed as a secure autonomous self-modifying production engine, a code-execution sandbox, or a semantic-equivalence verifier.
+The browser labs are educational and research demonstrations. The lexical pattern scanner is not an AST parser or runtime sandbox. The browser playground uses fixed built-in demonstrations; it does not execute arbitrary submitted source. Evidence reports use synthetic fixtures and are marked `SIMULATED`. Browser benchmark samples are local and descriptive, not production performance evidence. AI analysis and mutation routes are disabled in deployed production mode. The product must not be marketed as a secure autonomous self-modifying production engine, a code-execution sandbox, or a semantic-equivalence verifier.
 
 ## Release decision
 
-A release may be labelled production-ready only when every mandatory gate has implementation evidence, successful verification, and an authorised owner sign-off. External owner actions (licence choice, legal review, hosting credentials, branch protection, and independent security review) cannot be truthfully marked complete by repository automation.
+A release may be labelled production-ready only when every mandatory gate has implementation evidence, successful verification, and authorised owner sign-off. External owner actions (licence choice, legal review, hosting credentials, branch protection, and independent security review) cannot be marked complete by repository automation.
