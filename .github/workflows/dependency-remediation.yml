@@ -32,7 +32,7 @@ jobs:
         with:
           bun-version: "1.4.4"
       - name: Remove unused Vercel CLI development dependency
-        run: bun remove --dev vercel
+        run: bun remove vercel
       - name: Upgrade Vite to the patched 6.4.5 release
         run: bun add vite@6.4.5
       - name: Apply compatible advisory fixes
