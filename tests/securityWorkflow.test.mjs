@@ -18,8 +18,8 @@ test("security workflow pins every third-party action to a full immutable commit
   assert.match(workflow, /gitleaks\/gitleaks-action@[0-9a-f]{40}/);
 });
 
-test("dependency audit blocks high and critical advisories without modifying the lockfile", () => {
-  assert.match(workflow, /bun audit --audit-level=high/);
+test("dependency audit blocks known advisories across all severities", () => {
+  assert.match(workflow, /run: bun audit\n/);
 });
 
 test("pull request dependency review blocks moderate and higher severity changes", () => {
