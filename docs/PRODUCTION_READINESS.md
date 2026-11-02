@@ -4,70 +4,85 @@
 
 **Status: NOT CERTIFIED FOR PRODUCTION OR COMMERCIAL CUSTOMER USE.**
 
-The original baseline lacked a README, CI workflow, automated tests, and engineering documentation. This hardening branch now adds those assets, a shared Express API application used by both local development and the Vercel entry point, explicit API request/response validation, fail-closed production AI routes, and a documented test/release process. The latest verified CI run for commit `8c05482a27cfb141e56d87e843e3ebb2d1fafba1` completed 37 tests with zero failures or skips, passed TypeScript validation, built the frontend and server artefacts, and uploaded the build artefact. CodeQL analysis for this same commit also completed successfully. These checks are a baseline, not a production certification. These improvements do not establish customer production readiness: the repository still has no declared licence, no authenticated customer accounts or tenant isolation, no shared production quota service, no isolated candidate execution service, no deployed preview acceptance evidence, and no independent security review.
+The hardening branch establishes a useful engineering baseline: shared Express API entry point for local and Vercel deployments, request/response validation, fail-closed production AI routes, bounded payloads, security headers, CI, CodeQL, automated tests, and operational documentation.
 
-This document is a living gate checklist. A checked box requires evidence in CI, a test report, a deployment record, or an authorised review.
+Latest verified branch head: `660801935bf48b2fbf2bde45f75f3627815b755a` (1 November 2026).
+
+- [CI run 41388719579](https://github.com/yobi369/Self-modify-software-/actions/runs/41388719579): frozen dependency install, TypeScript check, automated tests, production frontend/server build, and artifact upload all passed.
+- [CodeQL run 41388719588](https://github.com/yobi369/Self-modify-software-/actions/runs/41388719588): TypeScript/JavaScript analysis passed.
+- The most recent code-bearing verification recorded 37 tests passing, with 0 failures and 0 skipped. The subsequent commits changed documentation only.
+
+These are engineering checks, not a production certification. The application still lacks customer identity, tenant isolation, a shared production quota service, isolated execution for untrusted candidate code, deployed preview acceptance evidence, and independent security review. The production AI routes intentionally remain unavailable.
+
+This checklist is evidence-based. A gate may be checked only when the implementation and its verification evidence exist. A documentation statement alone is not evidence.
 
 ## Gate A — Build and engineering quality
 
-- [x] Frozen dependency installation passes in CI (latest verified run: 1 November 2026).
-- [x] TypeScript checks pass (latest verified run: 1 November 2026).
-- [x] Current unit and API integration suites pass: 37 tests, 0 failures, 0 skipped (latest verified run: 1 November 2026).
-- [x] Production frontend and server builds pass in CI (latest verified run: 1 November 2026).
-- [ ] No unresolved critical/high dependency vulnerabilities.
-- [ ] No secrets detected in source, history, or built client assets.
+- [x] Frozen dependency installation passes in CI.
+- [x] TypeScript validation passes in CI.
+- [x] Automated Node test suite passes (37 passed, 0 failed, 0 skipped on the latest code-bearing verification).
+- [x] Production frontend and server builds pass in CI.
+- [x] Build artifact upload succeeds.
+- [x] CodeQL analysis passes on the current branch head.
 - [x] Supported toolchain is declared and tested in CI: Node.js 22 and Bun 1.4.4.
+- [ ] Dependency vulnerability audit and remediation policy are enforced.
+- [ ] Secret scanning covers repository history and release artefacts.
 
-## Gate B — API reliability
+## Gate B — API reliability and access control
 
-- [x] Local development and Vercel use the same Express API application.\n- [ ] Add end-to-end contract tests through both entry points.
-- [x] Request body size is bounded (128 KiB).\n- [x] Provider JSON response is bounded to 100,000 characters; generated mutation candidates are bounded to 100,000 characters.
-- [x] Request schemas and enum allowlists are enforced.
-- [ ] Rate limiting is enforced at a shared/edge layer (current limit is per process and is not sufficient for serverless multi-instance production).
-- [ ] Authentication, per-user quotas, and tenant isolation are implemented before paid public AI access.
-- [ ] Provider timeout, quota, malformed output, and missing-key behaviour are tested.
-- [ ] Production AI routes remain disabled by default and cannot be enabled without an approved authentication/shared-quota design.
-- [ ] No fabricated fallback is returned as real AI output.
-- [ ] Logs are structured and redact credentials and source code.
-- [ ] Health/readiness endpoints accurately describe dependency state.
+- [x] Local development and Vercel use the same Express API application.
+- [x] JSON request body size is bounded to 128 KiB.
+- [x] Source and provider response sizes are bounded.
+- [x] Request schemas and mutation-technique allowlists are enforced.
+- [x] Provider requests have a deadline and malformed provider output fails closed.
+- [x] Production AI analysis and mutation routes return `AI_API_DISABLED`; no environment-variable bypass exists.
+- [x] Fabricated AI fallback responses have been removed.
+- [x] Health endpoint does not disclose credentials.
+- [ ] End-to-end API contract tests cover both the Vercel function and standalone server entry point.
+- [ ] Shared/edge rate limiting is implemented (the current in-memory throttle is process-local and unsuitable as a multi-instance production control).
+- [ ] Authentication, per-user quotas, and tenant isolation are implemented and tested before public AI access.
+- [ ] Structured operational logs, request correlation, and source-code/credential redaction are verified.
+- [ ] Readiness and dependency health semantics are documented and tested.
 
-## Gate C — Security
+## Gate C — Security and execution isolation
 
-- [ ] Threat model reviewed.
-- [ ] Security headers and CORS policy tested.
-- [ ] Secrets are server-side and environment-specific.
-- [ ] Code is never executed in the API process.
-- [ ] A dedicated isolated execution service is implemented and independently red-teamed. The current browser-side execution helper is fail-closed and does not execute candidate source.
-- [ ] Any execution runner is isolated, network-denied by default, resource-limited, and disposable.
-- [ ] Human approval is mandatory before candidate promotion.
-- [ ] Dependency, secret, and static security scans pass.
-- [ ] Branch protection and deployment permissions are configured.
+- [x] Security headers are configured and selected headers are tested.
+- [x] Direct deployments do not trust caller-supplied forwarded IP headers by default.
+- [x] Candidate source execution is disabled in the browser prototype.
+- [x] Browser evidence and lexical screening are labelled as simulations or non-evaluated checks.
+- [ ] A reviewed threat model and data-flow assessment are signed off.
+- [ ] A dedicated execution service is implemented for untrusted code; it must be disposable, network-denied by default, resource-limited, and isolated from application credentials and customer data.
+- [ ] The execution service is independently tested and red-teamed for escape, denial-of-service, filesystem, network, and cross-tenant attacks.
+- [ ] Human approval, reproducible verification, canary rollout, and rollback controls are implemented before any candidate can be promoted.
+- [ ] Dependency and secret scans are enforced.
+- [ ] Main-branch protection, required checks, and deployment permissions are configured and verified. The connected GitHub integration cannot read the branch-protection endpoint, so this remains an owner-side verification item.
 
-## Gate D — Product correctness
+## Gate D — Product correctness and user experience
 
-- [ ] Simulated, generated, and independently verified results are visibly distinguished.
-- [ ] Semantic equivalence is never asserted without actual baseline/candidate tests.
-- [ ] Browser-generated evidence is labelled SIMULATED; synthetic hashes and metrics are never presented as real source provenance or measured results.
-- [ ] Runtime security verdicts remain NOT_EVALUATED until a real isolated runner is available.
-- [ ] Hashes are not described as signatures.
-- [ ] Exported experiment reports identify the exact environment and test evidence.
-- [ ] Critical workflows pass browser-based end-to-end tests.
-- [ ] Accessibility and responsive layout reviewed.
+- [x] Simulated, generated, and independently verified results are distinguished in the current prototype.
+- [x] Semantic equivalence is not claimed without baseline/candidate execution evidence.
+- [x] Browser-generated evidence is labelled `SIMULATED`; hashes are described as local integrity digests, not signatures.
+- [x] Runtime security verdicts remain `NOT_EVALUATED` while no isolated runner exists.
+- [ ] Real baseline/candidate regression execution uses pinned toolchains, datasets, and reproducible environments.
+- [ ] Critical user journeys have browser-based end-to-end tests.
+- [ ] Accessibility and responsive behaviour are independently reviewed.
+- [ ] A deployed preview has passed smoke, error-path, and security-header checks.
 
-## Gate E — Commercial readiness
+## Gate E — Commercial and operational readiness
 
 - [ ] Owner selects and adds an explicit software licence.
-- [ ] Privacy notice, terms of service, AI-provider disclosure, and data-retention policy are published.
-- [ ] Customer data handling and deletion process are documented.
-- [ ] Support contact, service scope, uptime expectations, and incident process are defined.
-- [ ] Pricing and product claims match actual tested functionality.
-- [ ] Independent security review and product acceptance completed.
-- [ ] Backup/restore and rollback procedures are rehearsed where persistent data is introduced.
+- [ ] Privacy notice, terms of service, AI-provider disclosure, and data-retention policy are published and legally reviewed.
+- [ ] Customer data export, retention, and deletion processes are implemented and tested.
+- [ ] Support contact, service scope, incident response, and realistic availability commitments are defined.
+- [ ] Pricing and product claims match functionality that is actually implemented and verified.
+- [ ] Independent security review and customer acceptance are completed.
+- [ ] Backup/restore and rollback procedures are rehearsed if persistent customer data is introduced.
+- [ ] Production deployment configuration, domain, secrets, monitoring, and alerting are verified in the owner's hosting account.
 
-## Current prototype limitations
+## Current product boundary
 
-The browser labs are educational demonstrations. The current lexical pattern scanner is not an AST parser or runtime sandbox. The in-browser benchmark is descriptive only and does not calculate a validated p-value or inspect actual JIT tiers. Evidence reports use synthetic fixtures and are marked SIMULATED. These are release blockers for any product claim involving secure autonomous code execution, semantic preservation, or production rollout.
+The browser labs are educational and research demonstrations. The lexical pattern scanner is not an AST parser or runtime sandbox. The browser playground uses fixed built-in demonstrations; it does not safely execute arbitrary submitted source. Evidence reports use synthetic fixtures and are marked `SIMULATED`. AI analysis and mutation routes are disabled in production. The product must not be marketed as a secure autonomous self-modifying production engine, a code-execution sandbox, or a semantic-equivalence verifier.
 
 ## Release decision
 
-A release may be labelled production-ready only when every mandatory gate has evidence and an authorised owner signs the release record. Do not market the product as a secure autonomous self-modifying production engine until the candidate isolation, independent verification, approval, canary, and rollback controls are implemented and demonstrated.
+A release may be labelled production-ready only when every mandatory gate has implementation evidence, successful verification, and an authorised owner sign-off. External owner actions (licence choice, legal review, hosting credentials, branch protection, and independent security review) cannot be truthfully marked complete by repository automation.
