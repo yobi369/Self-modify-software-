@@ -48,6 +48,12 @@ jobs:
       - name: Smoke test the built production server
         run: bun run smoke:production
 
+      - name: Install Chromium for browser tests
+        run: bunx playwright install --with-deps chromium
+
+      - name: Run browser E2E and accessibility checks
+        run: bun run test:e2e
+
       - name: Upload build output
         if: success()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
