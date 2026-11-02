@@ -72,7 +72,7 @@ export interface MutationCheckpoint {
   technique: string;
   code: string;
   status: 'active' | 'archived' | 'rolled_back' | 'rejected';
-  metrics: {
+  metrics?: {
     latencyUs: number;
     opsPerSec: number;
     memoryKb: number;
