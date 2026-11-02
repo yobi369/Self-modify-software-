@@ -678,7 +678,7 @@ Exported from Self-Modifying Software Studio
                 <Copy className="w-3.5 h-3.5" />
               </button>
             </div>
-            <pre className="text-emerald-300/90 text-[11px] overflow-x-auto whitespace-pre leading-relaxed">
+            <pre tabIndex={0} className="text-emerald-300/90 text-[11px] overflow-x-auto whitespace-pre leading-relaxed">
               {currentMod.codeSnippet}
             </pre>
           </div>
