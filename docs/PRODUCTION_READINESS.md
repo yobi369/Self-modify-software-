@@ -7,7 +7,7 @@
 The hardening branch now has a consistent Node.js 22.x / Bun 1.4.4 toolchain, API validation and fail-closed production routes, bounded payloads, security headers, CI, CodeQL, a production-server smoke test, and a more accurate research-prototype UI.
 
 Latest code-bearing revision: `450ffe237b141d6c698d1a8b5c47e57dde9d7ad6`.
-Latest documentation-only follow-up: `75eb9f25b870d1ecba3c120c31158c327379083e`.
+The release checklist and test strategy have been refreshed through the current documentation branch tip; the code-bearing revision listed above is the one covered by the linked CI and CodeQL runs.
 
 - [CI run 41390708094](https://github.com/yobi369/Self-modify-software-/actions/runs/41390708094): TypeScript, 42 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
 - [CodeQL run 41390713809](https://github.com/yobi369/Self-modify-software-/actions/runs/41390713809): TypeScript/JavaScript analysis passed for the latest code-bearing revision.
