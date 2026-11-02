@@ -35,7 +35,7 @@ export default function App() {
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main Content Area */}
-      <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
+      <main id="main-content" tabIndex={-1} className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
         <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-xs font-mono text-emerald-400" role="status" aria-live="polite">Loading research module…</div>}>
         {(activeTab === 'architecture' || activeTab === 'infographic') && (
           <InfographicView 
