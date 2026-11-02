@@ -880,7 +880,7 @@ function processData(items) {
                   { step: '3. Simulated Promotion', active: testEResult.simulatedPromotion },
                   { step: '4. Synthetic Event Count', active: testEResult.trafficProcessedBeforeFault > 0 },
                   { step: '5. Injected Demo Fault', active: testEResult.watchdogTriggered, alert: true },
-                  { step: '6. Auto-Rollback', active: testEResult.stage === 'ROLLBACK_RESTORED' }
+                  { step: '6. Demo State Reset', active: testEResult.stage === 'ROLLBACK_RESTORED' }
                 ].map((s, i) => (
                   <div
                     key={i}
@@ -1212,10 +1212,10 @@ function processData(items) {
                 <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-1.5">
                   <span className="text-white font-bold block flex items-center gap-1.5">
                     <History className="w-3.5 h-3.5 text-amber-400" />
-                    Canary Watchdog Anomaly & Rollback Checkpoint
+                    Simulated Fault & Local State Reset
                   </span>
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-neutral-400">Watchdog Fired:</span>
+                    <span className="text-neutral-400">Demo threshold triggered:</span>
                     <span className={`font-bold ${activeEvidenceReport.rollbackEvent.watchdogFired ? 'text-rose-400' : 'text-neutral-400'}`}>
                       {activeEvidenceReport.rollbackEvent.watchdogFired ? 'YES (ANOMALY DETECTED)' : 'NO (STEADY-STATE)'}
                     </span>
@@ -1227,11 +1227,11 @@ function processData(items) {
                     </div>
                   )}
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-neutral-400">Restored Target:</span>
+                    <span className="text-neutral-400">Restored demo state:</span>
                     <span className="text-cyan-300 font-mono truncate">{activeEvidenceReport.rollbackEvent.restoredTarget}</span>
                   </div>
                   <div className="flex items-center justify-between text-[11px] pt-1 border-t border-neutral-800">
-                    <span className="text-neutral-400">Checkpoint ID / Latency:</span>
+                    <span className="text-neutral-400">Demo snapshot / illustrative reset delay:</span>
                     <span className="text-neutral-200 font-mono">{activeEvidenceReport.rollbackCheckpoint.checkpointId} ({activeEvidenceReport.rollbackCheckpoint.restorationLatencyMs}ms)</span>
                   </div>
                   <div className="text-[10px] text-neutral-400 font-sans mt-1">
