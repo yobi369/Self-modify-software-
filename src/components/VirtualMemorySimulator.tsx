@@ -553,7 +553,7 @@ export const VirtualMemorySimulator: React.FC = () => {
               </span>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-neutral-800 bg-[#030608]">
+            <div tabIndex={0} role="region" aria-label="Scrollable virtual memory table" className="overflow-x-auto rounded-xl border border-neutral-800 bg-[#030608]">
               <table className="w-full text-left font-mono text-xs">
                 <thead>
                   <tr className="border-b border-neutral-800 text-neutral-500 text-[11px] bg-neutral-950">
