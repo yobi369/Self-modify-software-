@@ -911,7 +911,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               </div>
             </div>
 
-            <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 overflow-x-auto max-h-[250px]">
+            <div tabIndex={0} role="region" aria-label="Scrollable mutation simulation output" className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 overflow-x-auto max-h-[250px]">
               <div className="text-neutral-500 text-[10px] pb-2 border-b border-neutral-800 mb-2">
                 CURRENT COMPILED MACHINE CLOSURE IN HEAP ({activeVersion})
               </div>
