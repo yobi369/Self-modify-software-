@@ -430,7 +430,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 Metamorphic Mutation Engine
               </span>
               <span className="px-2.5 py-0.5 rounded-full border border-cyan-500/40 bg-cyan-950/50 text-cyan-300 font-mono text-[11px]">
-                Research-Grade Autonomous Software Studio Prototype
+                Research Prototype
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight">
@@ -469,7 +469,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             }`}
           >
             <Dna className="w-4 h-4 text-emerald-400" />
-            <span>5. Autonomous Multi-Gen Loop</span>
+            <span>5. Simulated Multi-Gen Loop</span>
           </button>
 
           <button
