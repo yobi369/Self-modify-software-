@@ -319,7 +319,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
 
           {activeReport && (
             <div className="relative">
-              <pre className="p-3.5 rounded-xl border border-neutral-800 bg-[#030608] font-mono text-[11px] text-cyan-300/90 overflow-x-auto max-h-[340px] leading-relaxed shadow-inner">
+              <pre tabIndex={0} className="p-3.5 rounded-xl border border-neutral-800 bg-[#030608] font-mono text-[11px] text-cyan-300/90 overflow-x-auto max-h-[340px] leading-relaxed shadow-inner">
                 {generateNodeCliVerificationScript(activeReport).slice(0, 1800)}...
               </pre>
               <div className="absolute bottom-2 right-3 text-[10px] font-mono text-neutral-500 bg-black/80 px-2 py-0.5 rounded border border-neutral-800">
