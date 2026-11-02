@@ -47,6 +47,10 @@ test("provider JSON parser rejects malformed, empty, array, and scalar responses
   assert.deepEqual(parseJsonObject('{"ok":true}'), { ok: true });
 });
 
+test("provider JSON parser enforces its maximum response size", () => {
+  assert.throws(() => parseJsonObject("x".repeat(100_001)), /response limit/);
+});
+
 test("analysis response must contain a valid, bounded schema", () => {
   const valid = {
     verdict: "Review required",
@@ -60,6 +64,15 @@ test("analysis response must contain a valid, bounded schema", () => {
   assert.equal(validateAnalysisResult(valid), true);
   assert.equal(validateAnalysisResult({ ...valid, riskLevel: "UNKNOWN" }), false);
   assert.equal(validateAnalysisResult({ ...valid, osConstraints: "none" }), false);
+});
+
+test("mutation candidate size is bounded", () => {
+  const candidate = {
+    mutatedCode: "x".repeat(100_001),
+    technique: "instruction_substitution",
+    explanation: "Candidate only.",
+  };
+  assert.equal(validateMutationResult(candidate, "instruction_substitution"), false);
 });
 
 test("mutation response is not accepted unless required fields match", () => {
