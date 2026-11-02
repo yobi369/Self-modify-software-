@@ -312,7 +312,7 @@ export const HexMemoryInspector: React.FC = () => {
           </div>
 
           {inspectorSubTab === 'hex' ? (
-            <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs overflow-x-auto">
+            <div tabIndex={0} role="region" aria-label="Scrollable memory inspection output" className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs overflow-x-auto">
               {/* Header Offset labels */}
               <div className="flex items-center pb-2 border-b border-neutral-800 text-[11px] text-neutral-500">
                 <span className="w-24 text-neutral-400">Offset</span>
@@ -369,7 +369,7 @@ export const HexMemoryInspector: React.FC = () => {
             </div>
           ) : (
             /* Live Disassembly View */
-            <div className="rounded-xl border border-neutral-800 bg-[#040608] p-3 font-mono text-xs overflow-x-auto max-h-[380px] overflow-y-auto">
+            <div tabIndex={0} role="region" aria-label="Scrollable memory map" className="rounded-xl border border-neutral-800 bg-[#040608] p-3 font-mono text-xs overflow-x-auto max-h-[380px] overflow-y-auto">
               <div className="grid grid-cols-12 pb-2 border-b border-neutral-800 text-[11px] text-neutral-500 uppercase tracking-wider font-semibold">
                 <span className="col-span-3">Address</span>
                 <span className="col-span-3">Machine Bytes</span>
