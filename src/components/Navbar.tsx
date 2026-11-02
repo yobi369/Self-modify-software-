@@ -122,13 +122,16 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
       {/* Navigation Tabs - Exposing all 8 sections */}
       <div className="border-t border-neutral-800/60 bg-[#05080b]/90">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <nav className="flex items-center gap-1.5 overflow-x-auto py-2 scrollbar-none">
+          <nav aria-label="Primary navigation" className="flex items-center gap-1.5 overflow-x-auto py-2 scrollbar-none">
             {tabs.map((tab) => {
               const active = isTabActive(tab.id);
               return (
                 <button
                   key={tab.id}
                   id={`tab-${tab.id}`}
+                  type="button"
+                  aria-pressed={active}
+                  aria-controls="main-content"
                   onClick={() => {
                     sounds.click();
                     setActiveTab(tab.id);
