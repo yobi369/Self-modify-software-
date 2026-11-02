@@ -57,7 +57,7 @@ Test payload limits, request throttling, injection resistance, secret redaction,
 
 ## Current automated coverage
 
-The current hardening branch has 35 automated tests across four groups:
+The current hardening branch has 37 automated tests across four groups:
 
 - Request-validation unit tests.
 - HTTP integration tests for health, invalid requests, missing provider configuration, malformed JSON, oversized payloads, response headers, per-instance throttling, and production AI fail-closed behaviour.
