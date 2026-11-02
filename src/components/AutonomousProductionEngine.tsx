@@ -207,7 +207,7 @@ export const AutonomousProductionEngine: React.FC = () => {
   const [trafficRequestsPerSec, setTrafficRequestsPerSec] = useState<number>(45);
   const [trafficTotalRequests, setTrafficTotalRequests] = useState<number>(3120);
   const [trafficErrorCount, setTrafficErrorCount] = useState<number>(0);
-  const [watchdogStatus, setWatchdogStatus] = useState<'HEALTHY' | 'ANOMALY_DETECTED' | 'AUTO_ROLLBACK_EXECUTED'>('HEALTHY');
+  const [watchdogStatus, setWatchdogStatus] = useState<'DEMO_HEALTHY' | 'DEMO_ANOMALY_DETECTED' | 'DEMO_STATE_RESTORED'>('DEMO_HEALTHY');
   const [watchdogLog, setWatchdogLog] = useState<string[]>([
     'DEMO WATCHDOG: Local simulated workload running. No independent invariants verified.'
   ]);
@@ -299,9 +299,9 @@ export const AutonomousProductionEngine: React.FC = () => {
             // Anomaly caught in simulated!
             setTrafficErrorCount((e) => {
               const newCount = e + 1;
-              if (newCount >= 3 && watchdogStatus === 'HEALTHY') {
+              if (newCount >= 3 && watchdogStatus === 'DEMO_HEALTHY') {
                 // Trigger Autonomous Canary Rollback!
-                triggerCanaryRollback(err.message || 'Simulated demo exception');
+                resetLocalDemoState(err.message || 'Simulated demo exception');
               }
               return newCount;
             });
@@ -316,12 +316,12 @@ export const AutonomousProductionEngine: React.FC = () => {
   // Simulated rollback sequence triggered when demo workload anomaly exceeds threshold
   const triggerCanaryRollback = (reason: string) => {
     sounds.error();
-    setWatchdogStatus('ANOMALY_DETECTED');
+    setWatchdogStatus('DEMO_ANOMALY_DETECTED');
     const timestamp = new Date().toISOString().substring(11, 19);
 
     setWatchdogLog((prev) => [
-      `${timestamp} [ANOMALY ALERT]: Rolling error rate exceeded 5% threshold! Trigger: "${reason}"`,
-      `${timestamp} [AUTO-ROLLBACK]: Initiating emergency restore to last known-good checkpoint...`,
+      `${timestamp} [ANOMALY ALERT]: Synthetic demo fault counter crossed its threshold. Trigger: "${reason}"`,
+      `${timestamp} [DEMO RESET]: Resetting local UI state to the saved baseline example...`,
       ...prev
     ]);
 
@@ -332,7 +332,7 @@ export const AutonomousProductionEngine: React.FC = () => {
         setActiveCode(knownGood.code);
         setActiveVersion(`${knownGood.version} (DEMO RESTORED)`);
         setActivePointer(`0x7ffee280${Math.floor(Math.random() * 9000 + 1000)}`);
-        setWatchdogStatus('AUTO_ROLLBACK_EXECUTED');
+        setWatchdogStatus('DEMO_STATE_RESTORED');
         setTrafficErrorCount(0);
         sounds.success();
 
@@ -399,7 +399,7 @@ export const AutonomousProductionEngine: React.FC = () => {
     setActiveCode(MUTANT_LATENT_FAILURE);
     setActiveVersion('v1.0.X (LATENT_BUGGY_MUTANT)');
     setActivePointer(`0x7ffee280${Math.floor(Math.random() * 9000 + 1000)}`);
-    setWatchdogStatus('HEALTHY'); // Initial state seems fine until workload triggers errors
+    setWatchdogStatus('DEMO_HEALTHY'); // Initial state seems fine until workload triggers errors
     setTrafficErrorCount(0);
 
     setWatchdogLog((prev) => [
@@ -624,7 +624,7 @@ export const AutonomousProductionEngine: React.FC = () => {
         </div>
       )}
 
-      {/* SUBTAB 2: ADVERSARIAL PENETRATION SUITE (9 VECTORS) */}
+      {/* SUBTAB 2: ADVERSARIAL FIXTURE SCREENING (NOT EXECUTED) */}
       {activeSubTab === 'adversarial_suite' && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-neutral-800 bg-[#070b0e] p-6 space-y-4">
@@ -732,7 +732,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               </div>
             </div>
 
-            {/* Real-time Telemetry Dashboard */}
+            {/* Synthetic Demo Workload */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608]">
                 <span className="text-[11px] font-mono text-neutral-500 block">Workload Throughput</span>
@@ -754,7 +754,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608]">
                 <span className="text-[11px] font-mono text-neutral-500 block">Watchdog State</span>
                 <span className={`text-sm font-mono font-bold ${
-                  watchdogStatus === 'HEALTHY' ? 'text-emerald-400' : watchdogStatus === 'ANOMALY_DETECTED' ? 'text-rose-400 animate-pulse' : 'text-amber-400'
+                  watchdogStatus === 'HEALTHY' ? 'text-emerald-400' : watchdogStatus === 'DEMO_ANOMALY_DETECTED' ? 'text-rose-400 animate-pulse' : 'text-amber-400'
                 }`}>
                   {watchdogStatus}
                 </span>
@@ -764,7 +764,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             {/* Watchdog Log Stream */}
             <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 space-y-1 max-h-[200px] overflow-y-auto">
               <div className="text-neutral-500 text-[10px] pb-1 border-b border-neutral-800 flex items-center justify-between">
-                <span>CANARY TELEMETRY STREAM</span>
+                <span>SIMULATED WORKLOAD LOG</span>
                 <span>Active Target: {activeVersion}</span>
               </div>
               {watchdogLog.map((log, i) => (
@@ -777,7 +777,7 @@ export const AutonomousProductionEngine: React.FC = () => {
         </div>
       )}
 
-      {/* SUBTAB 4: STATISTICAL JIT BENCHMARK HARNESS */}
+      {/* SUBTAB 4: LOCAL BROWSER MICROBENCHMARK */}
       {activeSubTab === 'statistical_bench' && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-neutral-800 bg-[#070b0e] p-6 space-y-4">
@@ -785,7 +785,7 @@ export const AutonomousProductionEngine: React.FC = () => {
               <div>
                 <h3 className="font-mono font-bold text-base text-white flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-purple-400" />
-                  STATISTICALLY RIGOROUS JIT BENCHMARK HARNESS
+                  LOCAL BROWSER MICROBENCHMARK
                 </h3>
                 <p className="text-xs text-neutral-400 font-sans mt-0.5">
                   Protects against JIT compilation distortion and microsecond noise: 150 warm-up runs, multi-trial sampling, standard deviation (σ), and 95% Confidence Intervals.
@@ -826,7 +826,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                     <div>Std Dev (σ): <strong className="text-white">±{benchReport.baseline.stdDevUs} μs</strong></div>
                   </div>
                   <div className="p-2 rounded bg-neutral-900 text-[11px] text-neutral-400">
-                    95% Confidence Interval: <strong className="text-purple-300">[{benchReport.baseline.confidenceInterval95.join(', ')} μs]</strong>
+                    95% Descriptive 95% interval (normal approximation): <strong className="text-purple-300">[{benchReport.baseline.confidenceInterval95.join(', ')} μs]</strong>
                   </div>
                   <div className="text-[10px] text-neutral-500">
                     CV: {benchReport.baseline.coefficientOfVariationPercent}% • {benchReport.baseline.jitState}
@@ -846,7 +846,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                     <div>Std Dev (σ): <strong className="text-emerald-400">±{benchReport.mutant.stdDevUs} μs</strong></div>
                   </div>
                   <div className="p-2 rounded bg-emerald-950/80 text-[11px] text-emerald-300">
-                    95% Confidence Interval: <strong className="text-white">[{benchReport.mutant.confidenceInterval95.join(', ')} μs]</strong>
+                    Descriptive 95% interval (normal approximation): <strong className="text-white">[{benchReport.mutant.confidenceInterval95.join(', ')} μs]</strong>
                   </div>
                   <div className="text-[10px] text-emerald-400">
                     Formal significance test: NOT RUN (no p-value calculated)
@@ -919,7 +919,7 @@ export const AutonomousProductionEngine: React.FC = () => {
             <div>
               <h3 className="font-mono font-bold text-base text-white flex items-center gap-2">
                 <History className="w-5 h-5 text-emerald-400" />
-                IMMUTABLE CHECKPOINT HISTORY LEDGER
+                LOCAL DEMO SNAPSHOTS
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
                 This local demo stores built-in snapshots in browser state. Selecting one changes only this UI; it does not restore a deployed artefact.
