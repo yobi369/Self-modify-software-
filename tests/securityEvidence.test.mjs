@@ -103,6 +103,17 @@ test("methodology UI does not claim unimplemented sandbox or statistical verific
   assert.doesNotMatch(source, /95 Assertions|hermetic JavaScript execution membrane|Studio implements a formal Two One-Sided Tests|Blocked prior to compilation|100\.0% \(Zero Divergence\)/);
 });
 
+test("research dashboards do not overstate sandbox, rollback, or benchmark evidence", async () => {
+  const realityLab = await readFile(new URL("../src/components/RealityVerificationLab.tsx", import.meta.url), "utf8");
+  const productionDemo = await readFile(new URL("../src/components/AutonomousProductionEngine.tsx", import.meta.url), "utf8");
+  assert.match(realityLab, /Browser runtime \(not isolated\)/);
+  assert.match(realityLab, /s\.passed \? "PASS" : "FAIL"/);
+  assert.doesNotMatch(realityLab, /ECMA-262 V8 Isolated Context|TOST ANALYSIS/);
+  assert.match(productionDemo, /Formal significance test: NOT RUN/);
+  assert.match(productionDemo, /NOT MEASURED/);
+  assert.doesNotMatch(productionDemo, /Statistical Significance: p|IMMUTABLE CHECKPOINT HISTORY LEDGER|AUTO-ROLLBACK/);
+});
+
 test("browser playground does not evaluate editable JavaScript source", async () => {
   const source = await readFile(new URL("../src/components/LiveSandboxPlayground.tsx", import.meta.url), "utf8");
   assert.match(source, /readOnly/);
