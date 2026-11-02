@@ -57,7 +57,7 @@ Test payload limits, request throttling, injection resistance, secret redaction,
 
 ## Current automated coverage
 
-The current hardening branch has 43 automated tests across five groups:
+The current hardening branch has 48 automated Node tests across five groups:
 
 - Request-validation unit tests.
 - HTTP integration tests for health, invalid requests, missing provider configuration, malformed JSON, oversized payloads, response headers, per-instance throttling, and production AI fail-closed behaviour.
@@ -67,7 +67,7 @@ The current hardening branch has 43 automated tests across five groups:
 
 **Additional CI runtime smoke check:** after building, CI starts the compiled production Express server and verifies the SPA root, health response/security headers, and fail-closed AI routes even when placeholder provider credentials and the legacy enable flag are present. This is not a live Vercel preview test.
 
-**Not yet implemented:** mocked successful AI-provider integration tests, provider timeout/retry tests, browser component tests, accessibility automation, full Playwright/Cypress end-to-end journeys, full authenticated browser E2E journeys against the live preview, coverage reporting, and independent penetration testing. An authenticated HTTP smoke check against the latest protected Vercel preview now verifies the homepage and `/api/health` return HTTP 200 with the expected security headers. The current test count must not be interpreted as full product coverage.
+**Browser automation now configured:** Playwright runs desktop Chromium and Pixel 7 mobile-emulation projects against the local Express/Vite application. The initial suite covers page landmarks, all eight navigation sections, keyboard activation, mobile overflow, both fail-closed AI endpoints, and an axe-core WCAG 2.1 A/AA scan. CI installs Chromium and runs `bun run test:e2e`. These browser tests have been added but their first CI execution and any resulting accessibility remediation are still pending.\n\n**Still outstanding:** mocked successful AI-provider integration tests, provider timeout/retry tests, full authenticated browser E2E journeys against the live SSO-protected preview, coverage reporting, and independent penetration testing. The existing authenticated HTTP smoke check applies to an older Vercel preview revision and is not a substitute for current-preview browser acceptance. The current test count must not be interpreted as full product coverage.
 
 ## Required evidence in pull requests
 
