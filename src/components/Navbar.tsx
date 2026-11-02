@@ -35,12 +35,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   // The 8 exposed main sections
   const tabs: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: 'architecture', label: 'Architecture Visualizer', icon: <Layers className="w-4 h-4" /> },
-    { id: 'live_sandbox', label: 'Live Executable Sandbox', icon: <Terminal className="w-4 h-4" />, badge: 'JS/WASM' },
+    { id: 'live_sandbox', label: 'Browser Runtime Demo', icon: <Terminal className="w-4 h-4" />, badge: 'Fixed demos' },
     { id: 'hex_inspector', label: 'Hex & Opcode Memory Inspector', icon: <Binary className="w-4 h-4" /> },
-    { id: 'metamorphic_engine', label: 'Metamorphic Mutation Engine', icon: <Dna className="w-4 h-4 text-emerald-400" />, badge: 'Autonomous' },
-    { id: 'reality_verification', label: 'Reality Verification Lab', icon: <CheckCircle2 className="w-4 h-4 text-cyan-400" />, badge: 'TOST / 95% CI' },
+    { id: 'metamorphic_engine', label: 'Metamorphic Mutation Engine', icon: <Dna className="w-4 h-4 text-emerald-400" />, badge: 'Simulation' },
+    { id: 'reality_verification', label: 'Reality Verification Lab', icon: <CheckCircle2 className="w-4 h-4 text-cyan-400" />, badge: 'Synthetic data' },
     { id: 'security_defense', label: 'W^X Security & Defense Lab', icon: <ShieldCheck className="w-4 h-4" /> },
-    { id: 'ai_architect', label: 'AI Metamorphic Architect', icon: <Sparkles className="w-4 h-4 text-emerald-400" />, badge: 'AI Engine' },
+    { id: 'ai_architect', label: 'AI Metamorphic Architect', icon: <Sparkles className="w-4 h-4 text-emerald-400" />, badge: 'API disabled' },
     { id: 'evidence_suite', label: 'Evidence & Reproduction Suite', icon: <FileCheck className="w-4 h-4 text-amber-400" />, badge: 'SHA-256' },
   ];
 
@@ -67,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                   AUTO<span className="text-emerald-400">MORPH</span>
                 </span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded border border-emerald-500/40 bg-emerald-950/60 text-emerald-300 font-semibold">
-                  Research-Grade Autonomous Software Studio Prototype
+                  Research Prototype
                 </span>
               </div>
               <p className="text-xs text-neutral-400 font-sans tracking-tight line-clamp-1">
@@ -109,12 +109,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-cyan-900/40 bg-cyan-950/30 text-[11px] font-mono text-cyan-300/90" title="Claims strictly scoped to empirical test harness & threat model">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-            <span>SCOPED TESTBED</span>
+            <span>EDUCATIONAL DEMO</span>
           </div>
 
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-emerald-900/40 bg-emerald-950/20 text-[11px] font-mono text-emerald-400/80">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>W^X: ENFORCED</span>
+            <span>W^X: SIMULATED</span>
           </div>
         </div>
       </div>
