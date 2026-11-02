@@ -594,7 +594,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                       ? 'border-emerald-500/80 bg-emerald-950/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
                       : g.active
                       ? 'border-neutral-700 bg-neutral-900/50 text-neutral-300'
-                      : 'border-neutral-800/60 bg-neutral-950/40 text-neutral-600 opacity-60'
+                      : 'border-neutral-800/60 bg-neutral-950/40 text-neutral-400'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
