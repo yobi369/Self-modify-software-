@@ -11,7 +11,8 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "test": "node --import tsx --test",
-    "check": "bun run lint && bun run test && bun run build"
+    "check": "bun run lint && bun run test && bun run build",
+    "smoke:production": "node tests/production-smoke.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
