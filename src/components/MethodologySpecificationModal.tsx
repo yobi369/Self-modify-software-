@@ -197,7 +197,7 @@ export const MethodologySpecificationModal: React.FC<MethodologyModalProps> = ({
                   <li>Measured speedup: NOT MEASURED.</li>
                   <li>Semantic equivalence: NOT EVALUATED.</li>
                   <li>Independent reproduction: NOT EVALUATED.</li>
-                  <li>Two One-Sided Tests (TOST): NOT IMPLEMENTED.</li>
+                  <li>TOST calculation: NOT EVALUATED (synthetic inputs; no inferential conclusion).</li>
                   <li>Confidence intervals shown in the demo are descriptive synthetic-fixture statistics, not acceptance evidence.</li>
                 </ul>
               </div>
