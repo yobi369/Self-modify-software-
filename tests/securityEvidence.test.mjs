@@ -18,6 +18,14 @@ import {
 
 beforeEach(() => clearExperimentChain());
 
+test("public metadata accurately describes the research prototype", async () => {
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  assert.match(html, /Self-Modifying Software Studio \| Research Prototype/);
+  assert.match(html, /Arbitrary code execution and deployed AI mutation are disabled/);
+  assert.match(html, /does not execute untrusted code or verify semantic equivalence/);
+  assert.doesNotMatch(html, /research-grade environment|Binary Mutation Research Suite|95 Assertions|Zero Divergence/);
+});
+
 test("candidate execution gate fails closed and never evaluates source", () => {
   globalThis.__sandboxProbe = false;
   const result = checkCandidateExecutionAvailability("globalThis.__sandboxProbe = true;", []);
