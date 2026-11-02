@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const workflow = await readFile(new URL("../.github/workflows/security.yml", import.meta.url), "utf8");
 
-test("security workflow runs dependency and secret checks on pull requests and protected development branches", () => {
+test("security workflow runs dependency and secret checks on pull requests and configured development branches", () => {
   assert.match(workflow, /pull_request:\n\s+branches: \[main\]/);
   assert.match(workflow, /push:\n\s+branches: \[main, "production\/\*\*"\]/);
   assert.match(workflow, /schedule:/);
@@ -23,7 +23,7 @@ test("dependency audit blocks known advisories across all severities", () => {
 });
 
 test("pull request dependency review blocks moderate and higher severity changes", () => {
-  assert.match(workflow, /fail-on-severity: moderate/);
+  assert.match(workflow, /if: github.event_name == 'pull_request' && vars.GITHUB_DEPENDENCY_GRAPH_ENABLED == 'true'/);\n  assert.match(workflow, /fail-on-severity: moderate/);
   assert.match(workflow, /comment-summary-in-pr: never/);
 });
 
