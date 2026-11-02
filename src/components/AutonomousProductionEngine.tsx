@@ -817,7 +817,7 @@ export const AutonomousProductionEngine: React.FC = () => {
                 <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608] space-y-3 font-mono text-xs">
                   <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
                     <span className="text-neutral-400 font-bold">BASELINE ENGINE (Gen 0)</span>
-                    <span className="text-neutral-500 text-[10px]">150 warmup + 200 local samples</span>
+                    <span className="text-neutral-500 text-[10px]">120 warmup + 200 local samples</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-neutral-300">
                     <div>Mean Latency: <strong className="text-white">{benchReport.baseline.meanUs} μs</strong></div>
