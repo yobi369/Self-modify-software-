@@ -6,12 +6,11 @@
 
 The hardening branch now has a consistent Node.js 22.x / Bun 1.4.4 toolchain, API validation and fail-closed production routes, bounded payloads, security headers, CI, CodeQL, a production-server smoke test, and a more accurate research-prototype UI.
 
-Latest verified application revision: `adafaafcb5137e678f0f696ddd263c12b7b7fb76`. Documentation-only follow-ups on the branch are verified separately and do not change this application revision.
-The release checklist and test strategy have been refreshed through the current documentation branch tip; the code-bearing revision listed above is the one covered by the linked CI and CodeQL runs.
+Latest verified application revision: `eb2ccdd993a1423b223bc28adb3f285a76aac48c`.
 
-- [CI run 41391142011](https://github.com/yobi369/Self-modify-software-/actions/runs/41390708094): TypeScript, 42 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
-- [CodeQL run 41391147673](https://github.com/yobi369/Self-modify-software-/actions/runs/41390713809): TypeScript/JavaScript analysis passed for the latest code-bearing revision.
-- [Vercel preview deployment](https://self-modifying-software-stu-git-a4e410-brians-projects-a132bca2.vercel.app): the Vercel build reached READY for the code-bearing revision. Preview access is protected by Vercel SSO, so an unauthenticated live HTTP/browser smoke test could not be completed. The preview was not promoted to production.
+- [CI run 41391810935](https://github.com/yobi369/Self-modify-software-/actions/runs/41391810935): TypeScript, 43 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
+- [CodeQL run 41391810974](https://github.com/yobi369/Self-modify-software-/actions/runs/41391810974): TypeScript/JavaScript analysis passed for the latest application revision.
+- [Vercel preview deployment](https://self-modifying-software-studio-fck7ykltp.vercel.app): READY for the latest application revision. Authenticated deployment fetches confirmed the homepage and `/api/health` return HTTP 200 and the expected security headers. Vercel project settings confirm SSO protection is enabled for all deployment URLs except custom domains; password protection and trusted-IP restrictions are disabled. A temporary shareable preview URL was created for review and expires on 2026-11-03 at 04:04 UTC. The preview was not promoted to production.
 
 These are engineering and build checks, not a production certification. Customer identity, tenant isolation, shared quotas, an isolated execution service, live preview acceptance, legal/commercial policies, and independent security review remain outstanding. The production AI routes intentionally remain unavailable.
 
@@ -21,11 +20,11 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 
 - [x] Frozen dependency installation passes in CI.
 - [x] TypeScript validation passes in CI.
-- [x] Automated Node test suite passes (42 passed, 0 failed, 0 skipped on the latest code-bearing verification).
+- [x] Automated Node test suite passes (43 passed, 0 failed, 0 skipped on the latest application revision).
 - [x] Production frontend and server builds pass in CI.
 - [x] CI starts the built production server and smoke-checks the SPA root, health headers, and fail-closed AI routes.
 - [x] Build artifact upload succeeds.
-- [x] CodeQL analysis passes on the latest code-bearing revision.
+- [x] CodeQL analysis passes on the latest application revision.
 - [x] Supported runtime is pinned consistently: Node.js 22.x and Bun 1.4.4; Vercel project Node runtime is set to 22.x.
 - [ ] Dependency vulnerability audit and remediation policy are enforced.
 - [ ] Secret scanning covers repository history and release artefacts.
@@ -72,7 +71,7 @@ This checklist is evidence-based. A gate may be checked only when the implementa
 - [ ] Real baseline/candidate regression execution uses pinned toolchains, datasets, and reproducible environments.
 - [ ] Critical user journeys have browser-based end-to-end tests.
 - [ ] Accessibility and responsive behaviour are independently reviewed.
-- [ ] A deployed preview has passed authenticated browser smoke, error-path, and security-header checks. Current Vercel preview builds successfully but is SSO-protected; build success alone is not live acceptance evidence.
+- [ ] A deployed preview has passed authenticated HTTP smoke checks for the homepage, health endpoint, and security headers. Full interactive browser journeys, accessibility, and user acceptance remain outstanding; the preview remains SSO-protected.
 
 ## Gate E — Commercial and operational readiness
 
