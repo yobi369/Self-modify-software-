@@ -739,7 +739,7 @@ function processData(items) {
               </div>
 
               {machineVerdict ? (
-                <div className="rounded-xl border border-neutral-800 bg-[#040608] p-3 font-mono text-xs overflow-x-auto max-h-[220px]">
+                <div tabIndex={0} role="region" aria-label="Scrollable verification evidence output" className="rounded-xl border border-neutral-800 bg-[#040608] p-3 font-mono text-xs overflow-x-auto max-h-[220px]">
                   <pre className={machineVerdict.verdict === 'BLOCKED' ? 'text-rose-400' : machineVerdict.verdict === 'NOT_EVALUATED' ? 'text-amber-300' : 'text-emerald-400'}>
                     {JSON.stringify(machineVerdict.machineReadablePayload, null, 2)}
                   </pre>
