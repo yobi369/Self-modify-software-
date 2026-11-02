@@ -112,7 +112,7 @@ test("research dashboards do not overstate sandbox, rollback, or benchmark evide
   assert.match(realityLab, /s\.passed \? "PASS" : "FAIL"/);
   assert.doesNotMatch(realityLab, /ECMA-262 V8 Isolated Context|TOST ANALYSIS/);
   assert.match(evidenceUtility, /engine not independently identified/);
-  assert.doesNotMatch(evidenceUtility, /V8\\/JIT Engine|V8 Node\\/Browser Runtime/);
+  assert.doesNotMatch(evidenceUtility, /V8\/JIT Engine|V8 Node\/Browser Runtime/);
   assert.match(aiArchitect, /Local SHA-256 digests; unsigned and not independently verified/);
   assert.doesNotMatch(aiArchitect, /Provider-Neutral Research Engine|Deep runtime opcode|Cryptographic SHA-256 seal/);
   assert.match(productionDemo, /Formal significance test: NOT RUN/);
