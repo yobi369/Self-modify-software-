@@ -48,11 +48,22 @@ jobs:
       - name: Smoke test the built production server
         run: bun run smoke:production
 
-      - name: Install Chromium for browser tests
+      - name: Install Playwright browser engines
         run: bunx playwright install --with-deps chromium firefox webkit
 
       - name: Run browser E2E and accessibility checks
         run: bun run test:e2e
+
+      - name: Upload browser diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-diagnostics
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload build output
         if: success()
