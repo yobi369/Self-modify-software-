@@ -373,7 +373,9 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
             </button>
 
             <div className="flex items-center gap-2">
+              <label htmlFor="mutation-strategy" className="sr-only">Mutation strategy</label>
               <select
+                id="mutation-strategy"
                 value={mutationType}
                 onChange={(e) => setMutationType(e.target.value)}
                 className="bg-neutral-900 border border-neutral-700 text-emerald-300 text-xs font-mono px-3 py-2 rounded-xl focus:outline-none cursor-pointer"
