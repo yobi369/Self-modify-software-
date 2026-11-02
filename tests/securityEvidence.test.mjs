@@ -98,7 +98,7 @@ test("record digest detects a changed report field", () => {
 test("methodology UI does not claim unimplemented sandbox or statistical verification", async () => {
   const source = await readFile(new URL("../src/components/MethodologySpecificationModal.tsx", import.meta.url), "utf8");
   assert.match(source, /No untrusted-code sandbox is implemented/);
-  assert.match(source, /TOST\): NOT IMPLEMENTED/);
+  assert.match(source, /TOST calculation: NOT EVALUATED/);
   assert.match(source, /No independent security audit has been completed/);
   assert.doesNotMatch(source, /95 Assertions|hermetic JavaScript execution membrane|Studio implements a formal Two One-Sided Tests|Blocked prior to compilation|100\.0% \(Zero Divergence\)/);
 });
