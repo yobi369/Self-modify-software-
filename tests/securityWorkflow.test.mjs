@@ -23,7 +23,8 @@ test("dependency audit blocks known advisories across all severities", () => {
 });
 
 test("pull request dependency review blocks moderate and higher severity changes", () => {
-  assert.match(workflow, /if: github.event_name == 'pull_request' && vars.GITHUB_DEPENDENCY_GRAPH_ENABLED == 'true'/);\n  assert.match(workflow, /fail-on-severity: moderate/);
+  assert.match(workflow, /if: github.event_name == 'pull_request' && vars.GITHUB_DEPENDENCY_GRAPH_ENABLED == 'true'/);
+  assert.match(workflow, /fail-on-severity: moderate/);
   assert.match(workflow, /comment-summary-in-pr: never/);
 });
 
