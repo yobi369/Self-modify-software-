@@ -256,7 +256,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
               <Sparkles className="w-3 h-3 text-emerald-400" />
               AI Metamorphic Intelligence
             </span>
-            <span className="text-xs font-mono text-neutral-400">Provider-Neutral Research Engine</span>
+            <span className="text-xs font-mono text-neutral-400">Optional Gemini API · disabled in deployed builds</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-mono font-bold text-white mt-1">
             AI METAMORPHIC ARCHITECT
@@ -295,7 +295,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
               <span className="text-emerald-300 font-bold block text-[11px]">Analyze code</span>
-              <span className="text-[10px] text-neutral-400">Deep runtime opcode &amp; AST analysis</span>
+              <span className="text-[10px] text-neutral-400">Provider-assisted source review; no AST parsing or runtime execution</span>
             </div>
           </div>
           <div className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-900/40 text-neutral-300 flex items-start gap-2">
@@ -322,8 +322,8 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
           <div className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-900/40 text-neutral-300 flex items-start gap-2">
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
-              <span className="text-amber-300 font-bold block text-[11px]">Generate an auditable mutation record</span>
-              <span className="text-[10px] text-neutral-400">Cryptographic SHA-256 seal &amp; JSON digest</span>
+              <span className="text-amber-300 font-bold block text-[11px]">Generate a local mutation record</span>
+              <span className="text-[10px] text-neutral-400">Local SHA-256 digests; unsigned and not independently verified</span>
             </div>
           </div>
         </div>
@@ -513,7 +513,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
                 <div className="flex items-center gap-2">
                   <FileCheck className="w-4 h-4 text-amber-400" />
                   <h3 className="font-mono font-bold text-sm text-white uppercase">
-                    AUDITABLE MUTATION RECORD
+                    LOCAL MUTATION RECORD (UNSIGNED)
                   </h3>
                 </div>
                 <div className="flex items-center gap-1.5">
