@@ -432,7 +432,7 @@ Exported from Self-Modifying Software Studio
 
           <div className="bg-[#05090c] p-3.5 rounded-lg border border-emerald-900/40 font-mono text-xs space-y-1">
             <span className="text-[10px] text-neutral-500 uppercase block">Code Expression</span>
-            <pre className="text-emerald-300 overflow-x-auto whitespace-pre-wrap">
+            <pre tabIndex={0} className="text-emerald-300 overflow-x-auto whitespace-pre-wrap">
               {currentStep.techExample}
             </pre>
           </div>
@@ -464,7 +464,7 @@ Exported from Self-Modifying Software Studio
           </p>
 
           {/* Interactive Code Container */}
-          <div className="rounded-xl border border-neutral-800 bg-[#05080a] p-4 font-mono text-xs overflow-x-auto">
+          <div tabIndex={0} role="region" aria-label="Scrollable architecture code sample" className="rounded-xl border border-neutral-800 bg-[#05080a] p-4 font-mono text-xs overflow-x-auto">
             {C_CODE_EXAMPLE.split('\n').map((line, idx) => {
               const lineNum = idx + 1;
               const hasAnnotation = codeAnnotations.find(a => a.line === lineNum);
@@ -555,7 +555,7 @@ Exported from Self-Modifying Software Studio
               </h3>
               <span className="text-[10px] font-mono text-neutral-500">ABSTRACT ALGORITHM</span>
             </div>
-            <pre className="p-3.5 rounded-xl border border-neutral-800 bg-[#05080a] text-xs font-mono text-emerald-300/90 overflow-x-auto leading-relaxed">
+            <pre tabIndex={0} className="p-3.5 rounded-xl border border-neutral-800 bg-[#05080a] text-xs font-mono text-emerald-300/90 overflow-x-auto leading-relaxed">
               {PSEUDOCODE_LOOP}
             </pre>
             <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pt-1">
