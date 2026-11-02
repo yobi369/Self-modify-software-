@@ -40,14 +40,18 @@ export const SecurityDefenseLab: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status">
+        <strong className="block mb-1 uppercase tracking-wide">Educational simulation only</strong>
+        These scenarios display illustrative outcomes. They do not call operating-system memory APIs, execute native machine code, inspect CPU page tables, or test real kernel/MMU enforcement.
+      </div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-emerald-500/30 bg-[#080d10]">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-bold">
-              OPERATING SYSTEM & HARDWARE ENFORCEMENT
+              OS & HARDWARE CONCEPT SIMULATOR
             </span>
-            <span className="text-xs font-mono text-neutral-400">DEFENSE & MITIGATION LABORATORY</span>
+            <span className="text-xs font-mono text-neutral-400">ILLUSTRATIVE DEFENSE LAB</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-mono font-bold text-white mt-1">
             W^X SECURITY &amp; DEFENSE LAB
@@ -56,7 +60,7 @@ export const SecurityDefenseLab: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono text-neutral-400 border border-neutral-800 bg-neutral-900 px-3 py-1.5 rounded-xl">
-            CPU Feature: <strong className="text-emerald-400">NX Bit / XD Bit (No-Execute)</strong>
+            Concept: <strong className="text-emerald-400">NX / XD No-Execute</strong>
           </span>
         </div>
       </div>
@@ -69,7 +73,7 @@ export const SecurityDefenseLab: React.FC = () => {
             FOUR APPROACHES TO RUNTIME CODE MODIFICATION
           </h2>
           <p className="text-xs text-neutral-400 mt-1">
-            Select a strategy to test how CPU Memory Management Units (MMU) and OS kernels respond
+            Select a strategy to view an illustrative explanation of memory-permission concepts
           </p>
         </div>
 
@@ -113,7 +117,7 @@ export const SecurityDefenseLab: React.FC = () => {
               <p className="text-neutral-300 font-sans">
                 Attempts to overwrite <code className="text-white">p[0] = 0x90</code> without calling <code className="text-emerald-400">mprotect()</code>. The code page was marked by the ELF loader as <code className="text-rose-300">PROT_READ | PROT_EXEC</code> (No write permission).
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-rose-300 overflow-x-auto">
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-rose-300 overflow-x-auto">
 {`void *p = (void*)my_func;
 // VIOLATION: Writing to non-writable memory!
 *(unsigned char*)p = 0x90; // ---> Hardware Trap: #PF (Page Fault) -> SIGSEGV`}
@@ -130,7 +134,7 @@ export const SecurityDefenseLab: React.FC = () => {
               <p className="text-neutral-300 font-sans">
                 Calls <code className="text-white">mprotect(page, 4096, PROT_READ|PROT_WRITE|PROT_EXEC)</code>. While functional on older x86 Linux, this violates modern security policies (DEP / W^X). Modern systems and EDRs monitor RWX pages as high-severity anomalies.
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-amber-300 overflow-x-auto">
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-amber-300 overflow-x-auto">
 {`mprotect(page, 4096, PROT_READ | PROT_WRITE | PROT_EXEC);
 // Page is now simultaneously Writable and Executable (W^X Broken)
 p[0] = 0x90;`}
@@ -147,7 +151,7 @@ p[0] = 0x90;`}
               <p className="text-neutral-300 font-sans">
                 Strict adherence to W^X: Memory is NEVER both writable and executable at the same moment. It is allocated as <code className="text-emerald-300">RW-</code> during emission, then transitioned to <code className="text-cyan-300">R-X</code> before execution, followed by an explicit instruction cache flush.
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-emerald-300 overflow-x-auto">
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-emerald-300 overflow-x-auto">
 {`// 1. Allocate as Writable (RW-)
 void *buf = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 emit_opcodes(buf); // Write machine code safely
@@ -171,13 +175,14 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
                 <span>Approach 4: Dual-Mapped Memory (High-Performance V8 / WebKit Architecture)</span>
               </div>
               <p className="text-neutral-300 font-sans">
-                The pinnacle of JIT engineering: The engine asks the OS to map the <strong>same physical memory pages</strong> to <strong>two separate virtual address ranges</strong>. One range is permanently mapped <code className="text-amber-300">RW-</code> (for the compiler thread to write), while the other range is permanently mapped <code className="text-emerald-300">R-X</code> (for the CPU execution thread).
+                Some JIT runtimes use dual-mapped aliases where the platform permits it: the same backing pages are mapped at separate virtual addresses, one writable and one executable. Availability and enforcement are OS-, architecture-, and policy-dependent.
               </p>
-              <pre className="p-3 rounded-lg bg-black border border-neutral-850 text-cyan-300 overflow-x-auto">
-{`// High performance zero-syscall W^X architecture:
+              <pre tabIndex={0} className="p-3 rounded-lg bg-black border border-neutral-850 text-cyan-300 overflow-x-auto">
+{`// Illustrative dual-mapping concept; mapping setup still requires OS operations:
 // Write address: 0x7FFF1000 (Mapped as PROT_READ | PROT_WRITE)
 // Exec address:  0x00401000 (Mapped as PROT_READ | PROT_EXEC)
-// Both point to identical physical RAM frames! Zero mprotect() syscall penalty.`}
+// Both aliases refer to the same backing pages. This can avoid repeated permission transitions;
+// setup, synchronization, and platform-specific cache maintenance still have costs.`}
               </pre>
             </div>
           )}
@@ -213,7 +218,7 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
                 ? 'border-amber-500/50 bg-amber-950/40 text-amber-300'
                 : 'border-emerald-500/50 bg-emerald-950/40 text-emerald-300'
             }`}>
-              <strong>Kernel Diagnostic:</strong> {simulatedExecutionResult}
+              <strong>Simulated Diagnostic:</strong> {simulatedExecutionResult}
             </div>
           )}
         </div>
@@ -229,7 +234,7 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
         </div>
 
         <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-          Modern CPUs feature a Harvard architecture at the L1 cache level: separate <strong>L1 Data Cache (L1-D)</strong> and <strong>L1 Instruction Cache (L1-I)</strong>.
+          Many modern CPUs have separate instruction and data caches at some levels. The exact coherency model and required synchronization are architecture-specific.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs pt-2">
@@ -243,14 +248,14 @@ __builtin___clear_cache((char*)buf, (char*)buf + 4096);
           <div className="p-3.5 rounded-xl border border-neutral-800 bg-neutral-950">
             <span className="text-amber-400 font-bold block mb-1">2. The Prefetch Lag (L1-I)</span>
             <p className="text-neutral-400 text-[11px]">
-              The CPU Instruction Fetch Unit reads from L1 Instruction Cache. L1-I does not automatically snoop L1-D writes on architectures like ARM64 and RISC-V!
+              Instruction-fetch coherency after code writes varies by architecture. Some systems require explicit cache maintenance and instruction synchronization; do not generalize one cache model to every ARM64 or RISC-V implementation.
             </p>
           </div>
 
           <div className="p-3.5 rounded-xl border border-neutral-800 bg-neutral-950">
             <span className="text-cyan-400 font-bold block mb-1">3. The Cache Flush Remedy</span>
             <p className="text-neutral-400 text-[11px]">
-              Calling <code className="text-white">__builtin___clear_cache()</code> flushes the modified data lines to unified L2 cache and invalidates stale L1-I cache lines.
+              A compiler/runtime-supported cache-maintenance API such as <code className="text-white">__builtin___clear_cache()</code> emits target-specific operations where required. Exact semantics depend on the compiler, CPU, and operating system.
             </p>
           </div>
         </div>

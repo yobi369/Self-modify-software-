@@ -124,19 +124,19 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
       mutatedCodeHashSha256: `sha256:${mutHash}`,
       mutationTechnique: tech,
       language,
-      behaviorPreserved: true,
+      behaviorPreserved: false,
       portabilityAudit: {
-        cacheCoherencyValidated: Boolean(analysis?.cacheCoherency),
-        wxDepCompliant: analysis?.riskLevel !== 'CRITICAL',
+        cacheCoherencyValidated: false,
+        wxDepCompliant: false,
         osConstraints: analysis?.osConstraints || [
           'Linux: mprotect() 4096-byte page boundary alignment',
           'Windows: VirtualProtect() with PAGE_EXECUTE_READWRITE',
           'ARM64/macOS: __builtin___clear_cache() or FlushInstructionCache()',
         ],
-        riskLevel: analysis?.riskLevel || 'LOW',
+        riskLevel: analysis?.riskLevel || 'MEDIUM',
       },
       explanation,
-      verifierSignature: `sig_ed25519_${computeSha256(`${recordId}:${timestamp}:${mutHash}`).slice(0, 32)}`,
+      verifierSignature: 'UNSIGNED — SHA-256 is an integrity digest, not a digital signature.',
     };
   };
 
@@ -156,7 +156,8 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
       });
 
       if (!response.ok) {
-        throw new Error(`Server returned status ${response.status}`);
+        const failure = await response.json().catch(() => ({}));
+        throw new Error(failure.error || `Server returned status ${response.status}`);
       }
 
       const data = await response.json();
@@ -203,10 +204,14 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
       }
 
       const data = await response.json();
-      const mutatedCode = data.mutatedCode || inputCode;
-      const technique = data.technique || mutationType;
-      const explanation = data.explanation || 'Variant generated preserving control-flow invariants.';
-      const behaviorPreserved = data.behaviorPreserved ?? true;
+      if (typeof data.mutatedCode !== 'string' || !data.mutatedCode.trim() || data.verificationStatus !== 'NOT_VERIFIED') {
+        throw new Error('The provider did not return a valid, explicitly unverified candidate.');
+      }
+      const mutatedCode = data.mutatedCode;
+      const technique = data.technique;
+      const explanation = data.explanation;
+      // Behavioural equivalence is never inferred from an AI response.
+      const behaviorPreserved = false;
 
       setMutationResult({
         mutatedCode,
@@ -251,7 +256,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
               <Sparkles className="w-3 h-3 text-emerald-400" />
               AI Metamorphic Intelligence
             </span>
-            <span className="text-xs font-mono text-neutral-400">Provider-Neutral Research Engine</span>
+            <span className="text-xs font-mono text-neutral-400">Optional Gemini API · disabled in deployed builds</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-mono font-bold text-white mt-1">
             AI METAMORPHIC ARCHITECT
@@ -290,7 +295,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
               <span className="text-emerald-300 font-bold block text-[11px]">Analyze code</span>
-              <span className="text-[10px] text-neutral-400">Deep runtime opcode &amp; AST analysis</span>
+              <span className="text-[10px] text-neutral-400">Provider-assisted source review; no AST parsing or runtime execution</span>
             </div>
           </div>
           <div className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-900/40 text-neutral-300 flex items-start gap-2">
@@ -303,7 +308,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
           <div className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-900/40 text-neutral-300 flex items-start gap-2">
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
-              <span className="text-cyan-300 font-bold block text-[11px]">Suggest functionally equivalent variants</span>
+              <span className="text-cyan-300 font-bold block text-[11px]">Suggest candidate code variants</span>
               <span className="text-[10px] text-neutral-400">Instruction substitution &amp; dead-code jitter</span>
             </div>
           </div>
@@ -311,14 +316,14 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
               <span className="text-teal-300 font-bold block text-[11px]">Explain the transformation</span>
-              <span className="text-[10px] text-neutral-400">Semantics &amp; invariant preservation proof</span>
+              <span className="text-[10px] text-neutral-400">Requires independent semantic and regression testing</span>
             </div>
           </div>
           <div className="p-2.5 rounded-lg border border-neutral-800 bg-neutral-900/40 text-neutral-300 flex items-start gap-2">
             <span className="text-emerald-400 font-bold shrink-0">→</span>
             <div>
-              <span className="text-amber-300 font-bold block text-[11px]">Generate an auditable mutation record</span>
-              <span className="text-[10px] text-neutral-400">Cryptographic SHA-256 seal &amp; JSON digest</span>
+              <span className="text-amber-300 font-bold block text-[11px]">Generate a local mutation record</span>
+              <span className="text-[10px] text-neutral-400">Local SHA-256 digests; unsigned and not independently verified</span>
             </div>
           </div>
         </div>
@@ -368,7 +373,9 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
             </button>
 
             <div className="flex items-center gap-2">
+              <label htmlFor="mutation-strategy" className="sr-only">Mutation strategy</label>
               <select
+                id="mutation-strategy"
                 value={mutationType}
                 onChange={(e) => setMutationType(e.target.value)}
                 className="bg-neutral-900 border border-neutral-700 text-emerald-300 text-xs font-mono px-3 py-2 rounded-xl focus:outline-none cursor-pointer"
@@ -490,7 +497,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
                 </button>
               </div>
 
-              <pre className="p-3.5 rounded-xl border border-neutral-800 bg-black font-mono text-xs text-cyan-300/90 overflow-x-auto max-h-[200px] leading-relaxed shadow-inner">
+              <pre tabIndex={0} className="p-3.5 rounded-xl border border-neutral-800 bg-black font-mono text-xs text-cyan-300/90 overflow-x-auto max-h-[200px] leading-relaxed shadow-inner">
                 {mutationResult.mutatedCode}
               </pre>
 
@@ -508,7 +515,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
                 <div className="flex items-center gap-2">
                   <FileCheck className="w-4 h-4 text-amber-400" />
                   <h3 className="font-mono font-bold text-sm text-white uppercase">
-                    AUDITABLE MUTATION RECORD
+                    LOCAL MUTATION RECORD (UNSIGNED)
                   </h3>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -537,10 +544,7 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
               <div className="space-y-1.5 text-xs font-mono">
                 <div className="flex items-center justify-between text-[11px] text-neutral-400">
                   <span>Record ID: <strong className="text-white">{auditableRecord.recordId}</strong></span>
-                  <span className="text-emerald-400 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" />
-                    Behavior Preserved
-                  </span>
+                  <span className="text-amber-400">Equivalence: NOT VERIFIED</span>
                 </div>
 
                 <div className="p-2.5 rounded-lg bg-black/60 border border-neutral-800 space-y-1 text-[11px]">
@@ -553,14 +557,14 @@ export const AiMetamorphicArchitect: React.FC<AiMetamorphicArchitectProps> = ({ 
                     <span className="text-cyan-300">{auditableRecord.mutatedCodeHashSha256}</span>
                   </div>
                   <div className="truncate">
-                    <span className="text-neutral-500">Signature: </span>
+                    <span className="text-neutral-500">Signing status: </span>
                     <span className="text-amber-400">{auditableRecord.verifierSignature}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between text-[10px] text-neutral-400 pt-1">
                   <span>Technique: <strong className="text-emerald-300">{auditableRecord.mutationTechnique}</strong></span>
-                  <span>W^X Status: <strong className="text-emerald-400">Compliant</strong></span>
+                  <span>W^X Status: <strong className="text-amber-400">Not audited</strong></span>
                 </div>
               </div>
             </div>

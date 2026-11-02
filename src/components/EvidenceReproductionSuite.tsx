@@ -46,7 +46,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
     let existingChain = getExperimentChain();
     if (existingChain.length === 0) {
       const initialReport = buildReproducibilityReport({
-        experimentId: 'exp_verified_anchor_001',
+        experimentId: 'exp_simulated_demo_001',
       });
       existingChain = [initialReport];
     }
@@ -116,15 +116,15 @@ export const EvidenceReproductionSuite: React.FC = () => {
                 Auditable Artifacts &amp; Reproduction
               </span>
               <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/50 text-emerald-400 font-mono text-[11px]">
-                Research-Grade Autonomous Software Studio Prototype
+                Research Demonstration Prototype
               </span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight">
-              EVIDENCE &amp; REPRODUCTION SUITE
+              EVIDENCE &amp; REPRODUCTION DEMONSTRATION
             </h1>
             <p className="text-sm text-neutral-300 font-sans max-w-3xl leading-relaxed">
-              Provides immutable cryptographic verification dossiers, tamper-evident SHA-256 hash chains, independent zero-dependency Node.js CLI verification scripts, and Two One-Sided Tests (TOST) statistical equivalence analyses for peer review and offline audit.
+              Provides a browser-side demonstration of evidence record structure, SHA-256 digest linking, and reproducibility concepts. The current data is synthetic; runtime tests, independent reproduction, digital signatures, and authenticated provenance are not implemented.
             </p>
           </div>
 
@@ -137,7 +137,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
               className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-cyan-500/60 bg-cyan-950/60 hover:bg-cyan-900/70 text-cyan-300 font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(6,182,212,0.25)] cursor-pointer"
             >
               <FileCheck className="w-4 h-4 text-cyan-400" />
-              <span>Public Experiment Report</span>
+              <span>Public Experiment Report (Simulation)</span>
             </button>
 
             <button
@@ -150,7 +150,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
               ) : (
                 <Scale className="w-4 h-4 text-emerald-400" />
               )}
-              <span>Run TOST Reproduction Audit</span>
+              <span>Run Illustrative Reproduction (Not Evaluated)</span>
             </button>
           </div>
         </div>
@@ -164,8 +164,8 @@ export const EvidenceReproductionSuite: React.FC = () => {
             Prototype Scope &amp; Boundary Notice
           </div>
           <p className="leading-relaxed">
-            This system is explicitly designated as a <strong>Research-Grade Autonomous Software Studio Prototype</strong>. 
-            All performance speedups, rollback guarantees, membrane boundaries, and statistical equivalence conclusions remain strictly scoped to the empirical test harness, synthetic adversarial vectors, and deterministic verification suites. This prototype does not claim to be an unconstrained general-purpose secure execution environment.
+            This system is explicitly designated as a <strong>Research Prototype</strong>. 
+            The current records are synthetic demonstrations. No real performance speedup, rollback guarantee, runtime isolation, or statistical equivalence conclusion has been established. Candidate execution remains disabled.
           </p>
         </div>
       </div>
@@ -176,13 +176,13 @@ export const EvidenceReproductionSuite: React.FC = () => {
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
             <span className="text-[10px] font-mono text-neutral-400 uppercase block">Active Experiment</span>
             <span className="font-mono text-xs font-bold text-white block truncate">{activeReport.experimentId}</span>
-            <span className="text-[10px] text-emerald-400 font-mono">Chain Block #{activeReport.chainIndex}</span>
+            <span className="text-[10px] text-emerald-400 font-mono">Demo Block #{activeReport.chainIndex}</span>
           </div>
 
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
-            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Benchmark Speedup</span>
+            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Measured Speedup</span>
             <span className="font-mono text-base font-bold text-emerald-300 block">
-              {activeReport.statistics.speedupFactorOnDefinedWorkload}×
+              {activeReport.statistics.speedupFactorOnDefinedWorkload === null ? "NOT MEASURED" : `${activeReport.statistics.speedupFactorOnDefinedWorkload}×`}
             </span>
             <span className="text-[10px] text-neutral-400 font-mono">
               N = {activeReport.statistics.sampleCount} samples
@@ -190,7 +190,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
-            <span className="text-[10px] font-mono text-neutral-400 uppercase block">95% Confidence Interval</span>
+            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Illustrative Range (Not Inferential)</span>
             <span className="font-mono text-xs font-bold text-cyan-300 block">
               [{activeReport.statistics.confidenceInterval95Us[0]}, {activeReport.statistics.confidenceInterval95Us[1]}] μs
             </span>
@@ -198,33 +198,33 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl border border-neutral-800 bg-[#070b0e] space-y-1">
-            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Tamper-Evident Seal</span>
+            <span className="text-[10px] font-mono text-neutral-400 uppercase block">Record Integrity Digest</span>
             <span className="font-mono text-xs font-bold text-emerald-400 block truncate">
               {activeReport.evidenceIntegrityHash.slice(0, 16)}...
             </span>
-            <span className="text-[10px] text-emerald-400 font-mono">Verified SHA-256</span>
+            <span className="text-[10px] text-emerald-400 font-mono">Client-side SHA-256 digest</span>
           </div>
         </div>
       )}
 
-      {/* Main Grid: Cryptographic Chain & Offline Verification Script */}
+      {/* Main Grid: Local Digest Chain & Record Checker */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Tamper-Evident Hash Chain Ledger */}
+        {/* Left Column: Client-Side Hash-Chain Demonstration */}
         <div className="lg:col-span-6 rounded-2xl border border-neutral-800 bg-[#070b0e] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-cyan-400" />
               <h2 className="font-mono font-bold text-sm text-white uppercase">
-                Cryptographic Evidence Chain
+                Record Digest Chain (Unsigned)
               </h2>
             </div>
             <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-cyan-500/40 bg-cyan-950/40 text-cyan-300">
-              {chain.length} Block{chain.length !== 1 ? 's' : ''} Linked
+              {chain.length} Block{chain.length !== 1 ? 's' : ''} Locally Linked
             </span>
           </div>
 
           <p className="text-xs text-neutral-400 font-sans">
-            Every experiment execution computes a canonical SHA-256 digest linking back to the parent block, guaranteeing that benchmark data and security verdicts cannot be modified retroactively.
+            This browser-side demonstration computes a SHA-256 digest linked to the previous in-memory record. It can detect accidental changes, but it is not signed, does not authenticate the author, and cannot prove that a benchmark or security test actually ran.
           </p>
 
           <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
@@ -261,9 +261,9 @@ export const EvidenceReproductionSuite: React.FC = () => {
                     <span className="text-neutral-400">{report.previousEvidenceHash}</span>
                   </div>
                   <div className="flex items-center justify-between pt-1 border-t border-neutral-800/60 text-[10px]">
-                    <span>Speedup: <strong className="text-white">{report.statistics.speedupFactorOnDefinedWorkload}×</strong></span>
-                    <span>Mean: <strong className="text-white">{report.statistics.meanLatencyUs} μs</strong></span>
-                    <span>Tests: <strong className="text-emerald-400">{report.testResults.passedCount}/{report.testResults.totalTests}</strong></span>
+                    <span>Measured speedup: <strong className="text-amber-300">NOT MEASURED</strong></span>
+                    <span>Synthetic mean: <strong className="text-white">{report.statistics.meanLatencyUs} μs</strong></span>
+                    <span>Recorded test suites: <strong className="text-amber-300">{report.testResults.totalTests}</strong></span>
                   </div>
                 </div>
               </div>
@@ -271,13 +271,13 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Independent Node.js Verifier CLI */}
+        {/* Right Column: Offline Record Digest Checker CLI */}
         <div className="lg:col-span-6 rounded-2xl border border-neutral-800 bg-[#070b0e] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-emerald-400" />
               <h2 className="font-mono font-bold text-sm text-white uppercase">
-                Independent Node.js Verifier
+                Offline Record Digest Checker
               </h2>
             </div>
             <div className="flex items-center gap-1.5">
@@ -302,12 +302,12 @@ export const EvidenceReproductionSuite: React.FC = () => {
           </div>
 
           <p className="text-xs text-neutral-400 font-sans">
-            Export a standalone, zero-dependency Node.js script. Anyone can run this offline in any terminal to independently verify cryptographic hash chains, calculate t-statistics, and replicate the results without relying on a browser or cloud backend.
+            Export a standalone script that recomputes the SHA-256 digest in an exported JSON record. It does not run candidate code, calculate a valid inferential test, or authenticate who created the record.
           </p>
 
           {/* Quick Terminal Run Snippet */}
           <div className="p-3 rounded-xl border border-neutral-800 bg-black font-mono text-xs text-emerald-400 flex items-center justify-between">
-            <span>$ node verify-evidence.js</span>
+            <span>$ node verify-evidence.mjs evidence-report.json</span>
             <button
               onClick={handleCopyCliCommand}
               className="text-neutral-400 hover:text-white text-[11px] flex items-center gap-1"
@@ -319,7 +319,7 @@ export const EvidenceReproductionSuite: React.FC = () => {
 
           {activeReport && (
             <div className="relative">
-              <pre className="p-3.5 rounded-xl border border-neutral-800 bg-[#030608] font-mono text-[11px] text-cyan-300/90 overflow-x-auto max-h-[340px] leading-relaxed shadow-inner">
+              <pre tabIndex={0} className="p-3.5 rounded-xl border border-neutral-800 bg-[#030608] font-mono text-[11px] text-cyan-300/90 overflow-x-auto max-h-[340px] leading-relaxed shadow-inner">
                 {generateNodeCliVerificationScript(activeReport).slice(0, 1800)}...
               </pre>
               <div className="absolute bottom-2 right-3 text-[10px] font-mono text-neutral-500 bg-black/80 px-2 py-0.5 rounded border border-neutral-800">

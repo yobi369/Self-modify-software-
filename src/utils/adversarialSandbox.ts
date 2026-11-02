@@ -1,4 +1,4 @@
-// Hermetic JavaScript execution membrane for the tested threat model with AST Sanitization, Deep Membrane Proxy, and 9-Vector Adversarial Penetration Suite
+// Static lexical pattern screening and adversarial payload fixtures. Runtime execution is intentionally disabled.
 
 export interface AdversarialVector {
   id: string;
@@ -19,6 +19,7 @@ export interface PenetrationTestResult {
   runtimeErrorCaught?: string;
   leakedData?: string;
   executionTimeMs: number;
+  executionStatus: 'NOT_EXECUTED';
 }
 
 // 9 Adversarial Attack Vectors to test sandbox robustness
@@ -35,7 +36,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   }
   return { uniqueCount: items.length, frequencies: {}, firstUnique: items[0] || null, lastUnique: items[items.length-1] || null };
 }`,
-    expectedOutcome: 'Watchdog catches failure rate in production telemetry & executes automated canary rollback.'
+    expectedOutcome: 'Not executed here. Requires an isolated runner and a separately tested canary service.'
   },
   {
     id: 'ADV-02',
@@ -49,7 +50,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   }
   return { uniqueCount: count, frequencies: {} };
 }`,
-    expectedOutcome: 'Execution cycle-counter breaker halts execution at 100,000 iterations without freezing host UI.'
+    expectedOutcome: 'Not executed here. Browser-thread denial-of-service testing requires an isolated, terminable runner.'
   },
   {
     id: 'ADV-03',
@@ -63,7 +64,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   }
   return { uniqueCount: heapFlood.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Memory allocation limit (10MB buffer ceiling) intercepts and rejects allocation.'
+    expectedOutcome: 'Not executed here. Memory exhaustion testing requires external resource limits.'
   },
   {
     id: 'ADV-04',
@@ -76,7 +77,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   items.customInjectedField = 9999;
   return { uniqueCount: items.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Deep Object.freeze ensures input arrays are strictly immutable; throws or no-ops safely.'
+    expectedOutcome: 'Not executed here. Immutability behaviour requires a controlled runtime test.'
   },
   {
     id: 'ADV-05',
@@ -90,7 +91,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   escapedGlobal.__EXPLOIT_SUCCESSFUL = true;
   return { uniqueCount: items.length, frequencies: { leaked: !!escapedGlobal.__EXPLOIT_SUCCESSFUL } };
 }`,
-    expectedOutcome: 'AST sanitizer and Function.prototype.constructor proxy traps block anonymous constructor synthesis.'
+    expectedOutcome: 'Not executed here. Constructor escape resistance has not been verified.'
   },
   {
     id: 'ADV-06',
@@ -102,7 +103,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   var token = g.localStorage ? g.localStorage.getItem('token') : null;
   return { uniqueCount: items.length, frequencies: { stolenToken: token } };
 }`,
-    expectedOutcome: 'Lexical shadowing + Membrane Proxy poisons all global scope references with undefined. No global access observed across the defined adversarial test suite.'
+    expectedOutcome: 'Not executed here. Global access and data exfiltration resistance have not been verified.'
   },
   {
     id: 'ADV-07',
@@ -115,7 +116,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   } catch(e) {}
   return { uniqueCount: items.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Static AST scanner identifies dynamic import token and rejects before compilation.'
+    expectedOutcome: 'Lexical scanner may flag import syntax; no dynamic execution test is performed.'
   },
   {
     id: 'ADV-08',
@@ -127,7 +128,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   var res = eval(evilCode);
   return { uniqueCount: res, frequencies: {} };
 }`,
-    expectedOutcome: 'Shadowed eval() is bound to a strict SecurityTrap that throws immediately upon invocation.'
+    expectedOutcome: 'Lexical scanner may flag eval syntax; no runtime interception is implemented.'
   },
   {
     id: 'ADV-09',
@@ -139,7 +140,7 @@ export const ADVERSARIAL_VECTORS: AdversarialVector[] = [
   Array.prototype.hacked = function() { return 1337; };
   return { uniqueCount: items.length, frequencies: {} };
 }`,
-    expectedOutcome: 'Pre-flight and post-flight prototype integrity checks detect and rollback any prototype mutations.'
+    expectedOutcome: 'Not executed here. Prototype mutation resistance has not been verified.'
   }
 ];
 
@@ -160,8 +161,8 @@ export function deepFreeze<T>(obj: T): T {
 
 import { MaliciousVerdictResult, FalsePositiveChallengeResult } from '../types';
 
-// AST and Lexical Static Validator with String Literal Neutralization
-export function staticAstSecurityScan(codeStr: string): { safe: boolean; reason?: string; violations: string[] } {
+// Conservative lexical pattern scanner with comment/string neutralization. This is not an AST parser or a security boundary.
+export function staticPatternScan(codeStr: string): { safe: boolean; reason?: string; violations: string[] } {
   const violations: string[] = [];
 
   // Strip single-line comments, multi-line comments, and string literals to prevent false positives
@@ -173,19 +174,19 @@ export function staticAstSecurityScan(codeStr: string): { safe: boolean; reason?
 
   // Check for dynamic import invocation
   if (/\bimport\s*\(/.test(strippedCode)) {
-    violations.push('AST_VIOLATION_DYNAMIC_IMPORT: Dynamic import() module loading is forbidden');
+    violations.push('STATIC_PATTERN_DYNAMIC_IMPORT: Dynamic import() module loading is forbidden');
   }
   // Check for eval invocation
   if (/\beval\s*\(/.test(strippedCode)) {
-    violations.push('AST_VIOLATION_EVAL: Direct eval() invocation is forbidden');
+    violations.push('STATIC_PATTERN_EVAL: Direct eval() invocation is forbidden');
   }
   // Check for constructor traversal
   if (/\[\s*['"`]constructor['"`]\s*\]/.test(codeStr) || /\.constructor\s*\(\s*['"`]return/.test(codeStr)) {
-    violations.push('AST_VIOLATION_CONSTRUCTOR_TRAVERSAL: Function constructor traversal exploit detected');
+    violations.push('STATIC_PATTERN_CONSTRUCTOR_TRAVERSAL: Function constructor traversal exploit detected');
   }
   // Check for prototype pollution assignment
   if (/__proto__|prototype\s*\.\s*[a-zA-Z0-9_$]+\s*=/.test(strippedCode)) {
-    violations.push('AST_VIOLATION_PROTOTYPE_POLLUTION: Prototype mutation pattern detected');
+    violations.push('STATIC_PATTERN_PROTOTYPE_POLLUTION: Prototype mutation pattern detected');
   }
 
   return {
@@ -202,41 +203,28 @@ export function generateMachineReadableSecurityVerdict(
   code: string
 ): MaliciousVerdictResult {
   const t0 = performance.now();
-  const scan = staticAstSecurityScan(code);
-  const runtimeTraps: string[] = [];
-
-  let verdict: 'BLOCKED' | 'PERMITTED' = 'PERMITTED';
-
-  if (!scan.safe) {
-    verdict = 'BLOCKED';
-  } else {
-    // Attempt sandbox execution
-    const sandboxRun = runInHermeticSandbox(code, ['probe_token_alpha', 'probe_token_beta']);
-    if (!sandboxRun.success) {
-      verdict = 'BLOCKED';
-      runtimeTraps.push(sandboxRun.error || 'Hermetic Proxy Execution Trap Triggered');
-    }
-  }
-
-  const t1 = performance.now();
+  const scan = staticPatternScan(code);
+  const verdict: 'BLOCKED' | 'NOT_EVALUATED' = scan.safe ? 'NOT_EVALUATED' : 'BLOCKED';
+  const executionNotice = 'NOT_EXECUTED: No secure isolated execution service is configured.';
 
   const machineReadablePayload = {
-    schemaVersion: '2.4.0-sentinel',
+    schemaVersion: '3.0.0-research-prototype',
     verdict,
     testId,
     timestamp: new Date().toISOString(),
-    threatModelBoundary: 'Hermetic JavaScript execution membrane for the tested threat model',
-    globalAccessObserved: 'No global access observed across the defined adversarial test suite.',
+    evidenceMode: 'STATIC_ANALYSIS_ONLY',
+    threatModelBoundary: 'Lexical pattern screening only; no runtime sandbox is provided.',
+    globalAccessObserved: 'NOT_TESTED',
     securityGates: {
-      astScanner: scan.safe ? 'PASS' : 'VIOLATION_DETECTED',
-      hermeticScopeTrap: runtimeTraps.length === 0 ? 'PASS' : 'TRIP_ACTIVATED',
-      immutabilityGuard: 'ENFORCED_DEEP_FREEZE',
-      loopBreaker: 'BOUND_100K_CYCLES'
+      lexicalPatternScan: scan.safe ? 'NO_KNOWN_PATTERN_DETECTED' : 'PATTERN_DETECTED',
+      runtimeExecution: 'NOT_EXECUTED',
+      isolationBoundary: 'UNAVAILABLE'
     },
-    quarantineLatencyMs: parseFloat((t1 - t0).toFixed(3)),
-    findingsCount: scan.violations.length + runtimeTraps.length,
-    findings: [...scan.violations, ...runtimeTraps],
-    actionTaken: verdict === 'BLOCKED' ? 'QUARANTINE_MUTANT_DISCARD_BYTECODE' : 'ALLOW_TO_BENCHMARK_GATE'
+    quarantineLatencyMs: parseFloat((performance.now() - t0).toFixed(3)),
+    findingsCount: scan.violations.length,
+    findings: scan.violations,
+    executionNotice,
+    actionTaken: scan.safe ? 'HOLD_FOR_ISOLATED_REVIEW' : 'BLOCK_STATICALLY_AND_QUARANTINE'
   };
 
   return {
@@ -244,10 +232,10 @@ export function generateMachineReadableSecurityVerdict(
     name,
     sourceCode: code,
     verdict,
-    astViolations: scan.violations,
-    runtimeTrapsTriggered: runtimeTraps,
+    staticPatternFindings: scan.violations,
+    runtimeTrapsTriggered: [executionNotice],
     machineReadablePayload,
-    quarantineLatencyMs: parseFloat((t1 - t0).toFixed(3))
+    quarantineLatencyMs: parseFloat((performance.now() - t0).toFixed(3))
   };
 }
 
@@ -318,172 +306,77 @@ export const LEGITIMATE_CHALLENGE_SNIPPETS = [
 // Runs the False-Positive Challenge
 export function runFalsePositiveChallenge(): FalsePositiveChallengeResult {
   const results = LEGITIMATE_CHALLENGE_SNIPPETS.map((snip) => {
-    const verdict = generateMachineReadableSecurityVerdict(snip.id, snip.description, snip.code);
+    const scan = staticPatternScan(snip.code);
     return {
       id: snip.id,
       description: snip.description,
       code: snip.code,
       benignFeature: snip.benignFeature,
-      result: verdict.verdict === 'PERMITTED' ? ('PASS' as const) : ('FALSE_POSITIVE' as const)
+      result: scan.safe ? ('NOT_EVALUATED' as const) : ('FALSE_POSITIVE' as const)
     };
   });
 
-  const passed = results.filter((r) => r.result === 'PASS').length;
-  const blocked = results.length - passed;
-  const fpr = parseFloat(((blocked / results.length) * 100).toFixed(1));
+  const falsePositives = results.filter((result) => result.result === 'FALSE_POSITIVE').length;
+  const fpr = parseFloat(((falsePositives / results.length) * 100).toFixed(1));
 
   return {
     totalLegitimateSnippets: results.length,
-    passedCount: passed,
-    blockedCount: blocked,
+    passedCount: 0,
+    blockedCount: falsePositives,
     falsePositiveRatePercent: fpr,
     snippets: results
   };
 }
 
-// Hermetic JavaScript execution membrane for the tested threat model with Loop-Breaker & Prototype Guard
-export function runInHermeticSandbox(
+// Runtime execution is disabled; use a dedicated isolated runner for dynamic testing.
+/**
+ * Compatibility wrapper retained for existing UI callers.
+ * This function deliberately DOES NOT execute source code. A browser JavaScript
+ * realm is not a security boundary, so runtime evaluation is disabled until a
+ * dedicated isolated execution service is implemented and independently tested.
+ */
+export function checkCandidateExecutionAvailability(
   codeStr: string,
-  args: any[],
-  maxIterations: number = 100000
+  _args: any[],
+  _maxIterations: number = 100000
 ): {
   success: boolean;
   result: any;
   error?: string;
   violations: string[];
   executionTimeMs: number;
+  executionStatus: 'NOT_EXECUTED';
 } {
   const t0 = performance.now();
-  const violations: string[] = [];
-
-  // 1. Static AST Scan
-  const astCheck = staticAstSecurityScan(codeStr);
-  if (!astCheck.safe) {
-    return {
-      success: false,
-      result: null,
-      error: astCheck.reason,
-      violations: [astCheck.reason || 'AST scan failed'],
-      executionTimeMs: performance.now() - t0
-    };
-  }
-
-  // 2. Snapshot prototype state before execution to detect pollution
-  const objectProtoKeysBefore = Object.getOwnPropertyNames(Object.prototype).length;
-  const arrayProtoKeysBefore = Object.getOwnPropertyNames(Array.prototype).length;
-
-  // 3. Inject loop-breaker instrumentation
-  // Transforms while/for loops to increment a step counter
-  let instrumentedCode = codeStr;
-  let counterVarName = `__cycle_counter_${Math.floor(Math.random() * 100000)}`;
-
-  // Wrap inside hermetic boundary
-  const sandboxWrapper = `
-    'use strict';
-    return (function(immutableArgs, maxCycles) {
-      let ${counterVarName} = 0;
-      function __checkCycle() {
-        ${counterVarName}++;
-        if (${counterVarName} > maxCycles) {
-          throw new Error('CYCLE_LIMIT_EXCEEDED: Loop breaker tripped at ' + maxCycles + ' iterations.');
-        }
-      }
-
-      // Poison global identifiers
-      const window = undefined;
-      const document = undefined;
-      const globalThis = undefined;
-      const process = undefined;
-      const localStorage = undefined;
-      const sessionStorage = undefined;
-      const fetch = undefined;
-      const XMLHttpRequest = undefined;
-      const WebSocket = undefined;
-      const eval = function() { throw new Error('EVAL_DISARMED: Dynamic code evaluation forbidden'); };
-      const Function = function() { throw new Error('FUNCTION_CTOR_DISARMED: Dynamic constructor synthesis forbidden'); };
-
-      // Helper for memory bounds
-      let __allocatedBytes = 0;
-
-      ${instrumentedCode.replace(/while\s*\((.*?)\)\s*\{/g, `while ($1) { __checkCycle(); `)}
-
-      if (typeof processData !== 'function') {
-        throw new Error('Target function "processData" was not defined in mutant.');
-      }
-
-      return processData(immutableArgs);
-    });
-  `;
-
-  try {
-    const factory = new Function(sandboxWrapper);
-    const sandboxRunner = factory();
-
-    // Deep clone and freeze input arguments to prevent argument mutation
-    const safeClonedArgs = deepFreeze(JSON.parse(JSON.stringify(args)));
-
-    const result = sandboxRunner(safeClonedArgs, maxIterations);
-    const t1 = performance.now();
-
-    // 4. Verify Prototype Integrity
-    const objectProtoKeysAfter = Object.getOwnPropertyNames(Object.prototype).length;
-    const arrayProtoKeysAfter = Object.getOwnPropertyNames(Array.prototype).length;
-    if (objectProtoKeysAfter !== objectProtoKeysBefore || arrayProtoKeysAfter !== arrayProtoKeysBefore) {
-      // Revert pollution immediately
-      throw new Error('PROTOTYPE_POLLUTION_DETECTED: Mutation modified standard Object/Array prototypes');
-    }
-
-    return {
-      success: true,
-      result,
-      violations: [],
-      executionTimeMs: parseFloat((t1 - t0).toFixed(3))
-    };
-  } catch (err: any) {
-    const t1 = performance.now();
-    return {
-      success: false,
-      result: null,
-      error: err.message || 'Execution error in sandbox',
-      violations: [err.message || 'Unknown sandbox failure'],
-      executionTimeMs: parseFloat((t1 - t0).toFixed(3))
-    };
-  }
+  const scan = staticPatternScan(codeStr);
+  const executionNotice = 'EXECUTION_DISABLED: Browser JavaScript is not a secure sandbox.';
+  return {
+    success: false,
+    result: null,
+    error: executionNotice,
+    violations: [...scan.violations, executionNotice],
+    executionTimeMs: parseFloat((performance.now() - t0).toFixed(3)),
+    executionStatus: 'NOT_EXECUTED'
+  };
 }
 
-// Executes all 9 adversarial penetration tests against the sandbox
+// Static screening of the bundled adversarial examples. No payload is executed.
 export function runAdversarialPenetrationSuite(): PenetrationTestResult[] {
-  const results: PenetrationTestResult[] = [];
-  const testInput = ['test_token_1', 'test_token_2', 'test_token_3'];
-
-  for (const vector of ADVERSARIAL_VECTORS) {
-    const t0 = performance.now();
-    const run = runInHermeticSandbox(vector.payload, testInput, 50000);
-    const t1 = performance.now();
-
-    // In an adversarial test, "success" for the sandbox means the attack was BLOCKED or QUARANTINED
-    const wasBlocked = !run.success || run.violations.length > 0;
-    let interception = 'Hermetic JavaScript Execution Membrane & Scope Trap';
-    
-    if (vector.category === 'IMPORT') interception = 'Static AST Pre-Scan';
-    else if (vector.category === 'EVAL') interception = 'Shadowed Disarmed Eval Trap';
-    else if (vector.category === 'ESCAPE') interception = 'Constructor Traversal Barrier';
-    else if (vector.category === 'DOS') interception = 'Cycle Counter Loop Breaker';
-    else if (vector.category === 'IMMUTABILITY') interception = 'Deep Object.freeze Barrier';
-    else if (vector.category === 'POLLUTION') interception = 'Prototype Integrity Guardian';
-    else if (vector.category === 'EXCEPTION') interception = 'Exception Catch & Anomaly Watchdog';
-
-    results.push({
+  return ADVERSARIAL_VECTORS.map((vector) => {
+    const scan = staticPatternScan(vector.payload);
+    const blocked = !scan.safe;
+    return {
       vectorId: vector.id,
       name: vector.name,
       category: vector.category,
-      blocked: wasBlocked,
+      blocked,
       quarantined: true,
-      interceptionMechanism: interception,
-      runtimeErrorCaught: run.error || undefined,
-      executionTimeMs: parseFloat((t1 - t0).toFixed(2))
-    });
-  }
-
-  return results;
+      interceptionMechanism: blocked
+        ? 'Lexical pattern detected; candidate held'
+        : 'No known lexical pattern detected; runtime evaluation still disabled',
+      runtimeErrorCaught: 'NOT_EXECUTED: No isolated runtime is configured.',
+      executionTimeMs: 0,
+      executionStatus: 'NOT_EXECUTED'
+    };
+  });
 }

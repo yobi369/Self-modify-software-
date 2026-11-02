@@ -1,4 +1,4 @@
-// Rigorous Statistical JIT Benchmark Engine with Warmup, Multi-Trial Sampling, Variance & 95% CI
+// Descriptive browser microbenchmark for fixed built-in demo functions. JIT tier state and statistical significance are not established.
 
 export interface StatisticalMetric {
   sampleCount: number;
@@ -10,7 +10,7 @@ export interface StatisticalMetric {
   confidenceInterval95: [number, number];
   coefficientOfVariationPercent: number; // CV % = (stdDev / mean) * 100
   opsPerSec: number;
-  jitState: 'TurboFan Monomorphic JIT (Tier 2)' | 'Sparkplug Baseline' | 'Ignition Bytecode Interpreter';
+  jitState: 'NOT_OBSERVED';
   isStatisticallySignificant: boolean;
 }
 
@@ -19,13 +19,13 @@ export interface ComparativeBenchmarkReport {
   mutant: StatisticalMetric;
   speedupMultiplier: number;
   latencyDeltaPercent: number;
-  pValueEstimate: number;
+  pValueEstimate: number | null;
   confidenceOverlap: boolean;
   recommendation: 'PROMOTE' | 'REJECT' | 'INCONCLUSIVE_NOISE';
   diagnosticNote: string;
 }
 
-// Generates representative real-world token workload
+// Generates a deterministic synthetic token fixture; it is not a captured real-world workload.
 export function generateBenchmarkDataset(size: number = 500): string[] {
   const dictionary = [
     'syscall', 'mprotect', 'rip', 'rax', 'rbx', 'rcx', 'rdx', 'rsp', 'rbp', 'rsi',
@@ -39,7 +39,7 @@ export function generateBenchmarkDataset(size: number = 500): string[] {
   return dataset;
 }
 
-// Executes a statistical benchmark with warm-up phase & multi-trial sampling
+// Collects descriptive timing samples in the current browser session; results are environment-dependent and not production evidence.
 export function runStatisticalBenchmark(
   fn: (items: any[]) => any,
   dataset: string[],
@@ -47,7 +47,7 @@ export function runStatisticalBenchmark(
   trialEpochs: number = 5,
   samplesPerEpoch: number = 40
 ): StatisticalMetric {
-  // 1. Warm-Up Phase: Ensure V8 TurboFan tier-up & monomorphic IC optimization
+  // 1. Warm-up phase. This does not guarantee or observe any particular JavaScript engine JIT tier.
   for (let w = 0; w < warmupIterations; w++) {
     fn(dataset);
   }
@@ -71,6 +71,9 @@ export function runStatisticalBenchmark(
   // Sort samples for percentile calculation
   samplesUs.sort((a, b) => a - b);
   const n = samplesUs.length;
+  if (n < 2) {
+    throw new Error('Insufficient timer resolution: fewer than two positive-duration samples were collected.');
+  }
 
   // Mean
   const sum = samplesUs.reduce((acc, val) => acc + val, 0);
@@ -104,12 +107,12 @@ export function runStatisticalBenchmark(
     confidenceInterval95: [ciLower, ciUpper],
     coefficientOfVariationPercent: cvPercent,
     opsPerSec,
-    jitState: cvPercent < 25 ? 'TurboFan Monomorphic JIT (Tier 2)' : 'Sparkplug Baseline',
-    isStatisticallySignificant: cvPercent < 30
+    jitState: 'NOT_OBSERVED',
+    isStatisticallySignificant: false
   };
 }
 
-// Compare two statistical benchmark results using Confidence Intervals & Welch's T-test heuristic
+// Compare descriptive timing summaries. This is not a Welch test, formal significance test, or promotion gate.
 export function compareBenchmarks(
   baseline: StatisticalMetric,
   mutant: StatisticalMetric
@@ -118,19 +121,19 @@ export function compareBenchmarks(
   const latencyDelta = parseFloat((((mutant.meanUs - baseline.meanUs) / baseline.meanUs) * 100).toFixed(1));
 
   // Confidence Interval overlap check
-  // If baseline CI lower is strictly greater than mutant CI upper, the improvement is statistically significant at p < 0.05
+  // Non-overlapping descriptive intervals are not a formal inferential test.
   const isConfidenceDistinct = mutant.confidenceInterval95[1] < baseline.confidenceInterval95[0];
-  const pValue = isConfidenceDistinct ? 0.001 : 0.12;
+  const pValue: number | null = null;
 
   let recommendation: 'PROMOTE' | 'REJECT' | 'INCONCLUSIVE_NOISE' = 'INCONCLUSIVE_NOISE';
   let diagnostic = '';
 
   if (latencyDelta < -10 && isConfidenceDistinct) {
-    recommendation = 'PROMOTE';
-    diagnostic = `Statistically significant speedup (+${speedup}x). Confidence intervals do not overlap (p < 0.01). V8 JIT monomorphism verified.`;
+    recommendation = 'INCONCLUSIVE_NOISE';
+    diagnostic = `Provisional apparent speedup (+${speedup}x) on this browser workload. Confidence intervals are descriptive only; no formal significance test or JIT-state inspection was performed. Not eligible for automatic promotion.`;
   } else if (latencyDelta > 5) {
     recommendation = 'REJECT';
-    diagnostic = `Performance regressed by +${latencyDelta}%. Mutant rejected by statistical gate.`;
+    diagnostic = `The second built-in demo function was slower by ${latencyDelta}%. This descriptive heuristic labels the comparison REJECT; no inferential test or production promotion decision was performed.`;
   } else {
     recommendation = 'INCONCLUSIVE_NOISE';
     diagnostic = `Delta is within noise envelope (CV: ${mutant.coefficientOfVariationPercent}% vs ${baseline.coefficientOfVariationPercent}%). Inconclusive variance.`;

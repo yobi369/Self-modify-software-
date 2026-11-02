@@ -72,7 +72,7 @@ export interface MutationCheckpoint {
   technique: string;
   code: string;
   status: 'active' | 'archived' | 'rolled_back' | 'rejected';
-  metrics: {
+  metrics?: {
     latencyUs: number;
     opsPerSec: number;
     memoryKb: number;
@@ -139,7 +139,7 @@ export interface StateContinuityResult {
   reloadsDetected: number;
   domRemountsDetected: number;
   heapReferencePreserved: boolean;
-  status: 'VERIFIED' | 'FAILED';
+  status: 'VERIFIED' | 'FAILED' | 'SIMULATED';
   log: string[];
 }
 
@@ -147,8 +147,8 @@ export interface MutationIdentityResult {
   closureIdBefore: string;
   closureIdAfter: string;
   callableReferencesDiffer: boolean;
-  parentContextPreserved: boolean;
-  status: 'VERIFIED' | 'FAILED';
+  parentContextPreserved: boolean | null;
+  status: 'VERIFIED' | 'FAILED' | 'SIMULATED';
   proof: string;
 }
 
@@ -156,8 +156,8 @@ export interface MaliciousVerdictResult {
   testId: string;
   name: string;
   sourceCode: string;
-  verdict: 'BLOCKED' | 'PERMITTED';
-  astViolations: string[];
+  verdict: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
+  staticPatternFindings: string[];
   runtimeTrapsTriggered: string[];
   machineReadablePayload: Record<string, any>;
   quarantineLatencyMs: number;
@@ -167,21 +167,21 @@ export interface FalsePositiveChallengeResult {
   totalLegitimateSnippets: number;
   passedCount: number;
   blockedCount: number;
-  falsePositiveRatePercent: number;
+  falsePositiveRatePercent: number | null;
   snippets: {
     id: string;
     description: string;
     code: string;
     benignFeature: string;
-    result: 'PASS' | 'FALSE_POSITIVE';
+    result: 'PASS' | 'FALSE_POSITIVE' | 'NOT_EVALUATED';
   }[];
 }
 
 export interface BlindRegressionResult {
-  stage: 'UNIT_TESTS' | 'BENCHMARK' | 'PROMOTED' | 'PRODUCTION_TRAFFIC' | 'REGRESSION_DETECTED' | 'ROLLBACK_RESTORED';
+  stage: 'UNIT_TESTS' | 'BENCHMARK' | 'SIMULATED_PROMOTION' | 'SIMULATED_WORKLOAD' | 'REGRESSION_DETECTED' | 'ROLLBACK_RESTORED';
   unitTestsPassed: boolean;
   benchmarkPassed: boolean;
-  promotedToLive: boolean;
+  simulatedPromotion: boolean;
   trafficProcessedBeforeFault: number;
   faultTriggerPattern: string;
   watchdogTriggered: boolean;
@@ -245,18 +245,19 @@ export interface ReproducibilityEvidenceReport {
     p99LatencyUs: number;
     standardDeviationUs: number;
     confidenceInterval95Us: [number, number];
-    speedupFactorOnDefinedWorkload: number;
+    speedupFactorOnDefinedWorkload: number | null;
   };
   securityFindings: {
     testedVectorsSummary: string;
     isolationMechanism: string;
     globalAccessObserved: string;
-    astViolations: string[];
+    staticPatternFindings: string[];
     runtimeTrapsTriggered: string[];
-    membraneVerdict: 'BLOCKED' | 'PERMITTED';
-    falsePositiveRateOnLegitCorpus: number;
+    membraneVerdict: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
+    falsePositiveRateOnLegitCorpus: number | null;
   };
-  promotionDecision: 'PROMOTED' | 'REJECTED' | 'QUARANTINED' | 'ROLLED_BACK';
+  evidenceMode: 'SIMULATED';
+  promotionDecision: 'PROMOTED' | 'REJECTED' | 'QUARANTINED' | 'ROLLED_BACK' | 'SIMULATED';
   decisionReason: string;
   watchdogEvents: {
     monitored: boolean;
@@ -273,14 +274,7 @@ export interface ReproducibilityEvidenceReport {
     restoredTargetHash: string;
     restorationLatencyMs: number;
   };
-  rollbackEvent: {
-    watchdogFired: boolean;
-    triggerReason: string | null;
-    restoredTarget: string;
-    restorationLatencyMs: number;
-  };
-  finalState: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE';
-  finalDisposition: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE';
+  finalState: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE' | 'SIMULATED';
   // Cryptographic Hash Chain & Tamper-Evident Experiment Seal
   chainIndex: number;
   previousEvidenceHash: string;
@@ -292,13 +286,14 @@ export interface ReproducibilityEvidenceReport {
     parentExperimentId: string;
     parentEvidenceIntegrityHash: string;
     convergenceDeltaMeanPercent: number;
-    confidenceIntervalsOverlap: boolean;
-    invariantParityPreserved: boolean;
-    verdict: 'CONVERGED' | 'DIVERGED';
+    confidenceIntervalsOverlap: boolean | null;
+    invariantParityPreserved: boolean | null;
+    verdict: 'CONVERGED' | 'DIVERGED' | 'NOT_EVALUATED';
   };
 }
 
 export interface TostEquivalenceResult {
+  status: 'NOT_EVALUATED' | 'EVALUATED';
   h0Statement: string;
   h1Statement: string;
   equivalenceMarginPercent: number;
@@ -360,7 +355,8 @@ export interface ReproductionComparisonReport {
     hashesIdentical: boolean;
     tostEquivalenceSatisfied: boolean;
   };
-  overallConvergence: 'CONVERGED_WITHIN_TOLERANCES' | 'DIVERGED_OUTSIDE_TOLERANCES';
+  evidenceMode: 'SIMULATED';
+  overallConvergence: 'CONVERGED_WITHIN_TOLERANCES' | 'DIVERGED_OUTSIDE_TOLERANCES' | 'NOT_EVALUATED';
   convergenceExplanation: string;
   originalReport: ReproducibilityEvidenceReport;
   reproductionReport: ReproducibilityEvidenceReport;
@@ -381,7 +377,7 @@ export interface AuditableMutationRecord {
     riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   };
   explanation: string;
-  verifierSignature: string;
+  verifierSignature: string; // Explicitly unsigned until a real signing service is implemented.
 }
 
 export type ActiveTab = 

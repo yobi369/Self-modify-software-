@@ -20,7 +20,7 @@ export const LiveSandboxPlayground: React.FC = () => {
   // --- JavaScript Self-Modifying State ---
   const [jsCallCount, setJsCallCount] = useState<number>(0);
   const [jsOutputLog, setJsOutputLog] = useState<string[]>([
-    'Ready. Click "Execute Evolving Function" to run pass #1.',
+    'Ready. Click "Run Demo Pass" to view the built-in transformation.',
   ]);
   const [currentJsCode, setCurrentJsCode] = useState<string>(
 `let targetFunc = function(x) {
@@ -51,42 +51,43 @@ export const LiveSandboxPlayground: React.FC = () => {
   const [tapeHead, setTapeHead] = useState<number>(0);
   const [tapeOutput, setTapeOutput] = useState<string>('Ready.');
 
-  // Run JS self-modifying function
+  // Deterministic local demonstration. User-provided source is never evaluated.
   const executeJsSelfMod = () => {
     sounds.execute();
-    try {
-      // Define context
-      const logs: string[] = [];
-      const mockConsole = {
-        log: (...args: unknown[]) => logs.push(args.join(' ')),
-      };
+    const nextCount = jsCallCount + 1;
+    const n = 100;
+    let result = 0;
+    const logs: string[] = [];
 
-      // Construct dynamic function
-      const runner = new Function('console', 'callIndex', `
-        ${currentJsCode}
-        const result = targetFunc(100);
-        return { result, evolvedSource: targetFunc.toString() };
-      `);
-
-      const res = runner(mockConsole, jsCallCount + 1);
-      const newCount = jsCallCount + 1;
-      setJsCallCount(newCount);
-
-      setJsOutputLog(prev => [
-        `[Invocation #${newCount}] Result = ${res.result}`,
-        ...logs.map(l => `  ► ${l}`),
-        `  • Function Source Signature: ${res.evolvedSource.slice(0, 70)}...`,
-        ...prev.slice(0, 8),
-      ]);
-    } catch (err: any) {
-      setJsOutputLog(prev => [`[Error]: ${err.message}`, ...prev]);
+    if (nextCount === 1) {
+      logs.push('Pass 1: Running the built-in baseline loop implementation...');
+      for (let value = 1; value <= n; value += 1) result += value;
+      logs.push('Demo state: displayed source switches to the prewritten formula variant.');
+      setCurrentJsCode(`// Built-in optimized demonstration source (display only).
+// The app uses a predeclared implementation; this text is not evaluated.
+function targetFunc(x) {
+  console.log("Pass 2+: Built-in formula implementation selected.");
+  return x * (x + 1) / 2;
+}`);
+    } else {
+      logs.push('Pass 2+: Running the predeclared arithmetic implementation...');
+      result = n * (n + 1) / 2;
     }
+
+    setJsCallCount(nextCount);
+    setJsOutputLog(prev => [
+      `[Demo Pass #${nextCount}] Result = ${result}`,
+      ...logs.map((line) => `  ► ${line}`),
+      '  • No user-supplied JavaScript was compiled or evaluated.',
+      ...prev.slice(0, 8),
+    ]);
   };
 
   const resetJsState = () => {
     sounds.reset();
     setJsCallCount(0);
-    setJsOutputLog(['Reset state. Ready for fresh execution pass.']);
+    setCurrentJsCode(`// Built-in baseline demonstration source (display only).\n// User-provided source is never evaluated.\nfunction targetFunc(x) {\n  let sum = 0;\n  for (let i = 1; i <= x; i++) sum += i;\n  return sum;\n}`);
+    setJsOutputLog(['Reset state. Ready for a new demonstration pass.']);
   };
 
   // Run WebAssembly JIT Generator
@@ -193,6 +194,10 @@ export const LiveSandboxPlayground: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status">
+        <strong className="block mb-1 uppercase tracking-wide">Browser demonstration — not a secure sandbox</strong>
+        Arbitrary JavaScript source execution is disabled. The JavaScript pass uses fixed built-in implementations; the WebAssembly tab compiles only a fixed arithmetic module. Neither mode provides isolation for untrusted code.
+      </div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-emerald-500/30 bg-[#080d10]">
         <div>
@@ -200,10 +205,10 @@ export const LiveSandboxPlayground: React.FC = () => {
             <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-bold">
               BROWSER JIT & RUNTIME EXPERIMENTATION
             </span>
-            <span className="text-xs font-mono text-neutral-400">REAL EXECUTABLE SANDBOXES</span>
+            <span className="text-xs font-mono text-neutral-400">BROWSER RUNTIME DEMONSTRATIONS</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-mono font-bold text-white mt-1">
-            LIVE EXECUTABLE SANDBOX
+            SIMULATED CODE TRANSFORMATION DEMO
           </h1>
         </div>
 
@@ -246,7 +251,7 @@ export const LiveSandboxPlayground: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Code className="w-4 h-4 text-emerald-400" />
                 <h2 className="font-mono font-bold text-sm text-white uppercase">
-                  ACTIVE JAVASCRIPT MUTATING FUNCTION
+                  BUILT-IN JAVASCRIPT DEMO SOURCE
                 </h2>
               </div>
               <span className="text-xs font-mono text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded bg-emerald-950/40">
@@ -255,13 +260,14 @@ export const LiveSandboxPlayground: React.FC = () => {
             </div>
 
             <p className="text-xs text-neutral-300 font-sans">
-              This function rewrites its own reference upon first invocation, converting an O(N) linear loop into an O(1) mathematical formula on subsequent executions.
+              This deterministic demonstration switches its displayed source snapshot after the first pass. Computation uses predeclared implementations; the editable source is never evaluated.
             </p>
 
             <div className="relative">
               <textarea
                 value={currentJsCode}
-                onChange={(e) => setCurrentJsCode(e.target.value)}
+                readOnly
+                aria-label="Read-only built-in JavaScript demonstration source"
                 rows={14}
                 className="w-full rounded-xl border border-neutral-800 bg-[#040709] p-4 font-mono text-xs text-emerald-300 focus:outline-none focus:border-emerald-500/60 leading-relaxed resize-none shadow-inner"
               />
@@ -274,7 +280,7 @@ export const LiveSandboxPlayground: React.FC = () => {
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
                 >
                   <Play className="w-4 h-4" />
-                  <span>Execute Pass #{jsCallCount + 1}</span>
+                  <span>Run Demo Pass #{jsCallCount + 1}</span>
                 </button>
 
                 <button
@@ -287,7 +293,7 @@ export const LiveSandboxPlayground: React.FC = () => {
               </div>
 
               <span className="text-[11px] font-mono text-neutral-500">
-                Pattern: Self-Hotpatching / Memoized Dispatch
+                Pattern: Predeclared baseline / formula demonstration
               </span>
             </div>
           </div>
@@ -298,7 +304,7 @@ export const LiveSandboxPlayground: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Terminal className="w-4 h-4 text-emerald-400" />
                 <h3 className="font-mono font-bold text-sm text-white uppercase">
-                  DYNAMIC EXECUTION LOG
+                  DEMO EXECUTION LOG
                 </h3>
               </div>
               <button
@@ -327,7 +333,7 @@ export const LiveSandboxPlayground: React.FC = () => {
             </div>
 
             <div className="p-3 rounded-lg border border-emerald-950 bg-emerald-950/20 text-xs font-mono text-emerald-300">
-              <strong>Observation:</strong> Notice how Pass #1 executes the slow loop, then overwrites the pointer. On Pass #2, execution hits the fast path with zero code re-parsing.
+              <strong>Observation:</strong> Pass #1 uses a built-in loop; later passes use a predeclared formula. This illustrates a transformation concept only and does not hotpatch a live function.
             </div>
           </div>
         </div>
@@ -341,11 +347,11 @@ export const LiveSandboxPlayground: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Binary className="w-4 h-4 text-emerald-400" />
                 <h2 className="font-mono font-bold text-base text-white uppercase">
-                  REAL RUNTIME WEBASSEMBLY JIT COMPILER
+                  BROWSER WEBASSEMBLY COMPILATION DEMO
                 </h2>
               </div>
               <p className="text-xs text-neutral-400 font-sans mt-1">
-                Synthesizes raw WASM bytecodes directly in a JavaScript <code className="text-emerald-400">Uint8Array</code> buffer, compiles via <code className="text-emerald-400">WebAssembly.compile()</code>, and executes native code in-browser.
+                Builds a fixed, built-in WebAssembly byte sequence, compiles it with the browser WebAssembly API, and runs the exported arithmetic function. This is a demonstration, not an isolated untrusted-code sandbox.
               </p>
             </div>
 
@@ -374,7 +380,7 @@ export const LiveSandboxPlayground: React.FC = () => {
                 <span className="text-emerald-400">W^X Compliant In-Memory Emission</span>
               </div>
 
-              <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608] font-mono text-xs text-emerald-300/90 overflow-x-auto min-h-[140px] leading-relaxed shadow-inner">
+              <div tabIndex={0} role="region" aria-label="Built-in runtime demonstration output" className="p-4 rounded-xl border border-neutral-800 bg-[#040608] font-mono text-xs text-emerald-300/90 overflow-x-auto min-h-[140px] leading-relaxed shadow-inner">
                 {wasmByteHex || 'Click an "Emit" button above to synthesize a WebAssembly binary module in RAM.'}
               </div>
 

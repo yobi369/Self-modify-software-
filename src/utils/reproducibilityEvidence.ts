@@ -4,7 +4,7 @@ import { computeSha256 } from './cryptoSha256';
 // Genesis hash for initial chain block
 const GENESIS_PREV_HASH = 'sha256:0000000000000000000000000000000000000000000000000000000000000000';
 
-// In-memory ledger of experiments forming the tamper-evident hash chain
+// In-memory demonstration ledger; it is not an authenticated or tamper-proof evidence store.
 let experimentLedger: ReproducibilityEvidenceReport[] = [];
 
 export function getExperimentChain(): ReproducibilityEvidenceReport[] {
@@ -16,8 +16,8 @@ export function clearExperimentChain(): void {
 }
 
 /**
- * Computes a deterministic canonical string from an evidence record (excluding integrity seals)
- * to produce a tamper-evident cryptographic hash.
+ * Computes a deterministic canonical string from an evidence record to produce a local integrity digest.
+ * This digest is not signed and does not authenticate the record's author or truth.
  */
 export function computeCanonicalPayloadDigest(payload: {
   experimentId: string;
@@ -56,24 +56,23 @@ export function buildReproducibilityReport(params: {
   experimentId: string;
   testSuiteResults?: { suiteName: string; passed: boolean; durationMs: number; assertions: number }[];
   benchmarkSamples?: number[];
-  astViolations?: string[];
+  staticPatternFindings?: string[];
   runtimeTrapsTriggered?: string[];
-  membraneVerdict?: 'BLOCKED' | 'PERMITTED';
-  falsePositiveRate?: number;
-  rollbackEvent?: {
-    watchdogFired: boolean;
-    triggerReason: string | null;
-    restoredTarget: string;
-    restorationLatencyMs: number;
-  };
-  finalDisposition?: 'PROMOTED_TO_LIVE' | 'QUARANTINED_BLOCKED' | 'ROLLED_BACK_RESTORED_BASELINE';
+  membraneVerdict?: 'BLOCKED' | 'PERMITTED' | 'NOT_EVALUATED';
+  falsePositiveRate?: number | null;
   parentExperimentId?: string;
   parentIntegrityHash?: string;
 }): ReproducibilityEvidenceReport {
-  const samples = params.benchmarkSamples || [
+  const syntheticFixtureSamples = [
     34.2, 33.8, 35.1, 34.0, 33.9, 36.2, 34.4, 33.7, 34.8, 34.1,
     33.5, 35.0, 34.3, 33.9, 34.6, 33.8, 34.2, 35.3, 34.0, 33.6
   ];
+  const suppliedSamples = Array.isArray(params.benchmarkSamples)
+    ? params.benchmarkSamples.filter((sample) => Number.isFinite(sample) && sample >= 0).slice(0, 10_000)
+    : [];
+  // A descriptive summary needs at least two finite, non-negative values.
+  // Fallback values remain synthetic and are never represented as measured timings.
+  const samples = suppliedSamples.length >= 2 ? suppliedSamples : syntheticFixtureSamples;
 
   // Statistical calculations
   const n = samples.length;
@@ -98,29 +97,20 @@ export function buildReproducibilityReport(params: {
     parseFloat((mean + margin).toFixed(2))
   ];
 
-  // Baseline was 492 μs on the defined workload
-  const baselineMean = 492.0;
-  const speedup = parseFloat((baselineMean / mean).toFixed(2));
+  // No real baseline workload was captured; performance improvement is unknown.
+  // This browser-generated report is always a simulation, never production evidence.
+  const disposition = 'SIMULATED' as const;
 
-  const disposition = params.finalDisposition || 'PROMOTED_TO_LIVE';
+  const testSuites = params.testSuiteResults || [];
+  const passedSuites = testSuites.filter((suite) => suite.passed).length;
+  const failedSuites = testSuites.length - passedSuites;
 
-  const defaultSuites = [
-    { suiteName: 'Structural Invariant & Type Contract Suite', passed: true, durationMs: 1.4, assertions: 12 },
-    { suiteName: 'Deterministic Output Parity Equivalence Suite', passed: true, durationMs: 2.1, assertions: 25 },
-    { suiteName: 'Adversarial Edge-Case & Null-Token Suite', passed: true, durationMs: 1.8, assertions: 18 },
-    { suiteName: 'High-Volume Batch Permutation Suite', passed: true, durationMs: 3.5, assertions: 40 }
-  ];
-  const testSuites = params.testSuiteResults || defaultSuites;
-  const totalAssertions = testSuites.reduce((acc, s) => acc + s.assertions, 0);
+  const baselineMutationHash = `sha256:${computeSha256('SYNTHETIC_BASELINE_FIXTURE_NOT_SOURCE')}`;
+  const candidateMutationHash = `sha256:${computeSha256('SYNTHETIC_CANDIDATE_FIXTURE_NOT_SOURCE')}`;
 
-  const baselineMutationHash = 'sha256:4b8a7c29e1f3d6b88019ab238f4d9c72e41a0b5f12e8739103c8479e0a2b8e31';
-  const candidateMutationHash = 'sha256:d91a84f3e6205ba8c32f8b704c8e31a987c2b5104e1f7293a8d46e01c238b1f9';
+  const promotionDecision = 'SIMULATED' as const;
 
-  const promotionDecision = disposition === 'PROMOTED_TO_LIVE' 
-    ? 'PROMOTED' 
-    : (disposition === 'ROLLED_BACK_RESTORED_BASELINE' ? 'ROLLED_BACK' : 'QUARANTINED');
-
-  // Cryptographic Hash Chain linking
+  // Client-side hash-link demonstration
   const chainIndex = experimentLedger.length;
   const previousEvidenceHash = experimentLedger.length > 0
     ? experimentLedger[experimentLedger.length - 1].evidenceIntegrityHash
@@ -129,8 +119,8 @@ export function buildReproducibilityReport(params: {
   // Compute canonical integrity digest over normalized experiment record
   const evidenceIntegrityHash = computeCanonicalPayloadDigest({
     experimentId: params.experimentId,
-    softwareVersion: 'v2.4.0-sentinel-hotpatch',
-    commitSha: '7f83a9d',
+    softwareVersion: '0.0.0-research-prototype',
+    commitSha: 'UNKNOWN',
     baselineMutationHash,
     candidateMutationHash,
     sampleCount: n,
@@ -148,43 +138,37 @@ export function buildReproducibilityReport(params: {
   const report: ReproducibilityEvidenceReport = {
     experimentId: params.experimentId,
     timestamp: new Date().toISOString(),
-    softwareVersion: 'v2.4.0-sentinel-hotpatch',
-    commitSha: '7f83a9d',
-    commitVersion: 'v2.4.0-sentinel-hotpatch (Git SHA: 7f83a9d)',
-    browserRuntime: typeof navigator !== 'undefined' ? `${navigator.userAgent} [V8/JIT Engine]` : 'V8 Node/Browser Runtime',
+    softwareVersion: '0.0.0-research-prototype',
+    commitSha: 'UNKNOWN',
+    commitVersion: 'Unversioned research prototype',
+    browserRuntime: typeof navigator !== 'undefined' ? `${navigator.userAgent} [Browser engine not independently identified]` : 'Node.js runtime [engine not independently identified]',
     scopeBoundaries: {
       runtimeType: 'JavaScript Browser/Host Execution (ECMA-262)',
-      isolationType: 'Hermetic JavaScript execution membrane for the tested threat model',
-      scopeDeclaration: 'Tested and proven against enumerated attack vectors (globalThis, window, constructor traversal, eval, prototype pollution, runaway loops). No global access observed across the defined adversarial test suite. Not claiming an OS/browser hypervisor security boundary.'
+      isolationType: 'NO_RUNTIME_SANDBOX — execution disabled',
+      scopeDeclaration: 'SIMULATED DEMONSTRATION ONLY. No candidate code was executed in an isolated runtime. This record is not security or production evidence.'
     },
     baselineMutationHash,
     candidateMutationHash,
     baseline: {
       hash: baselineMutationHash,
-      description: 'O(N²) Quadratic scan search closure with nested iterations',
+      description: 'Synthetic baseline fixture identifier; not a captured source artefact',
       version: 'Gen 0 (Initial Dispatch Target)'
     },
     candidate: {
       hash: candidateMutationHash,
-      description: 'O(N) Hash-indexed dictionary lookup with typed frequency accumulator',
+      description: 'Synthetic candidate fixture identifier; not a captured source artefact',
       version: 'Gen 3 (Typed Hash-Cache Dispatch Target)'
     },
     inputDataset: {
-      description: 'Defined corpus of 1,000 synthetic alphanumeric token streams with frequency skew for hotspot optimization profiling',
-      sampleCount: 1000,
-      dataTypes: ['string[]', 'token_sequence', 'adversarial_fuzz_probes'],
-      previewSamples: [
-        'alpha_token_001',
-        'beta_token_002',
-        'gamma_skew_hotspot',
-        'adversarial_probe_null_byte',
-        'delta_frequency_burst'
-      ]
+      description: 'Illustrative synthetic fixture metadata; no external workload was captured',
+      sampleCount: 0,
+      dataTypes: [],
+      previewSamples: []
     },
     testResults: {
-      totalTests: totalAssertions,
-      passedCount: totalAssertions,
-      failedCount: 0,
+      totalTests: testSuites.length,
+      passedCount: passedSuites,
+      failedCount: failedSuites,
       suites: testSuites
     },
     testSuiteResults: testSuites,
@@ -197,53 +181,43 @@ export function buildReproducibilityReport(params: {
       p99LatencyUs: p99,
       standardDeviationUs: stdDev,
       confidenceInterval95Us: ci95,
-      speedupFactorOnDefinedWorkload: speedup
+      speedupFactorOnDefinedWorkload: null
     },
     securityFindings: {
-      testedVectorsSummary: 'Evaluated against: globalThis exfiltration, window/document DOM traversal, eval(), dynamic import(), constructor function escapes, and prototype pollution.',
-      isolationMechanism: 'Hermetic JavaScript execution membrane for the tested threat model',
-      globalAccessObserved: 'No global access observed across the defined adversarial test suite.',
-      astViolations: params.astViolations || [],
+      testedVectorsSummary: 'No runtime adversarial vectors executed. A lexical pattern scan only is available.',
+      isolationMechanism: 'No isolated execution service configured; browser code execution disabled.',
+      globalAccessObserved: 'NOT_TESTED',
+      staticPatternFindings: params.staticPatternFindings || [],
       runtimeTrapsTriggered: params.runtimeTrapsTriggered || [],
-      membraneVerdict: params.membraneVerdict || 'PERMITTED',
-      falsePositiveRateOnLegitCorpus: params.falsePositiveRate !== undefined ? params.falsePositiveRate : 0.0
+      membraneVerdict: 'NOT_EVALUATED',
+      falsePositiveRateOnLegitCorpus: params.falsePositiveRate ?? null
     },
     promotionDecision,
-    decisionReason: disposition === 'PROMOTED_TO_LIVE'
-      ? 'Candidate verified: All structural invariants passed, zero regression in parity, and statistically significant speedup.'
-      : (disposition === 'ROLLED_BACK_RESTORED_BASELINE'
-          ? 'Production canary anomaly watchdog triggered after latency spike; automated rollback restored baseline checkpoint.'
-          : 'Security AST or membrane proxy trap triggered; quarantined from production.'),
+    decisionReason: 'SIMULATED DEMONSTRATION ONLY. No production promotion, independent test execution, or runtime security verification occurred.',
     watchdogEvents: {
-      monitored: true,
-      watchdogFired: !!params.rollbackEvent?.watchdogFired,
-      triggerReason: params.rollbackEvent?.triggerReason || null,
-      anomalyThresholdPercent: 5.0,
-      observedErrorRatePercent: params.rollbackEvent?.watchdogFired ? 12.4 : 0.0,
+      monitored: false,
+      watchdogFired: false,
+      triggerReason: null,
+      anomalyThresholdPercent: 0,
+      observedErrorRatePercent: 0,
       timestamp: new Date().toISOString()
     },
     rollbackCheckpoint: {
-      available: true,
-      checkpointId: 'CHKPT_GEN0_BASELINE_7F83',
-      restoredTargetVersion: params.rollbackEvent?.restoredTarget || 'v1.0.0 (Gen 0 Baseline)',
+      available: false,
+      checkpointId: 'NOT_APPLICABLE',
+      restoredTargetVersion: 'NOT_APPLICABLE',
       restoredTargetHash: baselineMutationHash,
-      restorationLatencyMs: params.rollbackEvent?.restorationLatencyMs || (params.rollbackEvent?.watchdogFired ? 4.2 : 0)
-    },
-    rollbackEvent: params.rollbackEvent || {
-      watchdogFired: false,
-      triggerReason: null,
-      restoredTarget: 'None (Candidate running normally in production)',
       restorationLatencyMs: 0
     },
-    finalState: disposition,
-    finalDisposition: disposition,
+    evidenceMode: 'SIMULATED',
+    finalState: 'SIMULATED',
 
-    // Machine-readable tamper-evident chain
+    // Machine-readable local integrity digest chain
     chainIndex,
     previousEvidenceHash,
     evidenceIntegrityHash,
     tamperEvidentSeal,
-    evidenceFormat: 'machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts'
+    evidenceFormat: 'SIMULATED demonstration JSON; SHA-256 digest verifies only this record payload, not source provenance or experiment truth'
   };
 
   // Register in ledger
@@ -337,36 +311,28 @@ export function verifyExperimentChainIntegrity(chain: ReproducibilityEvidenceRep
   return {
     isChainValid: true,
     blockCount: chain.length,
-    message: `All ${chain.length} blocks verified: Cryptographic tamper-evident chain is 100% valid.`
+    message: `All ${chain.length} record digests and links are internally consistent. This does not authenticate the author or prove the experiment occurred.`
   };
 }
 
 /**
  * "Reproduce This Experiment"
- * Creates a fresh independent run from the exact same baseline & candidate on the same dataset/protocol,
- * executes verification tests and microsecond benchmark sampling, and evaluates statistical convergence
- * against predefined tolerances.
+ * Creates a simulated comparison using illustrative samples. It does not execute either source artefact,
+ * run regression tests, or perform a formal statistical equivalence evaluation.
  */
 export async function reproduceExperiment(
   originalReport: ReproducibilityEvidenceReport
 ): Promise<ReproductionComparisonReport> {
-  // Simulate execution latency for genuine asynchronous pipeline (membrane instantiation & benchmark passes)
+  // Fixed synthetic samples for UI demonstration only; no execution or benchmark occurs.
   await new Promise(resolve => setTimeout(resolve, 800));
 
-  // Generate 20 fresh independent latency measurements for candidate under host execution
-  // Centered close to 34.2 μs with realistic stochastic microsecond noise (±1.5 μs)
+  // Fixed synthetic samples for UI demonstration only; no candidate is executed.
   const reproSamples: number[] = [
     34.1, 34.5, 33.9, 34.8, 34.0, 35.1, 33.7, 34.4, 34.6, 33.8,
     34.3, 34.9, 34.1, 33.8, 34.7, 34.2, 34.0, 35.2, 34.1, 33.9
   ];
 
-  // Re-run test suites with fresh execution durations
-  const reproSuites = [
-    { suiteName: 'Structural Invariant & Type Contract Suite', passed: true, durationMs: 1.3, assertions: 12 },
-    { suiteName: 'Deterministic Output Parity Equivalence Suite', passed: true, durationMs: 2.0, assertions: 25 },
-    { suiteName: 'Adversarial Edge-Case & Null-Token Suite', passed: true, durationMs: 1.7, assertions: 18 },
-    { suiteName: 'High-Volume Batch Permutation Suite', passed: true, durationMs: 3.4, assertions: 40 }
-  ];
+  const reproSuites: { suiteName: string; passed: boolean; durationMs: number; assertions: number }[] = [];
 
   const reproExpId = `EXP-REPRO-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 900 + 100)}`;
 
@@ -375,11 +341,10 @@ export async function reproduceExperiment(
     experimentId: reproExpId,
     testSuiteResults: reproSuites,
     benchmarkSamples: reproSamples,
-    astViolations: [],
+    staticPatternFindings: [],
     runtimeTrapsTriggered: [],
-    membraneVerdict: 'PERMITTED',
-    falsePositiveRate: 0.0,
-    finalDisposition: 'PROMOTED_TO_LIVE',
+    membraneVerdict: 'NOT_EVALUATED',
+    falsePositiveRate: null,
     parentExperimentId: originalReport.experimentId,
     parentIntegrityHash: originalReport.evidenceIntegrityHash
   });
@@ -439,9 +404,10 @@ export async function reproduceExperiment(
   const tStatUpper = parseFloat(((equivalenceMarginUs - meanDiffUs) / (seDiff || 0.001)).toFixed(3));
 
   // H0 is rejected if the (1 - 2α) CI for difference lies within [-Δ, +Δ]
-  const h0Rejected = lowerBoundDiff > -equivalenceMarginUs && upperBoundDiff < equivalenceMarginUs;
+  const h0Rejected = false; // Synthetic samples are illustrative; no inferential conclusion is issued.
 
   const tostEquivalence: TostEquivalenceResult = {
+    status: 'NOT_EVALUATED',
     h0Statement: 'H₀: |μ_repro - μ_orig| ≥ Δ (performance difference exceeds the acceptable tolerance margin of 5.0%)',
     h1Statement: 'H₁: |μ_repro - μ_orig| < Δ (performance difference is within predefined equivalence margin of ±5.0%)',
     equivalenceMarginPercent,
@@ -454,9 +420,7 @@ export async function reproduceExperiment(
     degreesOfFreedom: df,
     criticalT,
     h0Rejected,
-    conclusion: h0Rejected
-      ? `H₀ rejected (p < 0.05): Performance difference is statistically equivalent within the predefined empirical reproducibility tolerance margin (±5.0%, [${lowerBoundDiff}, ${upperBoundDiff}] μs ⊂ [${-equivalenceMarginUs}, ${equivalenceMarginUs}] μs).`
-      : `H₀ cannot be rejected: Performance difference cannot be definitively confirmed equivalent within the ±5.0% margin.`
+    conclusion: 'NOT EVALUATED: displayed sample values are synthetic and no independent reproduction was executed.'
   };
 
   // Tolerances
@@ -468,12 +432,12 @@ export async function reproduceExperiment(
   };
 
   const toleranceChecks = {
-    meanWithinTolerance: Math.abs(meanDeltaPercent) <= tolerances.maxAllowedMeanDeltaPercent,
-    p95WithinTolerance: Math.abs(p95DeltaPercent) <= tolerances.maxAllowedP95DeltaPercent,
-    ciOverlapSatisfied: ciOverlap, // 95% CI compatibility criterion: requires overlapping confidence intervals as a predefined reproducibility acceptance condition
-    invariantsSatisfied: reproductionReport.testResults.passedCount === originalReport.testResults.totalTests,
-    hashesIdentical: reproductionReport.candidate.hash === originalReport.candidate.hash,
-    tostEquivalenceSatisfied: h0Rejected || Math.abs(meanDeltaPercent) <= tolerances.maxAllowedMeanDeltaPercent
+    meanWithinTolerance: false,
+    p95WithinTolerance: false,
+    ciOverlapSatisfied: false,
+    invariantsSatisfied: false,
+    hashesIdentical: false,
+    tostEquivalenceSatisfied: false
   };
 
   const isConverged = 
@@ -483,11 +447,9 @@ export async function reproduceExperiment(
     toleranceChecks.invariantsSatisfied &&
     toleranceChecks.hashesIdentical;
 
-  const overallConvergence = isConverged ? 'CONVERGED_WITHIN_TOLERANCES' : 'DIVERGED_OUTSIDE_TOLERANCES';
+  const overallConvergence = 'NOT_EVALUATED' as const;
 
-  const convergenceExplanation = isConverged
-    ? `REPRODUCIBILITY CONVERGED: Independent re-run from the identical baseline on the defined workload produced statistically consistent latency (|Δ Mean| = ${Math.abs(meanDeltaPercent)}% within the predefined empirical reproducibility tolerance of ±5.0%), satisfied the 95% CI compatibility criterion (overlapping interval [${overlapStart.toFixed(2)}, ${overlapEnd.toFixed(2)}] μs), supported H₁ statistical equivalence, and preserved 100% test invariant parity.`
-    : `REPRODUCIBILITY DIVERGED: One or more predefined statistical tolerances were not met. Candidate performance may have been perturbed by host runtime noise (e.g. CPU frequency scaling, background processes, garbage collection pauses, browser scheduling, JIT tiering, power-management state, or machine temperature).`;
+  const convergenceExplanation = 'NOT EVALUATED: this reproduction screen uses fixed synthetic samples and does not independently execute the baseline or candidate artefacts.';
 
   // Annotate the reproduction report with parent metadata
   reproductionReport.reproductionMetadata = {
@@ -497,22 +459,23 @@ export async function reproduceExperiment(
     convergenceDeltaMeanPercent: meanDeltaPercent,
     confidenceIntervalsOverlap: ciOverlap,
     invariantParityPreserved: toleranceChecks.invariantsSatisfied,
-    verdict: isConverged ? 'CONVERGED' : 'DIVERGED'
+    verdict: 'NOT_EVALUATED'
   };
 
   return {
+    evidenceMode: 'SIMULATED',
     originalExperimentId: originalReport.experimentId,
     reproductionExperimentId: reproductionReport.experimentId,
     timestamp: new Date().toISOString(),
-    baselineMatched: true,
-    candidateMatched: toleranceChecks.hashesIdentical,
+    baselineMatched: false,
+    candidateMatched: false,
     originalCandidateHash: originalReport.candidate.hash,
     reproductionCandidateHash: reproductionReport.candidate.hash,
     originalTestsPassed: originalReport.testResults.passedCount,
     originalTestsTotal: originalReport.testResults.totalTests,
     reproductionTestsPassed: reproductionReport.testResults.passedCount,
     reproductionTestsTotal: reproductionReport.testResults.totalTests,
-    invariantParityRatio: 1.0,
+    invariantParityRatio: 0,
     sampleCount: reproductionReport.statistics.sampleCount,
     originalMeanUs: origMean,
     reproductionMeanUs: reproMean,
@@ -545,71 +508,53 @@ export async function reproduceExperiment(
  * Generates an independent, zero-dependency Node.js CLI script for auditing
  * evidence records and cryptographic hash chains offline in any standard terminal.
  */
-export function generateNodeCliVerificationScript(report: ReproducibilityEvidenceReport): string {
-  const candidatePayload = `function processData(items) {
-  var freq = Object.create(null);
-  for (var i = 0; i < items.length; i++) {
-    freq[items[i]] = (freq[items[i]] || 0) + 1;
-  }
-  return { uniqueCount: Object.keys(freq).length, frequencies: freq };
-}`;
-
-  return `// ============================================================================
-// SELF-MODIFYING SOFTWARE STUDIO: ZERO-DEPENDENCY INDEPENDENT VERIFIER
-// Autonomous Invariant-Preserving Dispatch Mutation Reproduction CLI
-// ============================================================================
+/**
+ * Generates an offline self-consistency checker for an exported evidence JSON file.
+ * It does not execute candidate code and does not authenticate who created the report.
+ */
+export function generateNodeCliVerificationScript(_report: ReproducibilityEvidenceReport): string {
+  return `// Self-Modifying Software Studio — evidence record self-consistency check
+// Usage: node verify-evidence.mjs path/to/evidence-report.json
+// This recomputes the embedded SHA-256 digest. It does NOT prove provenance,
+// that tests actually ran, or that the report was signed by a trusted identity.
 import { createHash } from 'node:crypto';
-import { performance } from 'node:perf_hooks';
+import { readFileSync } from 'node:fs';
 
-console.log("=== SELF-MODIFYING SOFTWARE STUDIO INDEPENDENT VERIFIER ===");
-console.log("Experiment ID:", "${report.experimentId}");
-console.log("Expected Candidate Hash:", "${report.candidate.hash}");
-console.log("Parent Chain Digest:", "${report.previousEvidenceHash}");
-console.log("Integrity Hash:", "${report.evidenceIntegrityHash}");
-
-// 1. Candidate Source Artifact
-const candidateSource = \`${candidatePayload}\`;
-
-// 2. Cryptographic SHA-256 Identity Check
-const computedHash = 'sha256:' + createHash('sha256').update(candidateSource).digest('hex');
-console.log("\\n[1/3] Cryptographic Verification:");
-console.log("  Computed Hash:", computedHash);
-const hashMatch = computedHash === "${report.candidate.hash}";
-console.log("  Artifact Integrity:", hashMatch ? "PASSED (MATCHES EVIDENCE RECORD)" : "FAILED");
-
-// 3. Invariant Preservation Execution
-console.log("\\n[2/3] Executing Behavioral Invariant Assertions...");
-const fn = new Function('items', candidateSource.replace(/function processData\\(items\\) \\{/, '').slice(0, -1));
-
-const testItems = ["apple", "banana", "apple", "orange", "banana", "apple"];
-const testRes = fn(testItems);
-const invariantPass = testRes.uniqueCount === 3 && testRes.frequencies["apple"] === 3;
-console.log("  Invariant Check: uniqueCount === 3 && frequencies['apple'] === 3");
-console.log("  Behavioral Parity:", invariantPass ? "PASSED (100% INVARIANTS SATISFIED)" : "FAILED");
-
-// 4. Empirical Microsecond Latency Sampling
-console.log("\\n[3/3] Running Empirical Microsecond Workload Sampling (N = 100 runs)...");
-const latencies = [];
-for (let i = 0; i < 100; i++) {
-  const t0 = performance.now();
-  fn(testItems);
-  const t1 = performance.now();
-  latencies.push((t1 - t0) * 1000); // microseconds
+const file = process.argv[2];
+if (!file) {
+  console.error('Usage: node verify-evidence.mjs path/to/evidence-report.json');
+  process.exit(2);
 }
 
-latencies.sort((a, b) => a - b);
-const mean = latencies.reduce((a, b) => a + b, 0) / latencies.length;
-const p50 = latencies[Math.floor(latencies.length * 0.5)];
-const p95 = latencies[Math.floor(latencies.length * 0.95)];
+const report = JSON.parse(readFileSync(file, 'utf8'));
+const payload = {
+  experimentId: report.experimentId,
+  softwareVersion: report.softwareVersion,
+  commitSha: report.commitSha,
+  baselineMutationHash: report.baselineMutationHash,
+  candidateMutationHash: report.candidateMutationHash,
+  sampleCount: report.statistics.sampleCount,
+  meanLatencyUs: report.statistics.meanLatencyUs,
+  medianLatencyUs: report.statistics.medianLatencyUs,
+  p95LatencyUs: report.statistics.p95LatencyUs,
+  ciLower: report.statistics.confidenceInterval95Us[0],
+  ciUpper: report.statistics.confidenceInterval95Us[1],
+  promotionDecision: report.promotionDecision,
+  previousEvidenceHash: report.previousEvidenceHash
+};
 
-console.log("  Observed Mean Latency:", mean.toFixed(2), "μs");
-console.log("  Observed P50 Latency :", p50.toFixed(2), "μs");
-console.log("  Observed P95 Latency :", p95.toFixed(2), "μs");
-console.log("  Reference Mean       :", "${report.statistics.meanLatencyUs} μs");
-console.log("  Reference 95% CI     : [${report.statistics.confidenceInterval95Us.join(', ')}] μs");
+const canonical = JSON.stringify(payload);
+const computed = 'sha256:' + createHash('sha256').update(canonical).digest('hex');
+const expectedSeal = 'SENTINEL-CHAIN-SEAL:' + computed + '#BLOCK-' + report.chainIndex;
+const digestMatches = computed === report.evidenceIntegrityHash;
+const sealMatches = expectedSeal === report.tamperEvidentSeal;
 
-console.log("\\n============================================================");
-console.log("VERIFICATION COMPLETE: All cryptographic and behavioral assertions pass.");
-console.log("============================================================\\n");
+console.log('Record digest matches:', digestMatches);
+console.log('Seal matches:', sealMatches);
+console.log('Evidence mode:', report.evidenceMode || 'UNSPECIFIED');
+console.log('Promotion decision:', report.promotionDecision);
+console.log('NOTE: A matching digest is not a digital signature or proof of experiment truth.');
+
+if (!digestMatches || !sealMatches) process.exitCode = 1;
 `;
 }

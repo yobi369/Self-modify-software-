@@ -199,7 +199,7 @@ Exported from Self-Modifying Software Studio
           <div className="space-y-3 max-w-3xl">
             <div className="flex flex-wrap items-center gap-2.5">
               <span className="text-[11px] font-mono tracking-widest uppercase px-2.5 py-1 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-semibold shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                Research-Grade Autonomous Software Studio Prototype
+                Research and Education Prototype
               </span>
               <span className="text-[11px] font-mono text-neutral-400">
                 ARCHITECTURE VISUALIZER &amp; GUIDE
@@ -209,12 +209,12 @@ Exported from Self-Modifying Software Studio
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-mono font-black tracking-tight text-white leading-tight">
               SELF-MODIFYING SOFTWARE STUDIO &amp; <br className="hidden sm:block"/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-200">
-                BINARY MUTATION RESEARCH SUITE
+                BINARY MUTATION RESEARCH CONCEPTS
               </span>
             </h1>
 
             <p className="text-sm sm:text-base text-emerald-100/90 font-mono leading-relaxed">
-              A research-grade environment for investigating autonomous software mutation, runtime code transformation, binary diversity, execution safety, reproducibility, and empirical verification across JavaScript, WebAssembly, x86-64, ARM64, and related execution models.
+              An interactive research and education prototype for exploring software mutation concepts, runtime transformation models, memory architecture, static pattern screening, and simulated evidence. Arbitrary candidate execution is disabled; the interface does not provide a verified sandbox or empirical performance certification.
             </p>
 
             <div className="p-3.5 rounded-xl border border-emerald-900/60 bg-emerald-950/30 max-w-2xl">
@@ -282,11 +282,11 @@ Exported from Self-Modifying Software Studio
         <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
         <div className="text-xs text-neutral-300 space-y-1">
           <div className="font-mono font-bold text-white uppercase tracking-wide flex items-center gap-2">
-            <span>Research-Grade Autonomous Software Studio Prototype</span>
+            <span>Research Prototype</span>
             <span className="text-[10px] text-emerald-400 font-normal border border-emerald-500/30 px-1.5 py-0.2 rounded bg-emerald-950/40">Scoped Claims</span>
           </div>
           <p className="leading-relaxed text-neutral-400">
-            This laboratory is designed as an empirical research prototype. All verification claims, membrane isolation guarantees, rollback watchdogs, TOST statistical convergence analyses, and tamper-evident hash chains remain strictly scoped to the empirical test harness and tested threat models, rather than implying an unconstrained general-purpose secure execution environment.
+            This interface is a research and education prototype. It demonstrates fixed browser examples, simulations, and local evidence structures only. It does not provide an execution membrane, verified sandbox, evaluated TOST results, or production rollback controller. Arbitrary candidate execution is disabled and generated evidence may be synthetic.
           </p>
         </div>
       </div>
@@ -432,7 +432,7 @@ Exported from Self-Modifying Software Studio
 
           <div className="bg-[#05090c] p-3.5 rounded-lg border border-emerald-900/40 font-mono text-xs space-y-1">
             <span className="text-[10px] text-neutral-500 uppercase block">Code Expression</span>
-            <pre className="text-emerald-300 overflow-x-auto whitespace-pre-wrap">
+            <pre tabIndex={0} className="text-emerald-300 overflow-x-auto whitespace-pre-wrap">
               {currentStep.techExample}
             </pre>
           </div>
@@ -464,7 +464,7 @@ Exported from Self-Modifying Software Studio
           </p>
 
           {/* Interactive Code Container */}
-          <div className="rounded-xl border border-neutral-800 bg-[#05080a] p-4 font-mono text-xs overflow-x-auto">
+          <div tabIndex={0} role="region" aria-label="Scrollable architecture code sample" className="rounded-xl border border-neutral-800 bg-[#05080a] p-4 font-mono text-xs overflow-x-auto">
             {C_CODE_EXAMPLE.split('\n').map((line, idx) => {
               const lineNum = idx + 1;
               const hasAnnotation = codeAnnotations.find(a => a.line === lineNum);
@@ -555,7 +555,7 @@ Exported from Self-Modifying Software Studio
               </h3>
               <span className="text-[10px] font-mono text-neutral-500">ABSTRACT ALGORITHM</span>
             </div>
-            <pre className="p-3.5 rounded-xl border border-neutral-800 bg-[#05080a] text-xs font-mono text-emerald-300/90 overflow-x-auto leading-relaxed">
+            <pre tabIndex={0} className="p-3.5 rounded-xl border border-neutral-800 bg-[#05080a] text-xs font-mono text-emerald-300/90 overflow-x-auto leading-relaxed">
               {PSEUDOCODE_LOOP}
             </pre>
             <div className="flex items-center justify-between text-xs font-mono text-neutral-400 pt-1">
@@ -678,7 +678,7 @@ Exported from Self-Modifying Software Studio
                 <Copy className="w-3.5 h-3.5" />
               </button>
             </div>
-            <pre className="text-emerald-300/90 text-[11px] overflow-x-auto whitespace-pre leading-relaxed">
+            <pre tabIndex={0} className="text-emerald-300/90 text-[11px] overflow-x-auto whitespace-pre leading-relaxed">
               {currentMod.codeSnippet}
             </pre>
           </div>

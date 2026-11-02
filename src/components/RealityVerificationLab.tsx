@@ -43,7 +43,7 @@ import { sounds } from '../audio/soundEffects';
 import { 
   generateMachineReadableSecurityVerdict, 
   runFalsePositiveChallenge,
-  runInHermeticSandbox 
+  checkCandidateExecutionAvailability 
 } from '../utils/adversarialSandbox';
 import { buildReproducibilityReport, reproduceExperiment } from '../utils/reproducibilityEvidence';
 import { MethodologySpecificationModal } from './MethodologySpecificationModal';
@@ -69,19 +69,10 @@ export const RealityVerificationLab: React.FC = () => {
     if (activeEvidenceReport) return activeEvidenceReport;
     const report = buildReproducibilityReport({
       experimentId: `EXP-SENTINEL-${Date.now().toString(36).toUpperCase()}`,
-      astViolations: machineVerdict?.astViolations || [],
+      staticPatternFindings: machineVerdict?.staticPatternFindings || [],
       runtimeTrapsTriggered: machineVerdict?.runtimeTrapsTriggered || [],
-      membraneVerdict: machineVerdict?.verdict || 'PERMITTED',
+      membraneVerdict: machineVerdict?.verdict || 'NOT_EVALUATED',
       falsePositiveRate: challengeResult?.falsePositiveRatePercent,
-      rollbackEvent: testEResult ? {
-        watchdogFired: testEResult.watchdogTriggered,
-        triggerReason: testEResult.watchdogTriggered ? 'LATENT_POINTER_FAULT' : null,
-        restoredTarget: testEResult.restoredVersion,
-        restorationLatencyMs: 4.2
-      } : undefined,
-      finalDisposition: testEResult?.watchdogTriggered 
-        ? 'ROLLED_BACK_RESTORED_BASELINE' 
-        : (machineVerdict?.verdict === 'BLOCKED' ? 'QUARANTINED_BLOCKED' : 'PROMOTED_TO_LIVE')
     });
     setActiveEvidenceReport(report);
     return report;
@@ -118,10 +109,10 @@ export const RealityVerificationLab: React.FC = () => {
     counter: 9850,
     mutationApplied: false,
     dispatchVersion: 'Gen 0 (Initial Dispatch Target)',
-    heapIdentityToken: 'HEAP_CTX_REF_#8841a0e',
+    heapIdentityToken: 'LOCAL_REACT_REF_DEMO_01',
     log: [
-      '00:01 [INIT]: Workload initialized. Continuous state accumulator bound.',
-      '00:02 [STREAM]: State counter at 9,850. Monitoring for page/DOM remounts...'
+      '00:01 [INIT]: Workload initialized. Local React state counter initialized for demonstration.',
+      '00:02 [STREAM]: State counter at 9,850. Showing a local state counter; no DOM-remount instrumentation is active...'
     ],
     isRunning: false
   });
@@ -144,8 +135,8 @@ export const RealityVerificationLab: React.FC = () => {
             sounds.execute();
             nextLog = [
               `>>> [MUTATION TRIGGERED AT COUNTER = ${nextVal}]: Swapping dispatch closure in-memory...`,
-              `>>> [PROOF]: Window reloads: 0. DOM teardowns: 0. Heap identity: ${prev.heapIdentityToken} (UNBROKEN).`,
-              `>>> [CONTINUITY]: Counter seamlessly advancing to ${nextVal + 15}...`,
+              `>>> [DEMO]: React state advanced without this component being intentionally remounted. No heap-pointer or production continuity claim.`,
+              `>>> [LOCAL STATE]: Demo counter advancing to ${nextVal + 15}...`,
               ...prev.log
             ];
             return {
@@ -185,7 +176,7 @@ export const RealityVerificationLab: React.FC = () => {
   };
 
   // -------------------------------------------------------------
-  // TEST B: MUTATION IDENTITY (fnBefore !== fnAfter)
+  // TEST B: LOCAL FUNCTION REFERENCE COMPARISON
   // -------------------------------------------------------------
   const [testBResult, setTestBResult] = useState<MutationIdentityResult | null>(null);
 
@@ -194,19 +185,19 @@ export const RealityVerificationLab: React.FC = () => {
     const gen0Fn = function gen0Process(items: any[]) { return { count: items.length, mode: 'quadratic' }; };
     const gen1Fn = function gen1Process(items: any[]) { return { count: items.length, mode: 'linear_hash' }; };
 
-    const gen0Id = 'Closure_0x' + Math.floor(Math.random() * 899999 + 100000).toString(16) + ' [Gen 0 Function Reference]';
-    const gen1Id = 'Closure_0x' + Math.floor(Math.random() * 899999 + 100000).toString(16) + ' [Gen 1 Function Reference]';
+    const gen0Id = 'DEMO_FN_REF_' + Math.floor(Math.random() * 899999 + 100000).toString(16);
+    const gen1Id = 'DEMO_FN_REF_' + Math.floor(Math.random() * 899999 + 100000).toString(16);
 
     const areDifferent = (gen0Fn as any) !== (gen1Fn as any);
-    const parentPreserved = Object.is(heapContextRef.current, heapContextRef.current);
+    const parentPreserved: boolean | null = null; // No parent-context preservation test is implemented.
 
     setTestBResult({
       closureIdBefore: gen0Id,
       closureIdAfter: gen1Id,
       callableReferencesDiffer: areDifferent,
       parentContextPreserved: parentPreserved,
-      status: 'VERIFIED',
-      proof: `Object.is(fnBefore, fnAfter) === false (Callable reference changed). Parent context heap address === true (State preserved).`
+      status: 'SIMULATED',
+      proof: 'Two local demo function references are distinct. This does not verify closure-state preservation, heap identity, or runtime hot-patching.'
     });
     sounds.success();
   };
@@ -244,7 +235,7 @@ function processData(items) {
       if (verdict.verdict === 'BLOCKED') {
         sounds.error();
       } else {
-        sounds.success();
+        sounds.click();
       }
     }, 450);
   };
@@ -278,14 +269,14 @@ function processData(items) {
 
     setTestEResult({
       stage: 'UNIT_TESTS',
-      unitTestsPassed: true,
+      unitTestsPassed: false,
       benchmarkPassed: false,
-      promotedToLive: false,
+      simulatedPromotion: false,
       trafficProcessedBeforeFault: 0,
-      faultTriggerPattern: 'Delayed fault triggered when batch contains > 5 items and payload sequence exceeds 40 invocations',
+      faultTriggerPattern: 'Illustrative demo condition only; no real batch processor, telemetry, or watchdog is connected.',
       watchdogTriggered: false,
-      restoredVersion: 'v1.0.0 (Gen 0 Baseline)',
-      log: ['Stage 1: Running unit test suites on candidate mutant with delayed defect...']
+      restoredVersion: 'SIMULATED BASELINE LABEL — NO DEPLOYMENT RESTORED',
+      log: ['SIMULATION ONLY: No candidate was executed and no unit-test suite ran. A real CI result is required before promotion.']
     });
 
     await new Promise((r) => setTimeout(r, 600));
@@ -293,11 +284,11 @@ function processData(items) {
     setTestEResult((prev) => prev ? {
       ...prev,
       stage: 'BENCHMARK',
-      unitTestsPassed: true,
-      benchmarkPassed: true,
+      unitTestsPassed: false,
+      benchmarkPassed: false,
       log: [
-        'Stage 1: Unit tests PASSED (4/4 suites pass on trivial small-batch inputs).',
-        'Stage 2: Statistical benchmark PASSED (Measured 48 μs latency, +10.2x speedup).',
+        'Stage 1: NOT EVALUATED — this browser simulation does not execute unit tests.',
+        'Stage 2: NOT MEASURED — no candidate benchmark or baseline comparison was run.',
         ...prev.log
       ]
     } : null);
@@ -306,10 +297,10 @@ function processData(items) {
 
     setTestEResult((prev) => prev ? {
       ...prev,
-      stage: 'PROMOTED',
-      promotedToLive: true,
+      stage: 'SIMULATED_PROMOTION',
+      simulatedPromotion: true,
       log: [
-        'Stage 3: Promotion approved! Hotpatching closure to live production traffic...',
+        'Stage 3: Simulated promotion state displayed for teaching only; no deployment or traffic routing occurred.',
         ...prev.log
       ]
     } : null);
@@ -318,17 +309,17 @@ function processData(items) {
 
     setTestEResult((prev) => prev ? {
       ...prev,
-      stage: 'PRODUCTION_TRAFFIC',
+      stage: 'SIMULATED_WORKLOAD',
       trafficProcessedBeforeFault: 42,
       log: [
-        'Stage 4: Live production traffic streaming... 10 reqs... 25 reqs... 42 reqs...',
+        'Stage 4: Synthetic event counter advanced to 42; no real requests or production traffic were processed.',
         ...prev.log
       ]
     } : null);
 
     await new Promise((r) => setTimeout(r, 800));
 
-    // The delayed defect triggers under real production traffic!
+    // The delayed defect is introduced into the illustrative simulated workload.
     sounds.error();
     setTestEResult((prev) => prev ? {
       ...prev,
@@ -336,8 +327,8 @@ function processData(items) {
       watchdogTriggered: true,
       trafficProcessedBeforeFault: 53,
       log: [
-        'Stage 5: [ANOMALY DETECTED]: Production error spike (12.4% > 5.0% threshold) on payload batch #53!',
-        'Stage 5: Defect signature: "LATENT_POINTER_FAULT" after traffic threshold.',
+        'Stage 5: Simulated fault state injected by the demo; no production anomaly or measured error rate was observed.',
+        'Stage 5: Illustrative defect label only; no real workload was affected.',
         ...prev.log
       ]
     } : null);
@@ -350,8 +341,8 @@ function processData(items) {
       ...prev,
       stage: 'ROLLBACK_RESTORED',
       log: [
-        'Stage 6: [AUTOMATIC ROLLBACK EXECUTED]: Emergency restore to last known-good checkpoint: v1.0.0 (Gen 0 Baseline).',
-        'Stage 6: Production restored without page reload. Error rate returned to 0.00%.',
+        'Stage 6: Simulated UI state reset only; no deployment rollback or restoration was executed.',
+        'Stage 6: No production state or external system was changed.',
         ...prev.log
       ]
     } : null);
@@ -361,6 +352,10 @@ function processData(items) {
 
   return (
     <div className="space-y-6 pb-16">
+      <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs text-amber-100" role="status">
+        <strong className="block mb-1 uppercase tracking-wide">Research simulation — not a production verification system</strong>
+        This lab does not route production traffic or execute candidate code in an isolated runtime. Security results are lexical pattern checks only; lifecycle timelines and evidence figures are illustrative. Do not use these results to approve a production release.
+      </div>
       {/* Header Banner */}
       <div className="rounded-2xl border border-neutral-800 bg-gradient-to-b from-[#081216] via-[#050a0d] to-[#04080a] p-6 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -373,14 +368,14 @@ function processData(items) {
                 Reality Verification Lab
               </span>
               <span className="px-2.5 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-950/50 text-emerald-300 font-mono text-[11px]">
-                Research-Grade Autonomous Software Studio Prototype
+                Simulated Research Prototype
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight">
-              REALITY VERIFICATION LAB &amp; TOST ANALYSIS
+              REALITY VERIFICATION LAB &amp; EVIDENCE SIMULATION
             </h1>
             <p className="text-sm text-neutral-400 font-sans mt-1 max-w-3xl">
-              Proves live closure dispatch switching, zero-reload state continuity, machine-readable security verdicts, empirical false-positive resistance, TOST statistical equivalence testing, and delayed blind regression restoration.
+              Demonstrates simulated closure-dispatch concepts, static pattern screening, illustrative false-positive checks, and a staged rollback scenario. No production workload or isolated runtime is used.
             </p>
           </div>
 
@@ -388,10 +383,10 @@ function processData(items) {
             <div className="rounded-xl border border-cyan-500/30 bg-[#060c0f] p-3.5 font-mono text-xs text-neutral-400 space-y-1 min-w-[280px]">
               <div className="text-white font-bold flex items-center justify-between">
                 <span>Scope & Boundary Declaration</span>
-                <span className="text-emerald-400 text-[10px]">Empirically Tested</span>
+                <span className="text-emerald-400 text-[10px]">Static Scan Only</span>
               </div>
               <p className="text-[11px] text-neutral-300 font-sans leading-tight">
-                Evaluated against <strong>defined attack vectors</strong> via hermetic JavaScript execution membrane for the tested threat model and AST gates. No global access observed across the defined adversarial test suite. Does not claim a hypervisor/OS-level boundary.
+                Only lexical pattern checks are performed. Runtime payload execution is disabled because the browser realm is not a secure isolation boundary. No runtime security result is claimed.
               </p>
             </div>
 
@@ -403,7 +398,7 @@ function processData(items) {
                   setShowPublicReportModal(true);
                 }}
                 className="flex items-center gap-2 px-3.5 py-3 rounded-xl border border-purple-500/50 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(168,85,247,0.25)] cursor-pointer whitespace-nowrap w-full sm:w-auto justify-center"
-                title="View clean Public Experiment Report generated automatically from the evidence dossier"
+                title="View the simulated research report"
               >
                 <FileText className="w-4 h-4 text-purple-400" />
                 <span>Public Experiment Report</span>
@@ -525,7 +520,7 @@ function processData(items) {
             <div>
               <h3 className="font-mono font-bold text-base text-white flex items-center gap-2">
                 <Activity className="w-5 h-5 text-emerald-400" />
-                TEST A: LIVE STATE CONTINUITY (10,000 → 10,001+)
+                TEST A: LOCAL REACT STATE DEMONSTRATION (10,000 → 10,001+)
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
                 Proves that when a mutation is hotpatched into memory at counter = 10,000, execution advances seamlessly without a page reload or state reset.
@@ -555,7 +550,7 @@ function processData(items) {
           {/* Real-time State Displays */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608]">
-              <span className="text-[11px] font-mono text-neutral-500 block">Live Accumulator Counter</span>
+              <span className="text-[11px] font-mono text-neutral-500 block">Local Demo State Counter</span>
               <span className="text-2xl font-mono font-bold text-emerald-400">
                 {testAState.counter.toLocaleString()}
               </span>
@@ -593,7 +588,7 @@ function processData(items) {
             </div>
           </div>
 
-          {/* Live Execution Stream */}
+          {/* Local Demonstration Log */}
           <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 space-y-1.5 max-h-[220px] overflow-y-auto">
             <div className="text-neutral-500 text-[10px] pb-1 border-b border-neutral-800 flex items-center justify-between">
               <span>WORKLOAD STATE STREAM</span>
@@ -656,7 +651,7 @@ function processData(items) {
               <div className="p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/20 font-mono text-xs space-y-2">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>MATHEMATICAL PROOF OF DISPATCH MUTATION:</span>
+                  <span>ILLUSTRATIVE LOCAL STATE-TRANSITION MODEL:</span>
                 </div>
                 <div className="text-neutral-200">
                   <code>Object.is(fnBefore, fnAfter) === false</code> (Distinct memory instances in V8 heap).
@@ -689,7 +684,7 @@ function processData(items) {
                 TEST C: DELIBERATELY MALICIOUS MUTANT (DEFINED VECTORS VERDICT)
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                Evaluates candidate code against enumerated attack vectors (globalThis, window, constructor traversal, eval, runaway recursion), producing a machine-readable JSON security payload. Confirms containment within our hermetic JavaScript execution membrane for the tested threat model without claiming general-purpose OS sandbox equivalence. No global access observed across the defined adversarial test suite.
+                Performs lexical pattern screening only and produces a machine-readable review payload. Candidate execution is disabled. A clean scan is NOT a security pass; it means only that the configured patterns were not detected.
               </p>
             </div>
 
@@ -744,8 +739,8 @@ function processData(items) {
               </div>
 
               {machineVerdict ? (
-                <div className="rounded-xl border border-neutral-800 bg-[#040608] p-3 font-mono text-xs overflow-x-auto max-h-[220px]">
-                  <pre className={machineVerdict.verdict === 'BLOCKED' ? 'text-rose-400' : 'text-emerald-400'}>
+                <div tabIndex={0} role="region" aria-label="Scrollable verification evidence output" className="rounded-xl border border-neutral-800 bg-[#040608] p-3 font-mono text-xs overflow-x-auto max-h-[220px]">
+                  <pre className={machineVerdict.verdict === 'BLOCKED' ? 'text-rose-400' : machineVerdict.verdict === 'NOT_EVALUATED' ? 'text-amber-300' : 'text-emerald-400'}>
                     {JSON.stringify(machineVerdict.machineReadablePayload, null, 2)}
                   </pre>
                 </div>
@@ -803,14 +798,14 @@ function processData(items) {
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/20">
-                  <span className="text-emerald-400 block text-[10px]">Correctly Permitted (Non-Blocked)</span>
-                  <span className="text-lg font-bold text-emerald-300">{challengeResult.passedCount} / {challengeResult.totalLegitimateSnippets}</span>
+                  <span className="text-emerald-400 block text-[10px]">No Known Static Rule Triggered</span>
+                  <span className="text-lg font-bold text-emerald-300">{challengeResult.snippets.filter((snip) => snip.result === 'NOT_EVALUATED').length} / {challengeResult.totalLegitimateSnippets}</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-purple-500/40 bg-purple-950/20">
-                  <span className="text-purple-300 block text-[10px]">False Positive Rate (FPR)</span>
+                  <span className="text-purple-300 block text-[10px]">Static-Scan False Positive Rate</span>
                   <span className="text-lg font-bold text-white">{challengeResult.falsePositiveRatePercent}%</span>
-                  <span className="text-[10px] text-emerald-400 block">0% Over-Restriction</span>
+                  <span className="text-[10px] text-neutral-400 block">Lexical scan only; no runtime tests</span>
                 </div>
               </div>
 
@@ -852,7 +847,7 @@ function processData(items) {
                 TEST E: BLIND REGRESSION (PASSES TESTS $\rightarrow$ FAILS UNDER LOAD $\rightarrow$ WATCHDOG RESTORES)
               </h3>
               <p className="text-xs text-neutral-400 font-sans mt-0.5">
-                The ultimate test: mutant passes all unit tests, passes the statistical benchmark, gets promoted to production, behaves incorrectly only after a specific traffic threshold, and the watchdog automatically restores Gen N-1.
+                Illustrative lifecycle simulation: a hypothetical mutant passes mock checks, a simulated workload triggers a fault, and the demo displays a rollback sequence. No real production deployment or rollback occurs.
               </p>
             </div>
 
@@ -864,7 +859,7 @@ function processData(items) {
               {isSimulatingBlindRegression ? (
                 <>
                   <Activity className="w-4 h-4 animate-spin" />
-                  <span>Simulating Production Lifecycle...</span>
+                  <span>Simulating Local Research Scenario...</span>
                 </>
               ) : (
                 <>
@@ -882,10 +877,10 @@ function processData(items) {
                 {[
                   { step: '1. Unit Tests', active: testEResult.unitTestsPassed },
                   { step: '2. Benchmark', active: testEResult.benchmarkPassed },
-                  { step: '3. Promoted', active: testEResult.promotedToLive },
-                  { step: '4. Traffic Load', active: testEResult.trafficProcessedBeforeFault > 0 },
-                  { step: '5. Anomaly Tripped', active: testEResult.watchdogTriggered, alert: true },
-                  { step: '6. Auto-Rollback', active: testEResult.stage === 'ROLLBACK_RESTORED' }
+                  { step: '3. Simulated Promotion', active: testEResult.simulatedPromotion },
+                  { step: '4. Synthetic Event Count', active: testEResult.trafficProcessedBeforeFault > 0 },
+                  { step: '5. Injected Demo Fault', active: testEResult.watchdogTriggered, alert: true },
+                  { step: '6. Demo State Reset', active: testEResult.stage === 'ROLLBACK_RESTORED' }
                 ].map((s, i) => (
                   <div
                     key={i}
@@ -906,7 +901,7 @@ function processData(items) {
               <div className="rounded-xl border border-neutral-800 bg-[#040608] p-4 font-mono text-xs text-neutral-300 space-y-1.5 max-h-[220px] overflow-y-auto">
                 <div className="text-neutral-500 text-[10px] pb-1 border-b border-neutral-800 flex items-center justify-between">
                   <span>WATCHDOG CANARY TELEMETRY AUDIT</span>
-                  <span>Restored State: {testEResult.restoredVersion}</span>
+                  <span>Illustrative State Label: {testEResult.restoredVersion}</span>
                 </div>
                 {testEResult.log.map((l, i) => (
                   <div
@@ -926,7 +921,7 @@ function processData(items) {
             </div>
           ) : (
             <p className="text-xs font-mono text-neutral-500 text-center py-8">
-              Click the button above to execute the multi-stage blind regression simulation.
+              Click the button above to view a staged demonstration. It does not execute production traffic or deploy a candidate.
             </p>
           )}
         </div>
@@ -943,10 +938,10 @@ function processData(items) {
                 <FileCheck className="w-5 h-5 text-cyan-400" />
                 <div>
                   <h3 className="font-bold text-white text-sm">
-                    REPRODUCIBILITY & EMPIRICAL EVIDENCE DOSSIER
+                    SIMULATED EVIDENCE RECORD
                   </h3>
                   <span className="text-[10px] text-neutral-400 font-sans">
-                    machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts • Experiment ID: {activeEvidenceReport.experimentId}
+                    simulated evidence JSON; record digests are unsigned and do not prove execution • Experiment ID: {activeEvidenceReport.experimentId}
                   </span>
                 </div>
               </div>
@@ -968,10 +963,10 @@ function processData(items) {
                   onClick={handleReproduceCurrentExperiment}
                   disabled={isReproducing}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-500/60 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 font-bold cursor-pointer text-[11px] disabled:opacity-50"
-                  title="Run independent re-execution on the defined workload and evaluate statistical convergence"
+                  title="Generate a synthetic comparison; no source execution or statistical conclusion is performed"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isReproducing ? 'animate-spin' : ''}`} />
-                  <span>{isReproducing ? 'Reproducing...' : 'Reproduce This Experiment'}</span>
+                  <span>{isReproducing ? 'Generating demo...' : 'Generate Simulated Comparison'}</span>
                 </button>
 
                 <button
@@ -999,7 +994,7 @@ function processData(items) {
                     downloadAnchor.remove();
                   }}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-bold cursor-pointer text-[11px]"
-                  title="Download machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts"
+                  title="Download simulated evidence record"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download .JSON</span>
@@ -1031,7 +1026,7 @@ function processData(items) {
                 <div>
                   <span className="text-neutral-500 text-[10px] block">Runtime Engine</span>
                   <span className="text-cyan-300 block text-[11px] truncate">{activeEvidenceReport.browserRuntime}</span>
-                  <span className="text-[10px] text-neutral-400 block mt-0.5">ECMA-262 V8 Isolated Context</span>
+                  <span className="text-[10px] text-neutral-400 block mt-0.5">Browser runtime (not isolated)</span>
                 </div>
                 <div>
                   <span className="text-neutral-500 text-[10px] block">Promotion Decision / Final State</span>
@@ -1039,9 +1034,7 @@ function processData(items) {
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                       activeEvidenceReport.promotionDecision === 'PROMOTED'
                         ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-400'
-                        : (activeEvidenceReport.promotionDecision === 'ROLLED_BACK'
-                            ? 'bg-amber-950/80 border border-amber-500/40 text-amber-400'
-                            : 'bg-rose-950/80 border border-rose-500/40 text-rose-400')
+                        : 'bg-amber-950/80 border border-amber-500/40 text-amber-400'
                     }`}>
                       {activeEvidenceReport.promotionDecision}
                     </span>
@@ -1050,15 +1043,15 @@ function processData(items) {
                 </div>
               </div>
 
-              {/* Tamper-Evident Experiment Hash Chain Card */}
+              {/* Client-side hash-chain demonstration; not a trusted attestation. */}
               <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-2">
                 <div className="flex items-center justify-between text-cyan-300 font-bold">
                   <div className="flex items-center gap-1.5">
                     <Lock className="w-4 h-4 text-cyan-400" />
-                    <span>Tamper-Evident Cryptographic Hash Chain</span>
+                    <span>Client-Side Hash-Chain Demonstration</span>
                   </div>
                   <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
-                    CHAIN BLOCK #{activeEvidenceReport.chainIndex} • SEAL VERIFIED
+                    CHAIN BLOCK #{activeEvidenceReport.chainIndex} • HASH MATCH (UNSIGNED)
                   </span>
                 </div>
 
@@ -1116,12 +1109,12 @@ function processData(items) {
                   </div>
                 </div>
                 <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-1">
-                  <span className="text-neutral-500 text-[10px] block">Baseline Cryptographic Hash</span>
+                  <span className="text-neutral-500 text-[10px] block">Baseline Fixture Digest</span>
                   <span className="text-xs text-neutral-200 block truncate">{activeEvidenceReport.baseline.hash}</span>
                   <span className="text-[10px] text-neutral-400 block">{activeEvidenceReport.baseline.description}</span>
                 </div>
                 <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-1">
-                  <span className="text-cyan-400 text-[10px] block">Candidate Cryptographic Hash</span>
+                  <span className="text-cyan-400 text-[10px] block">Candidate Fixture Digest</span>
                   <span className="text-xs text-cyan-300 block truncate">{activeEvidenceReport.candidate.hash}</span>
                   <span className="text-[10px] text-neutral-400 block">{activeEvidenceReport.candidate.description}</span>
                 </div>
@@ -1132,36 +1125,36 @@ function processData(items) {
                 <div className="flex items-center justify-between">
                   <span className="text-white font-bold flex items-center gap-2">
                     <Activity className="w-4 h-4 text-emerald-400" />
-                    Rigorous Benchmark Statistics (N = {activeEvidenceReport.statistics.sampleCount} Warmup Samples)
+                    Synthetic Timing Fixture — Not Measured (N = {activeEvidenceReport.statistics.sampleCount})
                   </span>
                   <span className="text-emerald-400 font-bold">
-                    {activeEvidenceReport.statistics.speedupFactorOnDefinedWorkload}× Cumulative Improvement on Defined Workload
+                    NO MEASURED SPEEDUP
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">Mean (μ)</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture Mean</span>
                     <span className="font-bold text-white">{activeEvidenceReport.statistics.meanLatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">Median</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture Median</span>
                     <span className="font-bold text-white">{activeEvidenceReport.statistics.medianLatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">P95</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture P95</span>
                     <span className="font-bold text-cyan-300">{activeEvidenceReport.statistics.p95LatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">P99</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture P99</span>
                     <span className="font-bold text-cyan-300">{activeEvidenceReport.statistics.p99LatencyUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">Std Dev (σ)</span>
+                    <span className="text-[10px] text-neutral-500 block">Fixture Std Dev</span>
                     <span className="font-bold text-neutral-300">{activeEvidenceReport.statistics.standardDeviationUs} μs</span>
                   </div>
                   <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800">
-                    <span className="text-[10px] text-neutral-500 block">95% Conf. Interval</span>
+                    <span className="text-[10px] text-neutral-500 block">Illustrative Range</span>
                     <span className="font-bold text-emerald-400 text-[11px]">
                       [{activeEvidenceReport.statistics.confidenceInterval95Us[0]}, {activeEvidenceReport.statistics.confidenceInterval95Us[1]}]
                     </span>
@@ -1169,24 +1162,25 @@ function processData(items) {
                 </div>
 
                 <div className="text-[11px] text-neutral-400 font-sans">
-                  Raw latency samples (μs): [{activeEvidenceReport.benchmarkSamples.join(', ')}]
+                  Synthetic fixture values (μs), not captured from a real benchmark: [{activeEvidenceReport.benchmarkSamples.join(', ')}]
                 </div>
               </div>
 
               {/* Test Suites Verification Table */}
               <div className="p-4 rounded-xl border border-neutral-800 bg-[#040608] space-y-2">
-                <span className="text-white font-bold block">Verification Test Suites</span>
+                <span className="text-white font-bold block">Recorded Test Suites (supplied to this simulated report)</span>
+                {activeEvidenceReport.testSuiteResults.length === 0 && <p className="text-xs text-amber-300">No test suites were executed or attached to this browser-generated report.</p>}
                 <div className="space-y-1.5">
                   {activeEvidenceReport.testSuiteResults.map((s, idx) => (
                     <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-neutral-900/60 border border-neutral-800/80 text-[11px]">
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        {s.passed ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />}
                         <span className="text-neutral-200">{s.suiteName}</span>
                       </div>
                       <div className="flex items-center gap-4 text-neutral-400">
-                        <span>{s.assertions} Assertions</span>
+                        <span>{s.passed ? "Reported passed" : "Reported failed"} · {s.assertions} assertions</span>
                         <span>{s.durationMs} ms</span>
-                        <span className="text-emerald-400 font-bold">PASS</span>
+                        <span className={s.passed ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>{s.passed ? "PASS" : "FAIL"}</span>
                       </div>
                     </div>
                   ))}
@@ -1204,7 +1198,7 @@ function processData(items) {
                     {activeEvidenceReport.securityFindings.testedVectorsSummary}
                   </div>
                   <div className="flex items-center justify-between text-[11px] pt-1 border-t border-neutral-800">
-                    <span className="text-neutral-400">Membrane Verdict:</span>
+                    <span className="text-neutral-400">Static Scan Status:</span>
                     <span className={`font-bold ${activeEvidenceReport.securityFindings.membraneVerdict === 'BLOCKED' ? 'text-rose-400' : 'text-emerald-400'}`}>
                       {activeEvidenceReport.securityFindings.membraneVerdict}
                     </span>
@@ -1218,10 +1212,10 @@ function processData(items) {
                 <div className="p-3.5 rounded-xl border border-neutral-800 bg-[#040608] space-y-1.5">
                   <span className="text-white font-bold block flex items-center gap-1.5">
                     <History className="w-3.5 h-3.5 text-amber-400" />
-                    Canary Watchdog Anomaly & Rollback Checkpoint
+                    Simulated Fault & Local State Reset
                   </span>
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-neutral-400">Watchdog Fired:</span>
+                    <span className="text-neutral-400">Demo threshold triggered:</span>
                     <span className={`font-bold ${activeEvidenceReport.rollbackEvent.watchdogFired ? 'text-rose-400' : 'text-neutral-400'}`}>
                       {activeEvidenceReport.rollbackEvent.watchdogFired ? 'YES (ANOMALY DETECTED)' : 'NO (STEADY-STATE)'}
                     </span>
@@ -1233,11 +1227,11 @@ function processData(items) {
                     </div>
                   )}
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-neutral-400">Restored Target:</span>
+                    <span className="text-neutral-400">Restored demo state:</span>
                     <span className="text-cyan-300 font-mono truncate">{activeEvidenceReport.rollbackEvent.restoredTarget}</span>
                   </div>
                   <div className="flex items-center justify-between text-[11px] pt-1 border-t border-neutral-800">
-                    <span className="text-neutral-400">Checkpoint ID / Latency:</span>
+                    <span className="text-neutral-400">Demo snapshot / illustrative reset delay:</span>
                     <span className="text-neutral-200 font-mono">{activeEvidenceReport.rollbackCheckpoint.checkpointId} ({activeEvidenceReport.rollbackCheckpoint.restorationLatencyMs}ms)</span>
                   </div>
                   <div className="text-[10px] text-neutral-400 font-sans mt-1">
@@ -1249,7 +1243,7 @@ function processData(items) {
 
             {/* Modal Footer */}
             <div className="p-3 bg-[#040608] border-t border-neutral-800 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-              <span className="truncate max-w-[500px]">Format: machine-generated evidence JSON containing cryptographic identifiers for the evaluated artifacts</span>
+              <span className="truncate max-w-[500px]">Format: simulated evidence record; no source execution or independent reproduction</span>
               <button
                 onClick={() => { sounds.click(); setShowEvidenceModal(false); }}
                 className="px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 cursor-pointer font-bold"

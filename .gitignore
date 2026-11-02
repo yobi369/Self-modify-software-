@@ -7,3 +7,7 @@ coverage/
 .env*
 !.env.example
 .vercel
+
+# Playwright browser-test output
+playwright-report/
+test-results/
