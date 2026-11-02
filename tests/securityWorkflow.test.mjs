@@ -13,7 +13,7 @@ test("security workflow runs dependency and secret checks on pull requests and p
 
 test("security workflow pins every third-party action to a full immutable commit SHA", () => {
   const actions = [...workflow.matchAll(/^\s+uses:\s+[^@\s]+@([0-9a-f]+)(?:\s+#.*)?$/gm)];
-  assert.equal(actions.length, 4, "expected checkout x2, setup-bun, and dependency-review");
+  assert.equal(actions.length, 5, "expected checkout x2, setup-bun, dependency-review, and Gitleaks");
   for (const [, sha] of actions) assert.match(sha, /^[0-9a-f]{40}$/);
   assert.match(workflow, /gitleaks\/gitleaks-action@[0-9a-f]{40}/);
 });
