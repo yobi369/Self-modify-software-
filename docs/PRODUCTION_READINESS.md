@@ -6,7 +6,7 @@
 
 The hardening branch now has a consistent Node.js 22.x / Bun 1.4.4 toolchain, API validation and fail-closed production routes, bounded payloads, security headers, CI, CodeQL, a production-server smoke test, and a more accurate research-prototype UI.
 
-Latest verified branch revision: `adafaafcb5137e678f0f696ddd263c12b7b7fb76`.
+Latest verified application revision: `adafaafcb5137e678f0f696ddd263c12b7b7fb76`. The current branch tip is documentation-only revision `e18a681d6455f38a8b78257cf77db6158e4e0495`.
 The release checklist and test strategy have been refreshed through the current documentation branch tip; the code-bearing revision listed above is the one covered by the linked CI and CodeQL runs.
 
 - [CI run 41391142011](https://github.com/yobi369/Self-modify-software-/actions/runs/41390708094): TypeScript, 42 automated tests, production frontend/server build, production-server smoke test, and build artifact upload all passed.
