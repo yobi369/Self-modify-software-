@@ -30,7 +30,7 @@ jobs:
         with:
           bun-version: "1.4.4"
       - name: Audit locked dependencies (high and critical)
-        run: bun audit --audit-level=high
+        run: bun audit
 
   dependency-review:
     name: Pull request dependency review (requires dependency graph)
