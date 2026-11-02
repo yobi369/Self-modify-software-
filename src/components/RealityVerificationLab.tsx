@@ -372,7 +372,7 @@ function processData(items) {
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-mono font-bold text-white tracking-tight">
-              REALITY VERIFICATION LAB &amp; TOST ANALYSIS
+              REALITY VERIFICATION LAB &amp; EVIDENCE SIMULATION
             </h1>
             <p className="text-sm text-neutral-400 font-sans mt-1 max-w-3xl">
               Demonstrates simulated closure-dispatch concepts, static pattern screening, illustrative false-positive checks, and a staged rollback scenario. No production workload or isolated runtime is used.
@@ -1026,7 +1026,7 @@ function processData(items) {
                 <div>
                   <span className="text-neutral-500 text-[10px] block">Runtime Engine</span>
                   <span className="text-cyan-300 block text-[11px] truncate">{activeEvidenceReport.browserRuntime}</span>
-                  <span className="text-[10px] text-neutral-400 block mt-0.5">ECMA-262 V8 Isolated Context</span>
+                  <span className="text-[10px] text-neutral-400 block mt-0.5">Browser runtime (not isolated)</span>
                 </div>
                 <div>
                   <span className="text-neutral-500 text-[10px] block">Promotion Decision / Final State</span>
@@ -1180,7 +1180,7 @@ function processData(items) {
                       <div className="flex items-center gap-4 text-neutral-400">
                         <span>{s.passed ? "Reported passed" : "Reported failed"} · {s.assertions} assertions</span>
                         <span>{s.durationMs} ms</span>
-                        <span className="text-emerald-400 font-bold">PASS</span>
+                        <span className={s.passed ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>{s.passed ? "PASS" : "FAIL"}</span>
                       </div>
                     </div>
                   ))}
