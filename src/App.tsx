@@ -30,6 +30,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#040709] text-neutral-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-black">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-md focus:bg-emerald-400 focus:px-4 focus:py-2 focus:font-semibold focus:text-black">Skip to main content</a>
       {/* Top Navigation Bar */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
