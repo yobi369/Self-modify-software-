@@ -282,7 +282,7 @@ Exported from Self-Modifying Software Studio
         <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
         <div className="text-xs text-neutral-300 space-y-1">
           <div className="font-mono font-bold text-white uppercase tracking-wide flex items-center gap-2">
-            <span>Research-Grade Autonomous Software Studio Prototype</span>
+            <span>Research Prototype</span>
             <span className="text-[10px] text-emerald-400 font-normal border border-emerald-500/30 px-1.5 py-0.2 rounded bg-emerald-950/40">Scoped Claims</span>
           </div>
           <p className="leading-relaxed text-neutral-400">
