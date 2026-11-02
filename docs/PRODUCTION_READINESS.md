@@ -4,7 +4,7 @@
 
 **Status: NOT CERTIFIED FOR PRODUCTION OR COMMERCIAL CUSTOMER USE.**
 
-The original baseline lacked a README, CI workflow, automated tests, and engineering documentation. This hardening branch now adds those assets, a shared Express API application used by both local development and the Vercel entry point, explicit API request/response validation, fail-closed production AI routes, and a documented test/release process. The latest verified CI run for commit `877e41a317d48fdf3c084eaa56e64405698e5274` completed 35 tests with zero failures or skips, passed TypeScript validation, built the frontend and server artefacts, and uploaded the build artefact. CodeQL analysis for this same commit also completed successfully. These checks are a baseline, not a production certification. These improvements do not establish customer production readiness: the repository still has no declared licence, no authenticated customer accounts or tenant isolation, no shared production quota service, no isolated candidate execution service, no deployed preview acceptance evidence, and no independent security review.
+The original baseline lacked a README, CI workflow, automated tests, and engineering documentation. This hardening branch now adds those assets, a shared Express API application used by both local development and the Vercel entry point, explicit API request/response validation, fail-closed production AI routes, and a documented test/release process. The latest verified CI run for commit `8c05482a27cfb141e56d87e843e3ebb2d1fafba1` completed 37 tests with zero failures or skips, passed TypeScript validation, built the frontend and server artefacts, and uploaded the build artefact. CodeQL analysis for this same commit also completed successfully. These checks are a baseline, not a production certification. These improvements do not establish customer production readiness: the repository still has no declared licence, no authenticated customer accounts or tenant isolation, no shared production quota service, no isolated candidate execution service, no deployed preview acceptance evidence, and no independent security review.
 
 This document is a living gate checklist. A checked box requires evidence in CI, a test report, a deployment record, or an authorised review.
 
@@ -12,7 +12,7 @@ This document is a living gate checklist. A checked box requires evidence in CI,
 
 - [x] Frozen dependency installation passes in CI (latest verified run: 1 November 2026).
 - [x] TypeScript checks pass (latest verified run: 1 November 2026).
-- [x] Current unit and API integration suites pass: 35 tests, 0 failures, 0 skipped (latest verified run: 1 November 2026).
+- [x] Current unit and API integration suites pass: 37 tests, 0 failures, 0 skipped (latest verified run: 1 November 2026).
 - [x] Production frontend and server builds pass in CI (latest verified run: 1 November 2026).
 - [ ] No unresolved critical/high dependency vulnerabilities.
 - [ ] No secrets detected in source, history, or built client assets.
