@@ -201,6 +201,7 @@ export const AutonomousProductionEngine: React.FC = () => {
   // Statistical Benchmark state
   const [benchReport, setBenchReport] = useState<ComparativeBenchmarkReport | null>(null);
   const [isRunningBenchmark, setIsRunningBenchmark] = useState<boolean>(false);
+  const [benchmarkError, setBenchmarkError] = useState<string | null>(null);
 
   // Canary Watchdog & Simulated Workload Demo state
   const [isTrafficRunning, setIsTrafficRunning] = useState<boolean>(true);
@@ -369,27 +370,30 @@ export const AutonomousProductionEngine: React.FC = () => {
     }, 600);
   };
 
-  // Run the Statistical JIT Benchmark comparison
+  // Run a descriptive local browser microbenchmark over fixed built-in examples.
   const handleRunStatisticalBenchmark = () => {
     setIsRunningBenchmark(true);
+    setBenchmarkError(null);
     sounds.execute();
     setTimeout(() => {
-      const dataset = generateBenchmarkDataset(500);
-      const baseFn = compileActiveFunction(GEN_0_BASELINE);
-      const currFn = compileActiveFunction(activeCode);
-      if (!baseFn || !currFn) {
+      try {
+        const dataset = generateBenchmarkDataset(500);
+        const baseFn = compileActiveFunction(GEN_0_BASELINE);
+        const currFn = compileActiveFunction(activeCode);
+        if (!baseFn || !currFn) {
+          setEvolutionLog((prev) => ['[NOT RUN]: No built-in demo implementation is available for this code identifier.', ...prev]);
+          return;
+        }
+
+        const baseStat = runStatisticalBenchmark(baseFn, dataset, 120, 5, 40);
+        const currStat = runStatisticalBenchmark(currFn, dataset, 120, 5, 40);
+        setBenchReport(compareBenchmarks(baseStat, currStat));
+        sounds.success();
+      } catch (error) {
+        setBenchmarkError(error instanceof Error ? error.message : 'The local timing sample could not be completed.');
+      } finally {
         setIsRunningBenchmark(false);
-        setEvolutionLog((prev) => ['[NOT RUN]: No built-in demo implementation is available for this code identifier.', ...prev]);
-        return;
       }
-
-      const baseStat = runStatisticalBenchmark(baseFn, dataset, 120, 5, 40);
-      const currStat = runStatisticalBenchmark(currFn, dataset, 120, 5, 40);
-      const rep = compareBenchmarks(baseStat, currStat);
-
-      setBenchReport(rep);
-      setIsRunningBenchmark(false);
-      sounds.success();
     }, 800);
   };
 
@@ -811,6 +815,11 @@ export const AutonomousProductionEngine: React.FC = () => {
               </button>
             </div>
 
+            {benchmarkError && (
+              <p className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-xs text-amber-200" role="status">
+                Local benchmark unavailable: {benchmarkError}
+              </p>
+            )}
             {benchReport ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
                 {/* Baseline Metrics */}
